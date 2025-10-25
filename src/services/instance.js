@@ -1,7 +1,7 @@
 // axiosInstance.js
 import axios from 'axios';
 
-const baseURL = 'http://localhost:5000/api/';
+const baseURL = 'https://relax-feet-server.onrender.com/api/';
 
 const instance = axios.create({
   baseURL,

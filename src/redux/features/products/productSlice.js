@@ -3,7 +3,7 @@ import axios from 'axios';
 import axiosInstance from '../../../services/instance';
 
 // SOLUTION: Hardcode the backend URL here
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = 'https://relax-feet-server.onrender.com';
 
 // Initial state
 const initialState = {

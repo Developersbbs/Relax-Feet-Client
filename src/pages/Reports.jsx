@@ -26,16 +26,16 @@ const Reports = () => {
 
       // Fetch multiple stats in parallel
       const [productsRes, customersRes, billsRes, servicesRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/products', {
+        axios.get('https://relax-feet-server.onrender.com/api/products', {
           headers: { Authorization: `Bearer ${token}` }
         }).catch(() => ({ data: { products: [] } })),
-        axios.get('http://localhost:5000/api/customers', {
+        axios.get('https://relax-feet-server.onrender.com/api/customers', {
           headers: { Authorization: `Bearer ${token}` }
         }).catch(() => ({ data: { customers: [] } })),
-        axios.get('http://localhost:5000/api/bills', {
+        axios.get('https://relax-feet-server.onrender.com/api/bills', {
           headers: { Authorization: `Bearer ${token}` }
         }).catch(() => ({ data: { bills: [] } })),
-        axios.get('http://localhost:5000/api/services', {
+        axios.get('https://relax-feet-server.onrender.com/api/services', {
           headers: { Authorization: `Bearer ${token}` }
         }).catch(() => ({ data: { services: [] } }))
       ]);

@@ -384,7 +384,7 @@ const ProductManagement = () => {
       formData.append('image', fileToUpload);
 
       const response = await axios.post(
-        "http://localhost:5000/api/upload/image",
+        "https://relax-feet-server.onrender.com/api/upload/image",
         formData,
         {
           headers: {

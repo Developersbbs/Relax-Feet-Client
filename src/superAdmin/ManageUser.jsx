@@ -3,11 +3,11 @@ import { Plus, Edit, Trash2, Eye, EyeOff, Key, Users, UserCheck, AlertCircle, Se
 
 
 // API Helper Function with correct backend URL
-const baseURL = 'http://localhost:5000'; // Your backend server
+const baseURL = 'https://relax-feet-server.onrender.com'; // Your backend server
 
 // Updated apiFetch function with authentication
 const apiFetch = async (endpoint, options = {}) => {
-  const baseURL = 'http://localhost:5000';
+  const baseURL = 'https://relax-feet-server.onrender.com';
   
   // Get token from localStorage or cookies
   const token = localStorage.getItem('token') || getCookie('token');
