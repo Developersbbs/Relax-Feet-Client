@@ -60,7 +60,7 @@ const Services = () => {
   const fetchServices = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('https://relax-feet-server.onrender.com/api/services', {
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/services`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const servicesData = response.data.services || [];
@@ -97,12 +97,12 @@ const Services = () => {
 
     try {
       if (editingService) {
-        await axios.put(`https://relax-feet-server.onrender.com/api/services/${editingService._id}`, formData, {
+        await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/services/${editingService._id}`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
         toast.success('Service updated successfully');
       } else {
-        await axios.post('https://relax-feet-server.onrender.com/api/services', formData, {
+        await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/services`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
         toast.success('Service created successfully');
@@ -123,7 +123,7 @@ const Services = () => {
   const handleDelete = async (serviceId) => {
     if (window.confirm('Are you sure you want to delete this service?')) {
       try {
-        await axios.delete(`https://relax-feet-server.onrender.com/api/services/${serviceId}`, {
+        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/services/${serviceId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         toast.success('Service deleted successfully');

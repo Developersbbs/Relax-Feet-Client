@@ -1,7 +1,7 @@
 // axiosInstance.js
 import axios from 'axios';
 
-const baseURL = 'https://relax-feet-server.onrender.com/api/';
+const baseURL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
 const instance = axios.create({
   baseURL,

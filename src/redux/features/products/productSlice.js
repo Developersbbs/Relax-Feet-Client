@@ -2,9 +2,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import axiosInstance from '../../../services/instance';
 
-// SOLUTION: Hardcode the backend URL here
-const API_BASE_URL = 'https://relax-feet-server.onrender.com';
-
 // Initial state
 const initialState = {
   items: [],
@@ -41,7 +38,7 @@ export const fetchProducts = createAsyncThunk(
         ...(params.sortOrder && { sortOrder: params.sortOrder }),
         ...(params.stockStatus && { stockStatus: params.stockStatus })
       });
-      const response = await axios.get(`${API_BASE_URL}/api/products?${queryParams}`, getAuthConfig(token));
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/products?${queryParams}`, getAuthConfig(token));
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -96,11 +93,11 @@ export const deleteProduct = createAsyncThunk(
     try {
       const token = getState().login?.token;
       if (!token) throw new Error('No auth token');
-      const productResponse = await axios.get(`${API_BASE_URL}/api/products/${id}`, getAuthConfig(token));
+      const productResponse = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/products/${id}`, getAuthConfig(token));
       const product = productResponse.data;
       if (product.image && product.image.includes('storage.googleapis.com')) {
         try {
-          await axios.delete(`${API_BASE_URL}/api/upload/image`, {
+          await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/upload/image`, {
             headers: { Authorization: `Bearer ${token}` },
             data: { imageUrl: product.image }
           });
@@ -108,7 +105,7 @@ export const deleteProduct = createAsyncThunk(
           console.warn('Could not delete image, but continuing.', imageDeleteError.message);
         }
       }
-      await axios.delete(`${API_BASE_URL}/api/products/${id}`, getAuthConfig(token));
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/products/${id}`, getAuthConfig(token));
       return id;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to delete product');

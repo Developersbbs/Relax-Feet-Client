@@ -1,13 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Edit, Trash2, Eye, EyeOff, Key, Users, UserCheck, AlertCircle, Search, Filter } from 'lucide-react';
 
-
-// API Helper Function with correct backend URL
-const baseURL = 'https://relax-feet-server.onrender.com'; // Your backend server
-
 // Updated apiFetch function with authentication
 const apiFetch = async (endpoint, options = {}) => {
-  const baseURL = 'https://relax-feet-server.onrender.com';
   
   // Get token from localStorage or cookies
   const token = localStorage.getItem('token') || getCookie('token');
@@ -40,7 +35,7 @@ const apiFetch = async (endpoint, options = {}) => {
   }
 
   try {
-    const response = await fetch(`${baseURL}/api${endpoint}`, config);
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api${endpoint}`, config);
 
     // Handle 401 Unauthorized - redirect to login
     if (response.status === 401) {

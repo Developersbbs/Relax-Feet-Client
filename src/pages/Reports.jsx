@@ -26,16 +26,16 @@ const Reports = () => {
 
       // Fetch multiple stats in parallel
       const [productsRes, customersRes, billsRes, servicesRes] = await Promise.all([
-        axios.get('https://relax-feet-server.onrender.com/api/products', {
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/products`, {
           headers: { Authorization: `Bearer ${token}` }
         }).catch(() => ({ data: { products: [] } })),
-        axios.get('https://relax-feet-server.onrender.com/api/customers', {
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/customers`, {
           headers: { Authorization: `Bearer ${token}` }
         }).catch(() => ({ data: { customers: [] } })),
-        axios.get('https://relax-feet-server.onrender.com/api/bills', {
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/bills`, {
           headers: { Authorization: `Bearer ${token}` }
         }).catch(() => ({ data: { bills: [] } })),
-        axios.get('https://relax-feet-server.onrender.com/api/services', {
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/services`, {
           headers: { Authorization: `Bearer ${token}` }
         }).catch(() => ({ data: { services: [] } }))
       ]);

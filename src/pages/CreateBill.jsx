@@ -76,7 +76,7 @@ const ManageBills = () => {
   // Fetch products from API
   const fetchProducts = useCallback(async () => {
     try {
-      const response = await fetch('https://relax-feet-server.onrender.com/api/products', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/products`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -98,7 +98,7 @@ const ManageBills = () => {
   // Fetch services from API
   const fetchServices = useCallback(async () => {
     try {
-      const response = await fetch('https://relax-feet-server.onrender.com/api/services', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/services`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -124,7 +124,7 @@ const ManageBills = () => {
     setLoading(true);
     try {
       // Fetch customers
-      const customersResponse = await fetch('https://relax-feet-server.onrender.com/api/customers', {
+      const customersResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/customers`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -139,7 +139,7 @@ const ManageBills = () => {
       setFilteredCustomers(customersData.customers || []);
 
       // Fetch bills with pagination
-      const billsResponse = await fetch(`https://relax-feet-server.onrender.com/api/bills?page=${page}&limit=${limit}`, {
+      const billsResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/bills?page=${page}&limit=${limit}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -316,7 +316,7 @@ const ManageBills = () => {
     setCustomerFormSubmitting(true);
 
     try {
-      const response = await fetch('https://relax-feet-server.onrender.com/api/customers', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/customers`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -499,7 +499,7 @@ const ManageBills = () => {
 
       let response;
       if (modalMode === 'create') {
-        response = await fetch('https://relax-feet-server.onrender.com/api/bills', {
+        response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/bills`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -508,7 +508,7 @@ const ManageBills = () => {
           body: JSON.stringify(billData)
         });
       } else if (modalMode === 'edit' && selectedBill) {
-        response = await fetch(`https://relax-feet-server.onrender.com/api/bills/${selectedBill._id}`, {
+        response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/bills/${selectedBill._id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

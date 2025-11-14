@@ -384,7 +384,7 @@ const ProductManagement = () => {
       formData.append('image', fileToUpload);
 
       const response = await axios.post(
-        "https://relax-feet-server.onrender.com/api/upload/image",
+        `${import.meta.env.VITE_API_BASE_URL}/api/upload/image`,
         formData,
         {
           headers: {
