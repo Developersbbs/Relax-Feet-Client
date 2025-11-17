@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npm run build && sudo rm -rf /var/www/relax-feet/* && cd dist && sudo mv * /var/www/relax-feet/"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
