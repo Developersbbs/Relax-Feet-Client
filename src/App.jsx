@@ -19,6 +19,8 @@ import Reports from './pages/Reports'
 import CategoryManagement from './pages/CategoryManagement'
 import Pages from './pages/Pages'
 import BranchManagement from './pages/BranchManagement'
+import BranchDashboard from './pages/BranchDashboard'
+import UserManagement from './pages/UserManagement'
 
 
 
@@ -94,6 +96,14 @@ const App = () => {
         {
           path: '/branches',
           element: <BranchManagement />
+        },
+        {
+          path: '/branch-dashboard',
+          element: <BranchDashboard />
+        },
+        {
+          path: '/user-management',
+          element: <UserManagement />
         },
       ]
     }

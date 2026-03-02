@@ -52,29 +52,35 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-orange-950 via-orange-900 to-amber-800 flex items-center justify-center px-4 py-10">
+    <div className="min-h-screen w-full bg-gradient-to-br from-[#005f7f] via-[#0099CC] to-[#00bcd4] flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
-        <div className="rounded-3xl bg-white/90 backdrop-blur shadow-xl ring-1 ring-orange-100 px-8 py-10 space-y-8">
+        <div className="rounded-3xl bg-white/95 backdrop-blur shadow-2xl ring-1 ring-teal-100 px-8 py-10 space-y-8">
           <div className="text-center space-y-3">
-            <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 text-orange-600 text-xl font-semibold">
-              🔐
+            {/* Logo */}
+            <div className="flex justify-center">
+              <img
+                src="/FettleHealth.png"
+                alt="Fettle Health and Heal"
+                className="h-20 w-auto object-contain"
+                onError={(e) => { e.target.style.display = 'none'; }}
+              />
             </div>
             <div>
-              <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-                Welcome back
+              <h2 className="text-2xl font-bold tracking-tight text-[#0099CC]">
+                Welcome Back
               </h2>
-
+              <p className="text-xs text-slate-400 font-medium tracking-wide uppercase mt-1">Physio & Wellness Studio</p>
             </div>
-            <p className="text-sm text-slate-500">
-              New here?{' '}
-              <Link
-                to="/register"
-                className="font-medium text-orange-600 hover:text-orange-500 underline-offset-4 hover:underline"
-              >
-                Create an account
-              </Link>
-            </p>
           </div>
+          <p className="text-sm text-slate-500 text-center">
+            New here?{' '}
+            <a
+              href="/register"
+              className="font-medium text-[#0099CC] hover:text-[#007aa3] underline-offset-4 hover:underline"
+            >
+              Create an account
+            </a>
+          </p>
 
           <form className="space-y-6" onSubmit={handleLogin}>
             <div className="space-y-5">
@@ -90,7 +96,7 @@ const Login = () => {
                   required
                   value={email}
                   onChange={(e) => dispatch(setEmail(e.target.value))}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-400/60 transition"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:border-[#0099CC] focus:outline-none focus:ring-2 focus:ring-[#0099CC]/40 transition"
                   placeholder="you@example.com"
                 />
               </div>
@@ -107,13 +113,13 @@ const Login = () => {
                     required
                     value={password}
                     onChange={(e) => dispatch(setPassword(e.target.value))}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 pr-12 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-400/60 transition"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 pr-12 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:border-[#0099CC] focus:outline-none focus:ring-2 focus:ring-[#0099CC]/40 transition"
                     placeholder="Enter your password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute inset-y-0 right-3 flex items-center text-sm font-semibold text-orange-500 hover:text-orange-600 focus:outline-none"
+                    className="absolute inset-y-0 right-3 flex items-center text-sm font-semibold text-[#0099CC] hover:text-[#007aa3] focus:outline-none"
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? 'Hide' : 'Show'}
@@ -128,9 +134,9 @@ const Login = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 ${isLoading
-                  ? 'bg-gray-400 cursor-not-allowed opacity-70'
-                  : 'bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-400 shadow-orange-500/30 hover:shadow-xl hover:shadow-amber-500/40 hover:scale-[1.02] active:scale-[0.98]'
+              className={`w-full rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0099CC] ${isLoading
+                ? 'bg-gray-400 cursor-not-allowed opacity-70'
+                : 'bg-gradient-to-r from-[#0099CC] via-[#007aa3] to-[#005f7f] shadow-[#0099CC]/30 hover:shadow-xl hover:shadow-[#0099CC]/40 hover:scale-[1.02] active:scale-[0.98]'
                 }`}
             >
               <div className="flex items-center justify-center gap-2">

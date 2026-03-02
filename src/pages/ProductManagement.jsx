@@ -583,7 +583,7 @@ const ProductManagement = () => {
             <p className="text-sm text-gray-500 dark:text-slate-400 mb-2">ID: {product._id.slice(-6)}</p>
             
             <div className="flex items-center justify-between mb-3">
-              <span className="bg-[#f8e6e6] text-[#720000] px-2 py-1 rounded-full text-xs font-medium">
+              <span className="bg-[#e0f5fb] text-[#0099CC] px-2 py-1 rounded-full text-xs font-medium">
                 {(() => {
                   if (product.category?.name) {
                     return product.category.name;
@@ -619,7 +619,7 @@ const ProductManagement = () => {
                       e.stopPropagation();
                       handleEdit(product);
                     }}
-                    className="bg-[#f8e6e6] hover:bg-[#f0d6d6] text-[#720000] p-1.5 rounded transition-colors"
+                    className="bg-[#e0f5fb] hover:bg-[#f0d6d6] text-[#0099CC] p-1.5 rounded transition-colors"
                     title="Edit Product"
                   >
                     ✏️
@@ -722,13 +722,13 @@ const ProductManagement = () => {
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <div className="min-w-0 flex-1">
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2 sm:gap-3">
-              <span className="bg-[#720000] p-1.5 sm:p-2 rounded-lg text-white text-sm sm:text-base">📦</span>
+              <span className="bg-[#0099CC] p-1.5 sm:p-2 rounded-lg text-white text-sm sm:text-base">📦</span>
               <span className="truncate">Product Management</span>
             </h1>
             <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
               Manage your product catalog - {safeProducts.length} products total
               {filteredProducts.length !== safeProducts.length && (
-                <span className="text-[#720000] font-medium"> ({filteredProducts.length} filtered)</span>
+                <span className="text-[#0099CC] font-medium"> ({filteredProducts.length} filtered)</span>
               )}
             </p>
           </div>
@@ -738,7 +738,7 @@ const ProductManagement = () => {
                 resetForm();
                 setShowModal(true);
               }}
-              className="bg-[#720000] hover:bg-[#8a1a1a] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold shadow-lg transition-all duration-200 flex items-center gap-2 min-w-0 whitespace-nowrap"
+              className="bg-[#0099CC] hover:bg-[#007aa3] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold shadow-lg transition-all duration-200 flex items-center gap-2 min-w-0 whitespace-nowrap"
             >
               <span className="text-base sm:text-lg">➕</span>
               <span className="hidden sm:inline">Add New Product</span>
@@ -761,7 +761,7 @@ const ProductManagement = () => {
               placeholder="Search by name, description, product ID, or MongoDB ID..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#720000] focus:border-transparent"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-transparent"
             />
           </div>
 
@@ -829,7 +829,7 @@ const ProductManagement = () => {
             <div className="flex bg-gray-100 rounded-lg p-1">
               <button
                 onClick={() => setDisplayMode("list")}
-                className={`p-1.5 sm:p-2 rounded-md ${displayMode === "list" ? "bg-[#720000] text-white" : "text-gray-500 dark:text-slate-400"}`}
+                className={`p-1.5 sm:p-2 rounded-md ${displayMode === "list" ? "bg-[#0099CC] text-white" : "text-gray-500 dark:text-slate-400"}`}
                 title="List View"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -838,7 +838,7 @@ const ProductManagement = () => {
               </button>
               <button
                 onClick={() => setDisplayMode("grid")}
-                className={`p-1.5 sm:p-2 rounded-md ${displayMode === "grid" ? "bg-[#720000] text-white" : "text-gray-500 dark:text-slate-400"}`}
+                className={`p-1.5 sm:p-2 rounded-md ${displayMode === "grid" ? "bg-[#0099CC] text-white" : "text-gray-500 dark:text-slate-400"}`}
                 title="Grid View"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1059,7 +1059,7 @@ const ProductManagement = () => {
                   onClick={() => paginate(number)}
                   className={`px-3 py-2 text-sm rounded-md ${
                     currentPage === number
-                      ? "bg-orange-600 text-white"
+                      ? "bg-[#0099CC] text-white"
                       : "bg-white text-gray-700 dark:text-slate-300 border border-gray-300 hover:bg-orange-50"
                   }`}
                 >
@@ -1315,7 +1315,7 @@ const ProductManagement = () => {
                           setShowDetailModal(false);
                           setSelectedProduct(null);
                         }}
-                        className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-3 px-6 rounded-lg font-semibold transition-colors"
+                        className="flex-1 bg-[#0099CC] hover:bg-[#0099CC] text-white py-3 px-6 rounded-lg font-semibold transition-colors"
                       >
                         ✏️ Edit Product
                       </button>
@@ -1368,7 +1368,7 @@ const ProductManagement = () => {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#720000] focus:border-transparent ${formErrors.name ? "border-red-500" : "border-gray-300"}`}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-transparent ${formErrors.name ? "border-red-500" : "border-gray-300"}`}
                   placeholder="Enter product name"
                 />
                 {formErrors.name && <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>}
@@ -1381,7 +1381,7 @@ const ProductManagement = () => {
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows={4}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#720000] focus:border-transparent ${formErrors.description ? "border-red-500" : "border-gray-300"}`}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-transparent ${formErrors.description ? "border-red-500" : "border-gray-300"}`}
                   placeholder="Enter product description"
                 />
                 {formErrors.description && <p className="text-red-500 text-sm mt-1">{formErrors.description}</p>}
@@ -1408,13 +1408,13 @@ const ProductManagement = () => {
                       }}
                       accept="image/*"
                       disabled={uploading}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#720000] focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-transparent"
                     />
                     {uploading && (
                       <div className="mt-2">
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div
-                            className="bg-[#720000] h-2 rounded-full transition-all duration-300"
+                            className="bg-[#0099CC] h-2 rounded-full transition-all duration-300"
                             style={{ width: `${uploadProgress}%` }}
                           ></div>
                         </div>
@@ -1453,7 +1453,7 @@ const ProductManagement = () => {
                     step="0.01"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 ${formErrors.price ? "border-red-500" : "border-gray-300"}`}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#0099CC] ${formErrors.price ? "border-red-500" : "border-gray-300"}`}
                     placeholder="0.00"
                   />
                   {formErrors.price && <p className="text-red-500 text-sm mt-1">{formErrors.price}</p>}
@@ -1464,7 +1464,7 @@ const ProductManagement = () => {
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent ${formErrors.category ? "border-red-500" : "border-gray-300"}`}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-transparent ${formErrors.category ? "border-red-500" : "border-gray-300"}`}
                 >
                   <option value="">Select category</option>
                   {loadingCategories ? (
@@ -1490,7 +1490,7 @@ const ProductManagement = () => {
                       const supplierId = e.target.value;
                       setFormData(prev => ({ ...prev, supplier: supplierId }));
                     }}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent ${
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-transparent ${
                       formErrors.supplier ? 'border-red-500' : 'border-gray-300'
                     }`}
                     disabled={loadingSuppliers}
@@ -1523,7 +1523,7 @@ const ProductManagement = () => {
                   type="text"
                   value={formData.batchNumber}
                   onChange={(e) => setFormData({ ...formData, batchNumber: e.target.value })}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent ${formErrors.batchNumber ? "border-red-500" : "border-gray-300"}`}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-transparent ${formErrors.batchNumber ? "border-red-500" : "border-gray-300"}`}
                   placeholder="Enter batch number"
                 />
                 {formErrors.batchNumber && <p className="text-red-500 text-sm mt-1">{formErrors.batchNumber}</p>}
@@ -1560,7 +1560,7 @@ const ProductManagement = () => {
                   value={formData.manufacturingDate}
                   max={new Date().toISOString().split('T')[0]}
                   onChange={(e) => setFormData({ ...formData, manufacturingDate: e.target.value })}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent ${formErrors.manufacturingDate ? "border-red-500" : "border-gray-300"}`}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-transparent ${formErrors.manufacturingDate ? "border-red-500" : "border-gray-300"}`}
                 />
                 {formErrors.manufacturingDate && <p className="text-red-500 text-sm mt-1">{formErrors.manufacturingDate}</p>}
               </div>
@@ -1573,7 +1573,7 @@ const ProductManagement = () => {
                   min="1"
                   value={formData.reorderLevel}
                   onChange={(e) => setFormData({ ...formData, reorderLevel: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-transparent"
                 />
                 <p className="text-xs text-gray-500 mt-1">Inventory notifications trigger when quantity falls to this level</p>
               </div>
@@ -1585,7 +1585,7 @@ const ProductManagement = () => {
                   min="1"
                   value={formData.quantity}
                   onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 ${formErrors.quantity ? "border-red-500" : "border-gray-300"}`}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#0099CC] ${formErrors.quantity ? "border-red-500" : "border-gray-300"}`}
                   placeholder="0"
                 />
                 {formErrors.quantity && <p className="text-red-500 text-sm mt-1">{formErrors.quantity}</p>}
@@ -1615,7 +1615,7 @@ const ProductManagement = () => {
                   type="button"
                   onClick={handleSubmit}
                   disabled={loading}
-                  className="w-full bg-[#720000] hover:bg-[#8a1a1a] text-white py-3 px-6 rounded-lg font-medium transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full bg-[#0099CC] hover:bg-[#007aa3] text-white py-3 px-6 rounded-lg font-medium transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {loading ? 'Saving...' : (editingProduct ? 'Update Product' : 'Create Product')}
                 </button>

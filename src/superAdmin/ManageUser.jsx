@@ -355,7 +355,7 @@ const ManageUsers = () => {
           {/* Add User Button */}
           <button
             onClick={openCreateModal}
-            className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg flex items-center justify-center transition-colors text-sm sm:text-base font-medium min-w-0"
+            className="bg-[#0099CC] hover:bg-[#007aa3] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg flex items-center justify-center transition-colors text-sm sm:text-base font-medium min-w-0"
           >
             <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
             <span className="hidden sm:inline">Add User</span>
@@ -644,7 +644,7 @@ const ManageUsers = () => {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 text-sm font-medium text-white bg-orange-600 border border-transparent rounded-md hover:bg-orange-700 transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-white bg-[#0099CC] border border-transparent rounded-md hover:bg-[#007aa3] transition-colors"
                   >
                     {modalMode === 'create' ? 'Create' : 'Update'}
                   </button>

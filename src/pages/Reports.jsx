@@ -71,33 +71,33 @@ const Reports = () => {
       description: 'View inventory, stock levels, and product performance',
       icon: '📦',
       path: '/stock-report',
-      color: 'bg-[#f0d6d6] dark:bg-[#720000]'
+      color: 'bg-[#f0d6d6] dark:bg-[#0099CC]'
     },
     {
       title: 'Sales Reports',
       description: 'Analyze sales trends, revenue, and billing data',
       icon: '💰',
       path: '/manage-bill',
-      color: 'bg-[#f0d6d6] dark:bg-[#720000]'
+      color: 'bg-[#f0d6d6] dark:bg-[#0099CC]'
     },
     {
       title: 'Customer Reports',
       description: 'Customer analytics and management insights',
       icon: '👥',
       path: '/manage-customers',
-      color: 'bg-[#f0d6d6] dark:bg-[#720000]'
+      color: 'bg-[#f0d6d6] dark:bg-[#0099CC]'
     },
     {
       title: 'Service Reports',
       description: 'Track service offerings and performance',
       icon: '🔧',
       path: '/services',
-      color: 'bg-[#f0d6d6] dark:bg-[#720000]'
+      color: 'bg-[#f0d6d6] dark:bg-[#0099CC]'
     }
   ];
 
   return (
-    <div className="p-6 bg-[#f8e6e6] dark:bg-gray-900 min-h-screen">
+    <div className="p-6 bg-[#e0f5fb] dark:bg-gray-900 min-h-screen">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
@@ -123,7 +123,7 @@ const Reports = () => {
                     <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Products</p>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalProducts}</p>
                   </div>
-                  <div className="bg-[#f0d6d6] dark:bg-[#720000] p-3 rounded-lg">
+                  <div className="bg-[#f0d6d6] dark:bg-[#0099CC] p-3 rounded-lg">
                     <span className="text-2xl">📦</span>
                   </div>
                 </div>
@@ -135,7 +135,7 @@ const Reports = () => {
                     <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Customers</p>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalCustomers}</p>
                   </div>
-                  <div className="bg-[#f0d6d6] dark:bg-[#720000] p-3 rounded-lg">
+                  <div className="bg-[#f0d6d6] dark:bg-[#0099CC] p-3 rounded-lg">
                     <span className="text-2xl">👥</span>
                   </div>
                 </div>
@@ -147,7 +147,7 @@ const Reports = () => {
                     <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Revenue</p>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">₹{stats.totalRevenue.toLocaleString()}</p>
                   </div>
-                  <div className="bg-[#f0d6d6] dark:bg-[#720000] p-3 rounded-lg">
+                  <div className="bg-[#f0d6d6] dark:bg-[#0099CC] p-3 rounded-lg">
                     <span className="text-2xl">💰</span>
                   </div>
                 </div>
@@ -159,7 +159,7 @@ const Reports = () => {
                     <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Bills</p>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalBills}</p>
                   </div>
-                  <div className="bg-[#f0d6d6] dark:bg-[#3d0000] p-3 rounded-lg">
+                  <div className="bg-[#f0d6d6] dark:bg-[#003d55] p-3 rounded-lg">
                     <span className="text-2xl">🧾</span>
                   </div>
                 </div>
@@ -171,7 +171,7 @@ const Reports = () => {
                     <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Low Stock Items</p>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.lowStockProducts}</p>
                   </div>
-                  <div className="bg-[#f0d6d6] dark:bg-[#720000] p-3 rounded-lg">
+                  <div className="bg-[#f0d6d6] dark:bg-[#0099CC] p-3 rounded-lg">
                     <span className="text-2xl">⚠️</span>
                   </div>
                 </div>
@@ -183,7 +183,7 @@ const Reports = () => {
                     <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Services</p>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalServices}</p>
                   </div>
-                  <div className="bg-[#f0d6d6] dark:bg-[#720000] p-3 rounded-lg">
+                  <div className="bg-[#f0d6d6] dark:bg-[#0099CC] p-3 rounded-lg">
                     <span className="text-2xl">🔧</span>
                   </div>
                 </div>
@@ -215,7 +215,7 @@ const Reports = () => {
                 <p className="text-gray-600 dark:text-gray-300 text-sm">
                   {category.description}
                 </p>
-                <div className="mt-4 flex items-center text-[#720000] dark:text-[#ffb3b3] hover:text-[#8a1a1a] dark:hover:text-white text-sm font-medium transition-colors duration-200">
+                <div className="mt-4 flex items-center text-[#0099CC] dark:text-[#b3e5fc] hover:text-[#007aa3] dark:hover:text-white text-sm font-medium transition-colors duration-200">
                   View Reports
                   <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -234,7 +234,7 @@ const Reports = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <button
               onClick={fetchStats}
-              className="flex items-center justify-center gap-2 px-4 py-3 bg-[#720000] hover:bg-[#8a1a1a] text-white rounded-lg font-medium transition-colors duration-200"
+              className="flex items-center justify-center gap-2 px-4 py-3 bg-[#0099CC] hover:bg-[#007aa3] text-white rounded-lg font-medium transition-colors duration-200"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -244,7 +244,7 @@ const Reports = () => {
 
             <Link
               to="/manage-bill"
-              className="flex items-center justify-center gap-2 px-4 py-3 bg-[#8a1a1a] hover:bg-[#720000] text-white rounded-lg font-medium transition-colors duration-200"
+              className="flex items-center justify-center gap-2 px-4 py-3 bg-[#007aa3] hover:bg-[#0099CC] text-white rounded-lg font-medium transition-colors duration-200"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -254,7 +254,7 @@ const Reports = () => {
 
             <Link
               to="/stock-report"
-              className="flex items-center justify-center gap-2 px-4 py-3 bg-[#8a1a1a] hover:bg-[#720000] text-white rounded-lg font-medium transition-colors duration-200"
+              className="flex items-center justify-center gap-2 px-4 py-3 bg-[#007aa3] hover:bg-[#0099CC] text-white rounded-lg font-medium transition-colors duration-200"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />

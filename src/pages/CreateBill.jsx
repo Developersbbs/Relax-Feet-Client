@@ -900,10 +900,10 @@ const ManageBills = () => {
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 transition-colors duration-300">
           <div className="flex items-center">
-            <FileText className="w-8 h-8 text-[#720000] mr-3" />
+            <FileText className="w-8 h-8 text-[#0099CC] mr-3" />
             <div>
               <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Bills</h3>
-              <p className="text-xl font-bold text-[#720000] dark:text-[#8a1a1a]">{stats.totalBills}</p>
+              <p className="text-xl font-bold text-[#0099CC] dark:text-[#007aa3]">{stats.totalBills}</p>
             </div>
           </div>
         </div>
@@ -956,7 +956,7 @@ const ManageBills = () => {
                 placeholder="Search bills..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#720000] focus:border-[#720000] w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-[#0099CC] w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
             </div>
             <div className="relative">
@@ -964,7 +964,7 @@ const ManageBills = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="pl-10 pr-8 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#720000] focus:border-[#720000] appearance-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white min-w-40"
+                className="pl-10 pr-8 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-[#0099CC] appearance-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white min-w-40"
               >
                 <option value="all">All Status</option>
                 <option value="pending">Pending</option>
@@ -977,20 +977,20 @@ const ManageBills = () => {
                 type="date"
                 value={dateRange.startDate}
                 onChange={(e) => setDateRange({ ...dateRange, startDate: e.target.value })}
-                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#720000] focus:border-[#720000] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
               <span className="self-center text-gray-600 dark:text-gray-400">to</span>
               <input
                 type="date"
                 value={dateRange.endDate}
                 onChange={(e) => setDateRange({ ...dateRange, endDate: e.target.value })}
-                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#720000] focus:border-[#720000] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
             </div>
           </div>
           <button
             onClick={openCreateModal}
-            className="bg-[#720000] hover:bg-[#8a1a1a] text-white px-4 py-2 rounded-lg flex items-center transition-colors"
+            className="bg-[#0099CC] hover:bg-[#007aa3] text-white px-4 py-2 rounded-lg flex items-center transition-colors"
           >
             <Plus className="w-5 h-5 mr-2" />
             Create Bill
@@ -1114,7 +1114,7 @@ const ManageBills = () => {
                 id="itemsPerPage"
                 value={pagination.itemsPerPage}
                 onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-                className="border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-sm focus:ring-[#720000] focus:border-[#720000] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-sm focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
                 <option value={10}>10</option>
                 <option value={20}>20</option>
@@ -1145,7 +1145,7 @@ const ManageBills = () => {
                     key={pageNumber}
                     onClick={() => handlePageChange(pageNumber)}
                     className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${pageNumber === pagination.currentPage
-                        ? 'z-10 bg-[#f8e6e6] border-[#720000] text-[#720000] dark:bg-[#3d0000] dark:border-[#720000] dark:text-[#8a1a1a]'
+                        ? 'z-10 bg-[#e0f5fb] border-[#0099CC] text-[#0099CC] dark:bg-[#003d55] dark:border-[#0099CC] dark:text-[#007aa3]'
                         : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600'
                       }`}
                   >
@@ -1184,13 +1184,13 @@ const ManageBills = () => {
                       <div className="text-sm text-gray-600 dark:text-gray-400">{formData.customerEmail}</div>
                       <div className="text-sm text-gray-600 dark:text-gray-400">{formData.customerPhone}</div>
                       {modalMode === 'create' && (
-                        <button type="button" onClick={openCustomerSelector} className="mt-2 text-[#720000] dark:text-[#8a1a1a] text-sm hover:text-[#8a1a1a] dark:hover:text-[#8a1a1a]">
+                        <button type="button" onClick={openCustomerSelector} className="mt-2 text-[#0099CC] dark:text-[#007aa3] text-sm hover:text-[#007aa3] dark:hover:text-[#007aa3]">
                           Change Customer
                         </button>
                       )}
                     </div>
                   ) : (
-                    <button type="button" onClick={openCustomerSelector} className="mt-1 w-full px-4 py-2 border border-dashed border-gray-300 dark:border-gray-600 rounded-md text-gray-600 dark:text-gray-400 hover:border-[#720000] hover:text-[#720000] dark:hover:text-orange-500 flex items-center justify-center bg-white dark:bg-gray-700">
+                    <button type="button" onClick={openCustomerSelector} className="mt-1 w-full px-4 py-2 border border-dashed border-gray-300 dark:border-gray-600 rounded-md text-gray-600 dark:text-gray-400 hover:border-[#0099CC] hover:text-[#0099CC] dark:hover:text-orange-500 flex items-center justify-center bg-white dark:bg-gray-700">
                       <User className="w-5 h-5 mr-2" />
                       Select Customer
                     </button>
@@ -1203,7 +1203,7 @@ const ManageBills = () => {
                     value={formData.billDate}
                     onChange={(e) => setFormData({ ...formData, billDate: e.target.value })}
                     required
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-[#720000] focus:border-[#720000] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
               </div>
@@ -1211,7 +1211,7 @@ const ManageBills = () => {
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Items</h3>
-                  <button type="button" onClick={addItem} className="text-sm bg-[#720000] text-white px-3 py-1 rounded hover:bg-[#8a1a1a]">
+                  <button type="button" onClick={addItem} className="text-sm bg-[#0099CC] text-white px-3 py-1 rounded hover:bg-[#007aa3]">
                     Add Item
                   </button>
                 </div>
@@ -1223,12 +1223,12 @@ const ManageBills = () => {
                         {item.productId || item.serviceId ? (
                           <div className="flex justify-between items-center">
                             <span className="text-sm font-medium text-gray-900 dark:text-white">{item.name}</span>
-                            <button type="button" onClick={() => { setShowProductSelector(true); setSelectedProductIndex(index); }} className="text-[#720000] dark:text-[#8a1a1a] text-sm hover:text-[#8a1a1a] dark:hover:text-[#8a1a1a]">
+                            <button type="button" onClick={() => { setShowProductSelector(true); setSelectedProductIndex(index); }} className="text-[#0099CC] dark:text-[#007aa3] text-sm hover:text-[#007aa3] dark:hover:text-[#007aa3]">
                               Change
                             </button>
                           </div>
                         ) : (
-                          <button type="button" onClick={() => { setShowProductSelector(true); setSelectedProductIndex(index); }} className="w-full px-2 py-1 border border-dashed border-gray-300 dark:border-gray-600 rounded text-gray-600 dark:text-gray-400 hover:border-[#720000] hover:text-[#720000] dark:hover:text-orange-500 text-sm flex items-center justify-center bg-white dark:bg-gray-600">
+                          <button type="button" onClick={() => { setShowProductSelector(true); setSelectedProductIndex(index); }} className="w-full px-2 py-1 border border-dashed border-gray-300 dark:border-gray-600 rounded text-gray-600 dark:text-gray-400 hover:border-[#0099CC] hover:text-[#0099CC] dark:hover:text-orange-500 text-sm flex items-center justify-center bg-white dark:bg-gray-600">
                             <Package className="w-4 h-4 mr-1" />
                             Select Product/Service
                           </button>
@@ -1244,7 +1244,7 @@ const ManageBills = () => {
                               onChange={(e) => handleItemChange(index, 'quantity', Number(e.target.value))}
                               min="1"
                               required
-                              className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm focus:outline-none focus:ring-[#720000] focus:border-[#720000] bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                              className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm focus:outline-none focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
                             />
                           </>
                         ) : (
@@ -1265,7 +1265,7 @@ const ManageBills = () => {
                             min="0"
                             step="0.01"
                             required
-                            className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm focus:outline-none focus:ring-[#720000] focus:border-[#720000] bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                            className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm focus:outline-none focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
                           />
                         )}
                       </div>
@@ -1295,7 +1295,7 @@ const ManageBills = () => {
                     rows="3"
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-[#720000] focus:border-[#720000] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder="Additional notes..."
                   />
                 </div>
@@ -1388,7 +1388,7 @@ const ManageBills = () => {
                   disabled={submitting}
                   className={`px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-300 ${submitting
                       ? 'bg-gray-400 cursor-not-allowed opacity-70'
-                      : 'bg-[#720000] hover:bg-[#8a1a1a] text-white focus:ring-amber-700'
+                      : 'bg-[#0099CC] hover:bg-[#007aa3] text-white focus:ring-amber-700'
                     }`}
                 >
                   <div className="flex items-center gap-2">
@@ -1445,7 +1445,7 @@ const ManageBills = () => {
                   placeholder="Search by name, email, or phone..."
                   value={customerSearchTerm}
                   onChange={(e) => setCustomerSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#720000] focus:border-[#720000] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   autoFocus
                 />
               </div>
@@ -1467,7 +1467,7 @@ const ManageBills = () => {
                         value={customerFormData.name}
                         onChange={handleCustomerFormChange}
                         required
-                        className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#720000] focus:border-[#720000] bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                       />
                     </div>
                     <div>
@@ -1478,7 +1478,7 @@ const ManageBills = () => {
                         value={customerFormData.email}
                         onChange={handleCustomerFormChange}
                         required
-                        className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#720000] focus:border-[#720000] bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                       />
                     </div>
                     <div>
@@ -1489,7 +1489,7 @@ const ManageBills = () => {
                         value={customerFormData.phone}
                         onChange={handleCustomerFormChange}
                         required
-                        className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#720000] focus:border-[#720000] bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                       />
                     </div>
                     <div>
@@ -1498,7 +1498,7 @@ const ManageBills = () => {
                         name="customerType"
                         value={customerFormData.customerType}
                         onChange={handleCustomerFormChange}
-                        className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#720000] focus:border-[#720000] bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                       >
                         <option value="individual">Individual</option>
                         <option value="business">Business</option>
@@ -1521,7 +1521,7 @@ const ManageBills = () => {
                       disabled={customerFormSubmitting}
                       className={`px-4 py-2 rounded-md text-white ${customerFormSubmitting
                           ? 'bg-orange-400 cursor-not-allowed opacity-80'
-                          : 'bg-[#720000] hover:bg-[#8a1a1a] transition-colors'
+                          : 'bg-[#0099CC] hover:bg-[#007aa3] transition-colors'
                         }`}
                     >
                       {customerFormSubmitting ? 'Creating...' : 'Create Customer'}
@@ -1574,7 +1574,7 @@ const ManageBills = () => {
                   placeholder="Search products and services..."
                   value={productSearchTerm}
                   onChange={(e) => setProductSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#720000] focus:border-[#720000] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
             </div>

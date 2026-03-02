@@ -32,7 +32,7 @@ const Home = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch data based on user role
       const role = user?.role?.toLowerCase();
       let data = {};
@@ -85,7 +85,7 @@ const Home = () => {
       ]);
 
       const productsData = products.products || products;
-      
+
       return {
         products: productsData,
         categories: categories.categories || [],
@@ -119,7 +119,7 @@ const Home = () => {
   const renderSuperAdminDashboard = () => (
     <div className="space-y-8">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-orange-400 to-orange-600 text-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-lg">
+      <div className="bg-gradient-to-r from-[#0099CC] to-[#005f7f] text-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-lg">
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">Welcome back, {user?.username}!</h1>
         <p className="text-lg sm:text-xl opacity-90">Super Admin Dashboard - Full System Overview</p>
         <div className="mt-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 text-xs sm:text-sm">
@@ -209,11 +209,10 @@ const Home = () => {
                 </div>
                 <div className="text-left sm:text-right">
                   <p className="font-semibold text-gray-900 dark:text-slate-100">₹{bill.totalAmount?.toLocaleString()}</p>
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                    bill.paymentStatus === 'paid' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
+                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${bill.paymentStatus === 'paid' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
                     bill.paymentStatus === 'partial' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' :
-                    'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
-                  }`}>
+                      'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+                    }`}>
                     {bill.paymentStatus}
                   </span>
                 </div>
@@ -231,9 +230,8 @@ const Home = () => {
                   <p className="font-medium text-gray-900 dark:text-slate-100 truncate">{customer.name}</p>
                   <p className="text-xs sm:text-sm text-gray-600 dark:text-slate-400 truncate">{customer.email}</p>
                 </div>
-                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                  customer.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-slate-300'
-                }`}>
+                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${customer.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-slate-300'
+                  }`}>
                   {customer.status}
                 </span>
               </div>
@@ -246,10 +244,30 @@ const Home = () => {
 
   const renderStockManagerDashboard = () => (
     <div className="space-y-8">
-      {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-lg">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">Welcome back, {user?.username}!</h1>
-        <p className="text-lg sm:text-xl opacity-90">Stock Manager Dashboard - Inventory Management</p>
+      {/* Branch Welcome Banner */}
+      <div className="bg-gradient-to-r from-amber-600 to-amber-800 text-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-lg">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold mb-1">Welcome back, {user?.username}!</h1>
+            <p className="text-base opacity-90">Stock Manager — Inventory Management</p>
+          </div>
+          {user?.branchId && (
+            <div className="bg-white/20 backdrop-blur rounded-xl px-4 py-3 flex items-center gap-3">
+              <div className="p-2 bg-white/20 rounded-lg">
+                <span className="text-2xl">🏢</span>
+              </div>
+              <div>
+                <p className="text-xs opacity-80 uppercase tracking-wide font-medium">Your Branch</p>
+                <p className="text-lg font-bold">
+                  {typeof user.branchId === 'object' ? user.branchId.name : 'Branch Assigned'}
+                </p>
+                {typeof user.branchId === 'object' && user.branchId.code && (
+                  <p className="text-xs opacity-80 font-mono">{user.branchId.code}</p>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Key Metrics */}
@@ -345,10 +363,30 @@ const Home = () => {
 
   const renderBillCounterDashboard = () => (
     <div className="space-y-8">
-      {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-orange-400 to-orange-600 text-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-lg">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">Welcome back, {user?.username}!</h1>
-        <p className="text-lg sm:text-xl opacity-90">Bill Counter Dashboard - Billing & Customer Management</p>
+      {/* Branch Welcome Banner */}
+      <div className="bg-gradient-to-r from-[#0099CC] to-[#a00000] text-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-lg">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold mb-1">Welcome back, {user?.username}!</h1>
+            <p className="text-base opacity-90">Bill Counter — Your Branch Data</p>
+          </div>
+          {user?.branchId && (
+            <div className="bg-white/20 backdrop-blur rounded-xl px-4 py-3 flex items-center gap-3">
+              <div className="p-2 bg-white/20 rounded-lg">
+                <span className="text-2xl">🏢</span>
+              </div>
+              <div>
+                <p className="text-xs opacity-80 uppercase tracking-wide font-medium">Your Branch</p>
+                <p className="text-lg font-bold">
+                  {typeof user.branchId === 'object' ? user.branchId.name : 'Branch Assigned'}
+                </p>
+                {typeof user.branchId === 'object' && user.branchId.code && (
+                  <p className="text-xs opacity-80 font-mono">{user.branchId.code}</p>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Key Metrics */}
@@ -414,11 +452,10 @@ const Home = () => {
               </div>
               <div className="text-left sm:text-right">
                 <p className="font-semibold text-gray-900 dark:text-slate-100">₹{bill.totalAmount?.toLocaleString()}</p>
-                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                  bill.paymentStatus === 'paid' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
+                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${bill.paymentStatus === 'paid' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
                   bill.paymentStatus === 'partial' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' :
-                  'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
-                }`}>
+                    'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+                  }`}>
                   {bill.paymentStatus}
                 </span>
               </div>
