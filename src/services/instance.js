@@ -13,7 +13,7 @@ const instance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true,
+  // withCredentials removed — auth uses JWT Bearer tokens in headers, not cookies
 });
 
 // Add request interceptor to include auth token
