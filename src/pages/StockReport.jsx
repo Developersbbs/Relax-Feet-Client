@@ -289,7 +289,7 @@ const StockReport = () => {
       <div className="mb-8">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent text-gray-900">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-[#0099CC] to-[#007aa3] bg-clip-text text-transparent text-gray-900">
               Stock Report
             </h1>
             <p className="mt-2 text-gray-600">Comprehensive analysis of your inventory with charts and insights</p>
@@ -305,7 +305,7 @@ const StockReport = () => {
             </button>
             <button
               onClick={exportToCSV}
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2 bg-[#0099CC] hover:bg-[#007aa3] text-white rounded-lg transition-all duration-200"
             >
               <Download className="w-4 h-4" />
               Export CSV
