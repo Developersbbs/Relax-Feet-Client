@@ -1,7 +1,8 @@
 // axiosInstance.js
 import axios from 'axios';
 
-const baseURL = `${import.meta.env.VITE_API_BASE_URL}/api`;
+// Use /api as baseURL to let Vite's proxy handle the target
+const baseURL = '/api';
 
 const instance = axios.create({
   baseURL,
@@ -30,11 +31,17 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   (response) => response,
   (error) => {
+    // 401 Unauthorized mean token is missing or expired
     if (error.response?.status === 401) {
-      // Token expired or invalid - redirect to login
+      // Clear auth state from storage
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      window.location.href = '/login';
+
+      // Redirect to login ONLY IF we are not already on an auth page
+      const currentPath = window.location.pathname;
+      if (currentPath !== '/login' && currentPath !== '/register') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

@@ -1,17 +1,13 @@
 // services/userService.js - Updated with correct API endpoints
-import axios from './axiosInstance';
+import instance from './instance';
 
 const userService = {
   // Get all users
   getAllUsers: async () => {
     try {
-      const response = await axios.get('/api/users');
+      const response = await instance.get('/users');
       return response.data;
     } catch (error) {
-      if (error.response?.status === 401) {
-        // Redirect to login if unauthorized
-        window.location.href = '/login';
-      }
       throw new Error(error.response?.data?.message || 'Failed to fetch users');
     }
   },
@@ -19,19 +15,16 @@ const userService = {
   // Get user statistics
   getUserStats: async () => {
     try {
-      const response = await axios.get('/api/users/stats');
+      const response = await instance.get('/users/stats');
       return response.data;
     } catch (error) {
-      if (error.response?.status === 401) {
-        window.location.href = '/login';
-      }
       // Return default stats if endpoint doesn't exist
       if (error.response?.status === 404) {
-        return { 
-          total: 0, 
-          superadmin: 0, 
-          stockmanager: 0, 
-          billcounter: 0 
+        return {
+          total: 0,
+          superadmin: 0,
+          stockmanager: 0,
+          billcounter: 0
         };
       }
       throw new Error(error.response?.data?.message || 'Failed to fetch stats');
@@ -41,12 +34,9 @@ const userService = {
   // Get user by ID
   getUserById: async (id) => {
     try {
-      const response = await axios.get(`/api/users/${id}`);
+      const response = await instance.get(`/users/${id}`);
       return response.data;
     } catch (error) {
-      if (error.response?.status === 401) {
-        window.location.href = '/login';
-      }
       throw new Error(error.response?.data?.message || 'Failed to fetch user');
     }
   },
@@ -54,12 +44,9 @@ const userService = {
   // Create new user
   createUser: async (userData) => {
     try {
-      const response = await axios.post('/users', userData);
+      const response = await instance.post('/users', userData);
       return response.data;
     } catch (error) {
-      if (error.response?.status === 401) {
-        window.location.href = '/login';
-      }
       throw new Error(error.response?.data?.message || 'Failed to create user');
     }
   },
@@ -67,12 +54,9 @@ const userService = {
   // Update user
   updateUser: async (id, userData) => {
     try {
-      const response = await axios.put(`/users/${id}`, userData);
+      const response = await instance.put(`/users/${id}`, userData);
       return response.data;
     } catch (error) {
-      if (error.response?.status === 401) {
-        window.location.href = '/login';
-      }
       throw new Error(error.response?.data?.message || 'Failed to update user');
     }
   },
@@ -80,12 +64,9 @@ const userService = {
   // Update user password
   updateUserPassword: async (id, passwordData) => {
     try {
-      const response = await axios.put(`/users/${id}/password`, passwordData);
+      const response = await instance.put(`/users/${id}/password`, passwordData);
       return response.data;
     } catch (error) {
-      if (error.response?.status === 401) {
-        window.location.href = '/login';
-      }
       throw new Error(error.response?.data?.message || 'Failed to update password');
     }
   },
@@ -93,12 +74,9 @@ const userService = {
   // Delete user
   deleteUser: async (id) => {
     try {
-      const response = await axios.delete(`/users/${id}`);
+      const response = await instance.delete(`/users/${id}`);
       return response.data;
     } catch (error) {
-      if (error.response?.status === 401) {
-        window.location.href = '/login';
-      }
       throw new Error(error.response?.data?.message || 'Failed to delete user');
     }
   }

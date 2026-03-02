@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
-import { selectEmail, selectUsername, selectPassword, setEmail, setUsername, setPassword } 
+import { selectEmail, selectUsername, selectPassword, setEmail, setUsername, setPassword }
   from '../redux/features/auth/registerSlice'
 
 import authServices from '../services/authServices'
@@ -10,12 +10,21 @@ import { toast } from 'react-toastify'
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+
+  const user = useSelector((state) => state.login?.user);
   const username = useSelector(selectUsername)
   const email = useSelector(selectEmail)
   const password = useSelector(selectPassword)
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
+
+  // 🔹 Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate("/reports", { replace: true })
+    }
+  }, [user, navigate])
 
   const handleRegister = async (e) => {
     e.preventDefault()
@@ -58,11 +67,11 @@ const Register = () => {
           <div className="grid gap-0 md:grid-cols-[14rem,1fr]">
             <div className="hidden md:flex flex-col justify-between bg-gradient-to-b from-orange-500 via-amber-500 to-yellow-400 p-8 text-white">
               <div className="space-y-4">
-               
-               
-                
+
+
+
               </div>
-              
+
             </div>
 
             <div className="px-8 py-10 space-y-8">
@@ -168,11 +177,10 @@ const Register = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className={`w-full rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 ${
-                    isLoading
-                      ? 'bg-gray-400 cursor-not-allowed opacity-70'
-                      : 'bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-400 shadow-orange-500/30 hover:shadow-xl hover:shadow-amber-500/40 hover:scale-[1.02] active:scale-[0.98]'
-                  }`}
+                  className={`w-full rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 ${isLoading
+                    ? 'bg-gray-400 cursor-not-allowed opacity-70'
+                    : 'bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-400 shadow-orange-500/30 hover:shadow-xl hover:shadow-amber-500/40 hover:scale-[1.02] active:scale-[0.98]'
+                    }`}
                 >
                   <div className="flex items-center justify-center gap-2">
                     {isLoading ? (

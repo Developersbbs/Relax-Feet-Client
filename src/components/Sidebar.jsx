@@ -34,10 +34,9 @@ const Sidebar = ({ onNavigate }) => {
   }
 
   const linkClass = ({ isActive }) =>
-    `flex items-center gap-2 md:gap-3 px-3 md:px-4 py-3 md:py-3 mx-1 md:mx-2 rounded-lg transition-all duration-200 font-medium ${
-      isActive
-        ? "bg-[#720000] text-white shadow-lg transform scale-105"
-        : "text-[#720000] dark:text-slate-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-[#8a1a1a] dark:hover:text-white hover:shadow-md"
+    `flex items-center gap-2 md:gap-3 px-3 md:px-4 py-3 md:py-3 mx-1 md:mx-2 rounded-lg transition-all duration-200 font-medium ${isActive
+      ? "bg-[#720000] text-white shadow-lg transform scale-105"
+      : "text-[#720000] dark:text-slate-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-[#8a1a1a] dark:hover:text-white hover:shadow-md"
     }`
 
   // Get navigation items based on user role
@@ -50,6 +49,7 @@ const Sidebar = ({ onNavigate }) => {
       { to: "/manage-bill", icon: "🧾", label: "Bills" },
       { to: "/notifications", icon: "🔔", label: "Notifications" },
       { to: "/reports", icon: "📊", label: "Reports" },
+      { to: "/branches", icon: "🏢", label: "Branches" },
       // { to: "/pages", icon: "📄", label: "Pages" },
     ]
 
@@ -60,13 +60,13 @@ const Sidebar = ({ onNavigate }) => {
 
     // Admin sees only specific items
     if (userRole === 'admin') {
-      return allItems.filter(item => 
+      return allItems.filter(item =>
         ['/services', '/manage-customers', '/manage-bill', '/reports'].includes(item.to)
       )
     }
 
     // Default to admin permissions if role is not recognized
-    return allItems.filter(item => 
+    return allItems.filter(item =>
       ['/services', '/manage-customers', '/manage-bill', '/reports', '/pages'].includes(item.to)
     )
   }

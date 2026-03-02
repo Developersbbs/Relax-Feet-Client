@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
-import { selectEmail, selectPassword, setEmail, setPassword, setUser } from '../redux/features/auth/loginSlice'
+import { selectEmail, selectPassword, setEmail, setPassword, setUser, selectUser } from '../redux/features/auth/loginSlice'
 import { toast } from 'react-toastify'
+import authServices from '../services/authServices'
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -12,6 +13,14 @@ const Login = () => {
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const user = useSelector(selectUser)
+
+  // 🔹 Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate("/reports", { replace: true })
+    }
+  }, [user, navigate])
 
   const handleLogin = async (e) => {
     e.preventDefault() // 👈 prevent page reload
@@ -21,35 +30,24 @@ const Login = () => {
     setIsLoading(true)
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      })
+      const response = await authServices.login({ email, password })
+      const data = response.data
 
-      const data = await res.json()
+      // ✅ LocalStorage save FIRST
+      localStorage.setItem("user", JSON.stringify(data.user))
+      localStorage.setItem("token", data.token)
 
-      if (res.ok) {
-        // ✅ Redux update
-        dispatch(setUser({ user: data.user, token: data.token }))
+      // ✅ Redux update SECOND
+      dispatch(setUser({ user: data.user, token: data.token }))
 
-        // ✅ LocalStorage save
-        localStorage.setItem("user", JSON.stringify(data.user))
-        localStorage.setItem("token", data.token)
-
-        toast.success("Login successful 🎉")
-        navigate("/reports") // 👈 redirect after login
-      } else {
-        toast.error(data.message || "Login failed ❌")
-      }
+      toast.success("Login successful 🎉")
+      navigate("/reports") // 👈 redirect after login
     } catch (err) {
       console.error(err)
-      toast.error("Something went wrong 😓")
+      const message = err.response?.data?.message || err.message || "Something went wrong"
+      toast.error(`Login Error: ${message}`)
     } finally {
-      // Show loading for minimum 5 seconds for better UX feedback
-      setTimeout(() => {
-        setIsLoading(false)
-      }, 5000)
+      setIsLoading(false)
     }
   }
 
@@ -65,7 +63,7 @@ const Login = () => {
               <h2 className="text-3xl font-bold tracking-tight text-slate-900">
                 Welcome back
               </h2>
-             
+
             </div>
             <p className="text-sm text-slate-500">
               New here?{' '}
@@ -130,11 +128,10 @@ const Login = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 ${
-                isLoading
+              className={`w-full rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 ${isLoading
                   ? 'bg-gray-400 cursor-not-allowed opacity-70'
                   : 'bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-400 shadow-orange-500/30 hover:shadow-xl hover:shadow-amber-500/40 hover:scale-[1.02] active:scale-[0.98]'
-              }`}
+                }`}
             >
               <div className="flex items-center justify-center gap-2">
                 {isLoading ? (
