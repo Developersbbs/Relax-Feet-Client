@@ -1,8 +1,11 @@
 // axiosInstance.js
 import axios from 'axios';
 
-// Use /api as baseURL to let Vite's proxy handle the target
-const baseURL = '/api';
+// In production (Netlify), VITE_API_BASE_URL points to the live backend server.
+// In local dev, fall back to '/api' which Vite proxies to localhost:5000.
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+const isProduction = apiBaseUrl && !apiBaseUrl.includes('localhost');
+const baseURL = isProduction ? `${apiBaseUrl}/api` : '/api';
 
 const instance = axios.create({
   baseURL,
