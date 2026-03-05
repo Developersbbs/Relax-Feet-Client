@@ -43,14 +43,12 @@ const Sidebar = ({ onNavigate }) => {
   const getNavigationItems = (userRole) => {
     const allItems = [
       { to: "/services", icon: "🔧", label: "Services" },
-      { to: "/products", icon: "📦", label: "Products" },
       { to: "/categories", icon: "🏷️", label: "Categories" },
       { to: "/manage-customers", icon: "🧑‍🤝‍🧑", label: "Customers" },
       { to: "/manage-bill", icon: "🧾", label: "Bills" },
       { to: "/user-management", icon: "👥", label: "Users" },
       { to: "/notifications", icon: "🔔", label: "Notifications" },
       { to: "/reports", icon: "📊", label: "Reports" },
-      { to: "/stock-report", icon: "📈", label: "Stock Report" },
       { to: "/branches", icon: "🏢", label: "Branches" },
       { to: "/branch-dashboard", icon: "📉", label: "Branch Analytics" },
     ]
@@ -67,21 +65,21 @@ const Sidebar = ({ onNavigate }) => {
       )
     }
 
-    // Stockmanager: products, stock, categories
+    // Stockmanager: categories (renamed or repurposed maybe? but user said only service)
     if (userRole === 'stockmanager') {
       return allItems.filter(item =>
-        ['/products', '/categories', '/stock-report', '/notifications'].includes(item.to)
+        ['/categories', '/notifications'].includes(item.to)
       )
     }
 
-    // Branch Admin: full branch control (bills, customers, products, users, reports)
+    // Branch Admin: full branch control (bills, customers, users, reports)
     if (userRole === 'branchadmin') {
       return allItems.filter(item =>
-        ['/manage-bill', '/manage-customers', '/products', '/categories', '/stock-report', '/services', '/reports', '/notifications'].includes(item.to)
+        ['/manage-bill', '/manage-customers', '/categories', '/services', '/reports', '/notifications'].includes(item.to)
       )
     }
 
-    // Branch Manager: similar to branchadmin but without stock management
+    // Branch Manager: similar to branchadmin
     if (userRole === 'branchmanager') {
       return allItems.filter(item =>
         ['/manage-bill', '/manage-customers', '/services', '/reports', '/notifications'].includes(item.to)

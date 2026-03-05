@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../redux/features/auth/loginSlice';
-import { Plus, Edit, Trash2, Eye, FileText, Calendar, DollarSign, AlertCircle, Search, Filter, Download, Printer, X, User, Package } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, FileText, Calendar, DollarSign, AlertCircle, Search, Filter, Download, Printer, X, User, Activity } from 'lucide-react';
 
 const customerFormInitialState = {
   name: '',
@@ -16,8 +16,6 @@ const ManageBills = () => {
   const [filteredBills, setFilteredBills] = useState([]);
   const [services, setServices] = useState([]);
   const [filteredServices, setFilteredServices] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [serviceSearchTerm, setServiceSearchTerm] = useState('');
@@ -45,16 +43,15 @@ const ManageBills = () => {
   const [customerFormData, setCustomerFormData] = useState(() => ({ ...customerFormInitialState }));
   const [customerFormError, setCustomerFormError] = useState('');
   const [customerFormSubmitting, setCustomerFormSubmitting] = useState(false);
-  const [showProductSelector, setShowProductSelector] = useState(false);
+  const [showItemSelector, setShowItemSelector] = useState(false);
   const [customerSearchTerm, setCustomerSearchTerm] = useState('');
-  const [productSearchTerm, setProductSearchTerm] = useState('');
-  const [selectedProductIndex, setSelectedProductIndex] = useState(null);
+  const [selectedItemIndex, setSelectedItemIndex] = useState(null);
   const [formData, setFormData] = useState({
     customerId: '',
     customerName: '',
     customerEmail: '',
     customerPhone: '',
-    items: [{ productId: '', serviceId: '', name: '', quantity: 1, price: 0, total: 0 }],
+    items: [{ serviceId: '', name: '', quantity: 1, price: 0, total: 0 }],
     subtotal: 0,
     discountPercent: 0,
     discountAmount: 0,
@@ -73,27 +70,6 @@ const ManageBills = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [dateRange, setDateRange] = useState({ startDate: '', endDate: '' });
 
-  // Fetch products from API
-  const fetchProducts = useCallback(async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/products`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch products: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setProducts(data.products || []);
-      setFilteredProducts(data.products || []);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      setError('Failed to load products. Please try again later.');
-    }
-  }, []);
 
   // Fetch services from API
   const fetchServices = useCallback(async () => {
@@ -119,7 +95,7 @@ const ManageBills = () => {
     }
   }, []);
 
-  // Fetch customers, bills, and products from API
+  // Fetch customers, bills, and services from API
   const fetchData = useCallback(async (page = 1, limit = 20) => {
     setLoading(true);
     try {
@@ -162,8 +138,8 @@ const ManageBills = () => {
         totalItems: billsData.total || 0
       });
 
-      // Fetch products and services
-      await Promise.all([fetchProducts(), fetchServices()]);
+      // Fetch services
+      await fetchServices();
 
       // Calculate stats from current page bills
       const today = new Date().toISOString().split('T')[0];
@@ -201,7 +177,7 @@ const ManageBills = () => {
     } finally {
       setLoading(false);
     }
-  }, [fetchProducts, fetchServices]);
+  }, [fetchServices]);
 
   useEffect(() => {
     if (localStorage.getItem('token')) {
@@ -346,55 +322,32 @@ const ManageBills = () => {
     }
   };
 
-  // Filter products and services based on search term
+  // Filter services based on search term
   useEffect(() => {
-    if (productSearchTerm.trim() === '') {
-      setFilteredProducts(products || []);
+    if (serviceSearchTerm.trim() === '') {
       setFilteredServices(services);
     } else {
-      const searchTerm = productSearchTerm.toLowerCase();
-      const filteredProds = products.filter(product =>
-        product.name.toLowerCase().includes(searchTerm) ||
-        product.description?.toLowerCase().includes(searchTerm) ||
-        (typeof product.category === 'object' ? product.category?.name : product.category)?.toLowerCase().includes(searchTerm) ||
-        product.sku?.toLowerCase().includes(searchTerm)
-      );
+      const searchTerm = serviceSearchTerm.toLowerCase();
       const filteredServs = services.filter(service =>
         service.name.toLowerCase().includes(searchTerm) ||
         service.description?.toLowerCase().includes(searchTerm) ||
         service.category?.toLowerCase().includes(searchTerm)
       );
-      setFilteredProducts(filteredProds);
       setFilteredServices(filteredServs);
     }
-  }, [productSearchTerm, products, services]);
-
-  const selectProduct = (product, index) => {
-    const updatedItems = [...formData.items];
-    updatedItems[index] = {
-      productId: product._id,
-      name: product.name,
-      quantity: 1,
-      price: product.price,
-      total: product.price
-    };
-    setFormData({ ...formData, items: updatedItems });
-    setShowProductSelector(false);
-    setProductSearchTerm('');
-  };
+  }, [serviceSearchTerm, services]);
 
   const selectService = (service, index) => {
     const updatedItems = [...formData.items];
     updatedItems[index] = {
       serviceId: service._id,
       name: service.name,
-      quantity: 1, // Services always have quantity 1
+      quantity: 1,
       price: service.price,
       total: service.price
     };
     setFormData({ ...formData, items: updatedItems });
-    setShowProductSelector(false);
-    setProductSearchTerm('');
+    setShowItemSelector(false);
   };
 
   const handleItemChange = (index, field, value) => {
@@ -423,7 +376,7 @@ const ManageBills = () => {
   const addItem = () => {
     setFormData({
       ...formData,
-      items: [...formData.items, { productId: '', serviceId: '', name: '', quantity: 1, price: 0, total: 0 }]
+      items: [...formData.items, { serviceId: '', name: '', price: 0, total: 0 }]
     });
   };
 
@@ -435,10 +388,9 @@ const ManageBills = () => {
     }
   };
 
-  const openProductSelector = (index) => {
-    setSelectedProductIndex(index);
-    setProductSearchTerm('');
-    setShowProductSelector(true);
+  const openServiceSelector = (index) => {
+    setSelectedItemIndex(index);
+    setShowItemSelector(true);
   };
 
   // Calculate totals with PERCENTAGE-based discount and tax
@@ -477,8 +429,8 @@ const ManageBills = () => {
       if (!formData.customerId) {
         throw new Error('Please select a customer');
       }
-      if (formData.items.some(item => !item.productId && !item.serviceId)) {
-        throw new Error('Please add valid products or services to the bill');
+      if (formData.items.some(item => !item.serviceId)) {
+        throw new Error('Please add valid services to the bill');
       }
 
       const billData = {
@@ -818,7 +770,7 @@ const ManageBills = () => {
       customerName: '',
       customerEmail: '',
       customerPhone: '',
-      items: [{ productId: '', serviceId: '', name: '', quantity: 1, price: 0, total: 0 }],
+      items: [{ serviceId: '', name: '', price: 0, total: 0 }],
       subtotal: 0,
       discountPercent: 0,
       discountAmount: 0,
@@ -881,7 +833,7 @@ const ManageBills = () => {
     <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Bill Management</h1>
-        <p className="text-gray-600 dark:text-gray-400">Create, manage, and track customer bills with integrated product pricing</p>
+        <p className="text-gray-600 dark:text-gray-400">Create, manage, and track customer bills with integrated service pricing</p>
       </div>
 
       {error && (
@@ -1040,8 +992,8 @@ const ManageBills = () => {
                     </td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${bill.paymentStatus === 'paid' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' :
-                          bill.paymentStatus === 'partial' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' :
-                            'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
+                        bill.paymentStatus === 'partial' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' :
+                          'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
                         }`}>
                         {bill.paymentStatus.charAt(0).toUpperCase() + bill.paymentStatus.slice(1)}
                       </span>
@@ -1145,8 +1097,8 @@ const ManageBills = () => {
                     key={pageNumber}
                     onClick={() => handlePageChange(pageNumber)}
                     className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${pageNumber === pagination.currentPage
-                        ? 'z-10 bg-[#e0f5fb] border-[#0099CC] text-[#0099CC] dark:bg-[#003d55] dark:border-[#0099CC] dark:text-[#007aa3]'
-                        : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600'
+                      ? 'z-10 bg-[#e0f5fb] border-[#0099CC] text-[#0099CC] dark:bg-[#003d55] dark:border-[#0099CC] dark:text-[#007aa3]'
+                      : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600'
                       }`}
                   >
                     {pageNumber}
@@ -1190,7 +1142,7 @@ const ManageBills = () => {
                       )}
                     </div>
                   ) : (
-                    <button type="button" onClick={openCustomerSelector} className="mt-1 w-full px-4 py-2 border border-dashed border-gray-300 dark:border-gray-600 rounded-md text-gray-600 dark:text-gray-400 hover:border-[#0099CC] hover:text-[#0099CC] dark:hover:text-orange-500 flex items-center justify-center bg-white dark:bg-gray-700">
+                    <button type="button" onClick={openCustomerSelector} className="mt-1 w-full px-4 py-2 border border-dashed border-gray-300 dark:border-gray-600 rounded-md text-gray-600 dark:text-gray-400 hover:border-[#0099CC] hover:text-[#0099CC] dark:hover:text-[#0099CC] flex items-center justify-center bg-white dark:bg-gray-700">
                       <User className="w-5 h-5 mr-2" />
                       Select Customer
                     </button>
@@ -1219,37 +1171,23 @@ const ManageBills = () => {
                   {formData.items.map((item, index) => (
                     <div key={index} className="grid grid-cols-12 gap-2 items-end p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                       <div className="col-span-5">
-                        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300">Product/Service *</label>
-                        {item.productId || item.serviceId ? (
+                        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300">Service *</label>
+                        {item.serviceId ? (
                           <div className="flex justify-between items-center">
                             <span className="text-sm font-medium text-gray-900 dark:text-white">{item.name}</span>
-                            <button type="button" onClick={() => { setShowProductSelector(true); setSelectedProductIndex(index); }} className="text-[#0099CC] dark:text-[#007aa3] text-sm hover:text-[#007aa3] dark:hover:text-[#007aa3]">
+                            <button type="button" onClick={() => openServiceSelector(index)} className="text-[#0099CC] dark:text-[#007aa3] text-sm hover:text-[#007aa3] dark:hover:text-[#007aa3]">
                               Change
                             </button>
                           </div>
                         ) : (
-                          <button type="button" onClick={() => { setShowProductSelector(true); setSelectedProductIndex(index); }} className="w-full px-2 py-1 border border-dashed border-gray-300 dark:border-gray-600 rounded text-gray-600 dark:text-gray-400 hover:border-[#0099CC] hover:text-[#0099CC] dark:hover:text-orange-500 text-sm flex items-center justify-center bg-white dark:bg-gray-600">
-                            <Package className="w-4 h-4 mr-1" />
-                            Select Product/Service
+                          <button type="button" onClick={() => openServiceSelector(index)} className="w-full px-2 py-1 border border-dashed border-gray-300 dark:border-gray-600 rounded text-gray-600 dark:text-gray-400 hover:border-[#0099CC] hover:text-[#0099CC] dark:hover:text-[#0099CC] text-sm flex items-center justify-center bg-white dark:bg-gray-600">
+                            <Activity className="w-4 h-4 mr-1" />
+                            Select Service
                           </button>
                         )}
                       </div>
                       <div className="col-span-2">
-                        {item.productId ? (
-                          <>
-                            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300">Quantity</label>
-                            <input
-                              type="number"
-                              value={item.quantity}
-                              onChange={(e) => handleItemChange(index, 'quantity', Number(e.target.value))}
-                              min="1"
-                              required
-                              className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm focus:outline-none focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
-                            />
-                          </>
-                        ) : (
-                          <div className="text-xs text-gray-500 dark:text-gray-400 py-2">Service</div>
-                        )}
+                        <div className="text-xs text-gray-500 dark:text-gray-400 py-2">Service Item</div>
                       </div>
                       <div className="col-span-2">
                         <label className="block text-xs font-medium text-gray-700 dark:text-gray-300">Price (₹)</label>
@@ -1387,8 +1325,8 @@ const ManageBills = () => {
                   type="submit"
                   disabled={submitting}
                   className={`px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-300 ${submitting
-                      ? 'bg-gray-400 cursor-not-allowed opacity-70'
-                      : 'bg-[#0099CC] hover:bg-[#007aa3] text-white focus:ring-amber-700'
+                    ? 'bg-gray-400 cursor-not-allowed opacity-70'
+                    : 'bg-[#0099CC] hover:bg-[#007aa3] text-white focus:ring-amber-700'
                     }`}
                 >
                   <div className="flex items-center gap-2">
@@ -1520,8 +1458,8 @@ const ManageBills = () => {
                       type="submit"
                       disabled={customerFormSubmitting}
                       className={`px-4 py-2 rounded-md text-white ${customerFormSubmitting
-                          ? 'bg-orange-400 cursor-not-allowed opacity-80'
-                          : 'bg-[#0099CC] hover:bg-[#007aa3] transition-colors'
+                        ? 'bg-orange-400 cursor-not-allowed opacity-80'
+                        : 'bg-[#0099CC] hover:bg-[#007aa3] transition-colors'
                         }`}
                     >
                       {customerFormSubmitting ? 'Creating...' : 'Create Customer'}
@@ -1556,13 +1494,13 @@ const ManageBills = () => {
         </div>
       )}
 
-      {/* Product/Service Selector Modal */}
-      {showProductSelector && (
+      {/* Service Selector Modal */}
+      {showItemSelector && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-60">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto transition-colors duration-300">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Select Product or Service</h3>
-              <button onClick={() => setShowProductSelector(false)} className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-400">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Select Service</h3>
+              <button onClick={() => setShowItemSelector(false)} className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-400">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1571,35 +1509,17 @@ const ManageBills = () => {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
                   type="text"
-                  placeholder="Search products and services..."
-                  value={productSearchTerm}
-                  onChange={(e) => setProductSearchTerm(e.target.value)}
+                  placeholder="Search services..."
+                  value={serviceSearchTerm}
+                  onChange={(e) => setServiceSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
             </div>
             <div className="space-y-2 max-h-96 overflow-y-auto">
-              {/* Products */}
-              {filteredProducts.map((product) => (
-                <div key={`product-${product._id}`} onClick={() => selectProduct(product, selectedProductIndex)} className="p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <div className="font-medium text-gray-900 dark:text-white">{product.name}</div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">{typeof product.category === 'object' ? product.category?.name : product.category}</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-bold text-green-600 dark:text-green-500">₹{product.price.toLocaleString()}</div>
-                      <div className={`text-xs px-2 py-1 rounded-full ${(product.quantity || 0) === 0 ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400' : (product.quantity || 0) <= 10 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' : 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'}`}>
-                        Stock: {product.quantity || 0}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-
               {/* Services */}
               {filteredServices.map((service) => (
-                <div key={`service-${service._id}`} onClick={() => selectService(service, selectedProductIndex)} className="p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                <div key={`service-${service._id}`} onClick={() => selectService(service, selectedItemIndex)} className="p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
                   <div className="flex justify-between items-center">
                     <div>
                       <div className="font-medium text-gray-900 dark:text-white">{service.name}</div>
@@ -1616,8 +1536,8 @@ const ManageBills = () => {
                 </div>
               ))}
 
-              {filteredProducts.length === 0 && filteredServices.length === 0 && (
-                <div className="text-center py-8 text-gray-500 dark:text-gray-400">No products or services found</div>
+              {filteredServices.length === 0 && (
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">No services found</div>
               )}
             </div>
           </div>

@@ -1,14 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { selectUser } from '../redux/features/auth/loginSlice';
-import {
-  Package, Users, ShoppingCart, AlertTriangle, TrendingUp, TrendingDown,
-  DollarSign, Activity, UserPlus, FileText, Bell, Settings,
-  Calendar, Clock, CheckCircle, XCircle, Eye, Edit, Trash2
-} from 'lucide-react';
-import productService from '../services/productService';
 import billApiService from '../services/billApiService';
 import customerService from '../services/customerService';
+import axios from 'axios';
 
 const Home = () => {
   const user = useSelector(selectUser);
@@ -37,12 +29,8 @@ const Home = () => {
       const role = user?.role?.toLowerCase();
       let data = {};
 
-      if (role === 'superadmin') {
-        data = await fetchSuperAdminData();
-      } else if (role === 'stockmanager') {
-        data = await fetchStockManagerData();
-      } else if (role === 'billcounter') {
-        data = await fetchBillCounterData();
+      if (role === 'superadmin' || role === 'billcounter' || role === 'branchadmin') {
+        data = await fetchDashboardDataForUser();
       }
 
       setDashboardData(data);
@@ -53,65 +41,36 @@ const Home = () => {
     }
   };
 
-  const fetchSuperAdminData = async () => {
+  const fetchDashboardDataForUser = async () => {
     try {
-      const [products, customers, bills, stats] = await Promise.all([
-        productService.getAllProducts(),
-        customerService.getAllCustomers(),
-        billApiService.getAllBills(),
-        productService.getProductStats()
-      ]);
-
-      return {
-        products: products.products || products,
-        customers: customers.customers || customers,
-        bills: bills.bills || bills,
-        stats: stats || productService.calculateStats(products.products || products),
-        recentBills: (bills.bills || bills).slice(0, 5),
-        recentCustomers: (customers.customers || customers).slice(0, 5),
-        lowStockProducts: (products.products || products).filter(p => p.quantity > 0 && p.quantity <= 10)
-      };
-    } catch (error) {
-      return {};
-    }
-  };
-
-  const fetchStockManagerData = async () => {
-    try {
-      const [products, categories, lowStock] = await Promise.all([
-        productService.getAllProducts(),
-        productService.getCategories(),
-        productService.getLowStockProducts()
-      ]);
-
-      const productsData = products.products || products;
-
-      return {
-        products: productsData,
-        categories: categories.categories || [],
-        lowStockProducts: lowStock.products || productsData.filter(p => p.quantity > 0 && p.quantity <= 10),
-        stats: productService.calculateStats(productsData),
-        outOfStockProducts: productsData.filter(p => p.quantity === 0)
-      };
-    } catch (error) {
-      return {};
-    }
-  };
-
-  const fetchBillCounterData = async () => {
-    try {
-      const [customers, bills] = await Promise.all([
+      const token = localStorage.getItem('token');
+      const [servicesResponse, customers, bills] = await Promise.all([
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/services`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
         customerService.getAllCustomers(),
         billApiService.getAllBills()
       ]);
 
+      const services = servicesResponse.data.services || [];
+      const customersData = customers.customers || customers;
+      const billsData = bills.bills || bills;
+
       return {
-        customers: customers.customers || customers,
-        bills: bills.bills || bills,
-        recentBills: (bills.bills || bills).slice(0, 10),
-        pendingPayments: (bills.bills || bills).filter(bill => bill.paymentStatus !== 'paid')
+        services,
+        customers: customersData,
+        bills: billsData,
+        recentBills: billsData.slice(0, 5),
+        recentCustomers: customersData.slice(0, 5),
+        stats: {
+          totalServices: services.length,
+          totalCustomers: customersData.length,
+          totalBills: billsData.length,
+          totalRevenue: billsData.reduce((sum, bill) => sum + (bill.totalAmount || 0), 0)
+        }
       };
     } catch (error) {
+      console.error('Error fetching dashboard data:', error);
       return {};
     }
   };
@@ -132,10 +91,10 @@ const Home = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-xl shadow-md border border-gray-200 dark:border-slate-700 hover:shadow-lg transition-all duration-300">
           <div className="flex items-center">
-            <Package className="w-10 h-10 sm:w-12 sm:h-12 text-orange-600 mr-3 sm:mr-4" />
+            <Activity className="w-10 h-10 sm:w-12 sm:h-12 text-[#0099CC] mr-3 sm:mr-4" />
             <div className="min-w-0 flex-1">
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-slate-100">{dashboardData.stats?.total || 0}</h3>
-              <p className="text-sm sm:text-base text-gray-600 dark:text-slate-400 truncate">Total Products</p>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-slate-100">{dashboardData.stats?.totalServices || 0}</h3>
+              <p className="text-sm sm:text-base text-gray-600 dark:text-slate-400 truncate">Total Services</p>
             </div>
           </div>
         </div>
@@ -144,7 +103,7 @@ const Home = () => {
           <div className="flex items-center">
             <Users className="w-10 h-10 sm:w-12 sm:h-12 text-green-600 mr-3 sm:mr-4" />
             <div className="min-w-0 flex-1">
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-slate-100">{dashboardData.customers?.length || 0}</h3>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-slate-100">{dashboardData.stats?.totalCustomers || 0}</h3>
               <p className="text-sm sm:text-base text-gray-600 dark:text-slate-400 truncate">Total Customers</p>
             </div>
           </div>
@@ -154,7 +113,7 @@ const Home = () => {
           <div className="flex items-center">
             <FileText className="w-10 h-10 sm:w-12 sm:h-12 text-purple-600 mr-3 sm:mr-4" />
             <div className="min-w-0 flex-1">
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-slate-100">{dashboardData.bills?.length || 0}</h3>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-slate-100">{dashboardData.stats?.totalBills || 0}</h3>
               <p className="text-sm sm:text-base text-gray-600 dark:text-slate-400 truncate">Total Bills</p>
             </div>
           </div>
@@ -164,35 +123,10 @@ const Home = () => {
           <div className="flex items-center">
             <DollarSign className="w-10 h-10 sm:w-12 sm:h-12 text-orange-600 mr-3 sm:mr-4" />
             <div className="min-w-0 flex-1">
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-slate-100">₹{(dashboardData.stats?.totalValue || 0).toLocaleString()}</h3>
-              <p className="text-sm sm:text-base text-gray-600 dark:text-slate-400 truncate">Inventory Value</p>
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-slate-100">₹{(dashboardData.stats?.totalRevenue || 0).toLocaleString()}</h3>
+              <p className="text-sm sm:text-base text-gray-600 dark:text-slate-400 truncate">Total Revenue</p>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Stock Alerts */}
-      <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-xl shadow-md border border-gray-200 dark:border-slate-700">
-        <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-slate-100 mb-4 flex items-center">
-          <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600 mr-2" />
-          Stock Alerts ({dashboardData.lowStockProducts?.length || 0})
-        </h3>
-        <div className="space-y-3 max-h-64 overflow-y-auto">
-          {dashboardData.lowStockProducts?.slice(0, 5).map((product, index) => (
-            <div key={product._id || index} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg space-y-2 sm:space-y-0">
-              <div className="flex items-center">
-                <Package className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-600 mr-2 sm:mr-3" />
-                <div className="min-w-0 flex-1">
-                  <p className="font-medium text-gray-900 dark:text-slate-100 truncate">{product.name}</p>
-                  <p className="text-xs sm:text-sm text-gray-600 dark:text-slate-400">Category: {formatCategory(product.category)}</p>
-                </div>
-              </div>
-              <div className="text-left sm:text-right">
-                <p className="font-semibold text-gray-900 dark:text-slate-100">Qty: {product.quantity}</p>
-                <p className="text-xs sm:text-sm text-yellow-600">Low Stock Alert</p>
-              </div>
-            </div>
-          ))}
         </div>
       </div>
 
@@ -500,9 +434,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {role === 'superadmin' && renderSuperAdminDashboard()}
-        {role === 'stockmanager' && renderStockManagerDashboard()}
-        {role === 'billcounter' && renderBillCounterDashboard()}
+        {(role === 'superadmin' || role === 'billcounter' || role === 'branchadmin') && renderSuperAdminDashboard()}
         {!role && (
           <div className="text-center py-12 sm:py-16">
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-slate-100 mb-4">Welcome to Inventory Management System</h1>
