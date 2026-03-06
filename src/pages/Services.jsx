@@ -229,17 +229,19 @@ const Services = () => {
               Overview and management of your services
             </p>
           </div>
-          <button
-            onClick={() => {
-              setShowModal(true);
-              setEditingService(null);
-              resetForm();
-            }}
-            className="mt-4 md:mt-0 bg-[#0099CC] hover:bg-[#007aa3] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors duration-200"
-          >
-            <FiPlus className="w-5 h-5" />
-            Add New Service
-          </button>
+          {user?.role === 'superadmin' && (
+            <button
+              onClick={() => {
+                setShowModal(true);
+                setEditingService(null);
+                resetForm();
+              }}
+              className="mt-4 md:mt-0 bg-[#0099CC] hover:bg-[#007aa3] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors duration-200"
+            >
+              <FiPlus className="w-5 h-5" />
+              Add New Service
+            </button>
+          )}
         </div>
 
         {/* Stats Cards */}
@@ -351,17 +353,19 @@ const Services = () => {
                 </svg>
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No services found</h3>
                 <p className="mb-4">Get started by adding your first service</p>
-                <button
-                  onClick={() => {
-                    setShowModal(true);
-                    setEditingService(null);
-                    resetForm();
-                  }}
-                  className="inline-flex items-center px-4 py-2 bg-[#0099CC] hover:bg-[#007aa3] text-white rounded-lg transition-colors duration-200"
-                >
-                  <FiPlus className="w-4 h-4 mr-2" />
-                  Add Service
-                </button>
+                {user?.role === 'superadmin' && (
+                  <button
+                    onClick={() => {
+                      setShowModal(true);
+                      setEditingService(null);
+                      resetForm();
+                    }}
+                    className="inline-flex items-center px-4 py-2 bg-[#0099CC] hover:bg-[#007aa3] text-white rounded-lg transition-colors duration-200"
+                  >
+                    <FiPlus className="w-4 h-4 mr-2" />
+                    Add Service
+                  </button>
+                )}
               </div>
               <p className="text-lg font-medium text-gray-900 dark:text-white mb-2">No services found</p>
               <p className="text-gray-500 dark:text-gray-400">Get started by adding your first service.</p>
@@ -397,20 +401,22 @@ const Services = () => {
                   </div>
                 </div>
 
-                <div className="flex gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <button
-                    onClick={() => handleEdit(service)}
-                    className="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(service._id)}
-                    className="flex-1 bg-[#e0f5fb] dark:bg-[#003d55] hover:bg-[#f0d6d6] dark:hover:bg-[#4a0000] text-[#0099CC] dark:text-[#b3e5fc] px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
-                  >
-                    Delete
-                  </button>
-                </div>
+                {user?.role === 'superadmin' && (
+                  <div className="flex gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <button
+                      onClick={() => handleEdit(service)}
+                      className="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(service._id)}
+                      className="flex-1 bg-[#e0f5fb] dark:bg-[#003d55] hover:bg-[#f0d6d6] dark:hover:bg-[#4a0000] text-[#0099CC] dark:text-[#b3e5fc] px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
               </div>
             ))
           )}

@@ -18,6 +18,7 @@ import Pages from './pages/Pages'
 import BranchManagement from './pages/BranchManagement'
 import BranchDashboard from './pages/BranchDashboard'
 import UserManagement from './pages/UserManagement'
+import ManageCoupons from './pages/ManageCoupons'
 
 
 
@@ -89,6 +90,10 @@ const App = () => {
         {
           path: '/user-management',
           element: <UserManagement />
+        },
+        {
+          path: '/manage-coupons',
+          element: <ManageCoupons />
         },
       ]
     }

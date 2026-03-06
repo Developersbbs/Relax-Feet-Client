@@ -11,7 +11,8 @@ import {
   HiChartBar,
   HiBuildingOffice,
   HiPresentationChartLine,
-  HiArrowLeftOnRectangle
+  HiArrowLeftOnRectangle,
+  HiTicket
 } from "react-icons/hi2"
 
 const Sidebar = ({ onNavigate }) => {
@@ -61,6 +62,7 @@ const Sidebar = ({ onNavigate }) => {
       { to: "/reports", icon: <HiChartBar />, label: "Reports" },
       { to: "/branches", icon: <HiBuildingOffice />, label: "Branches" },
       { to: "/branch-dashboard", icon: <HiPresentationChartLine />, label: "Branch Analytics" },
+      { to: "/manage-coupons", icon: <HiTicket />, label: "Coupons" },
     ]
 
     // Superadmin sees all items
