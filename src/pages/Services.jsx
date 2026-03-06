@@ -30,6 +30,12 @@ const Services = () => {
     category: ""
   });
 
+  // Categories state
+  const [categories, setCategories] = useState([]);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [newCategoryData, setNewCategoryData] = useState({ name: '', description: '' });
+  const [categorySubmitting, setCategorySubmitting] = useState(false);
+
   // Filter and search states
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
@@ -39,21 +45,33 @@ const Services = () => {
     const totalServices = services.length;
     const totalRevenue = services.reduce((sum, service) => sum + (parseFloat(service.price) || 0), 0);
     const avgPrice = totalServices > 0 ? (totalRevenue / totalServices).toFixed(2) : 0;
-    
+
     // Find most popular category
     const categoryCounts = services.reduce((acc, service) => {
       acc[service.category] = (acc[service.category] || 0) + 1;
       return acc;
     }, {});
-    
+
     const popularCategory = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
-    
+
     setStats({
       totalServices,
       totalRevenue,
       avgPrice,
       popularCategory: popularCategory || 'N/A'
     });
+  };
+
+  // Fetch categories
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/categories`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setCategories(response.data.categories || []);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
   };
 
   // Fetch services
@@ -77,6 +95,7 @@ const Services = () => {
   useEffect(() => {
     if (token) {
       fetchServices();
+      fetchCategories();
     }
   }, [token]);
 
@@ -148,6 +167,33 @@ const Services = () => {
     setShowModal(true);
   };
 
+  // Create category
+  const handleCreateCategory = async (e) => {
+    e.preventDefault();
+    if (!newCategoryData.name.trim()) {
+      toast.error('Category name is required');
+      return;
+    }
+
+    try {
+      setCategorySubmitting(true);
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/categories`, newCategoryData, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success('Category created successfully');
+      const createdCategory = response.data;
+      setCategories(prev => [...prev, createdCategory]);
+      setFormData(prev => ({ ...prev, category: createdCategory.name }));
+      setShowCategoryModal(false);
+      setNewCategoryData({ name: '', description: '' });
+    } catch (error) {
+      console.error('Error creating category:', error);
+      toast.error(error.response?.data?.message || 'Failed to create category');
+    } finally {
+      setCategorySubmitting(false);
+    }
+  };
+
   // Reset form
   const resetForm = () => {
     setFormData({
@@ -162,13 +208,13 @@ const Services = () => {
   // Filter services based on search and category
   const filteredServices = services.filter(service => {
     const matchesSearch = service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         service.description.toLowerCase().includes(searchTerm.toLowerCase());
+      service.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = !categoryFilter || service.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
 
-  // Get unique categories
-  const categories = [...new Set(services.map(service => service.category).filter(Boolean))];
+  // Get unique categories (we use the fetched ones now)
+  const categoryOptions = categories.length > 0 ? categories.map(c => c.name) : [...new Set(services.map(service => service.category).filter(Boolean))];
 
   return (
     <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
@@ -280,9 +326,9 @@ const Services = () => {
                   className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 >
                   <option value="">All Categories</option>
-                  {categories.map(category => (
+                  {categoryOptions.map(category => (
                     <option key={category} value={category}>
-                      {category || 'Uncategorized'}
+                      {category}
                     </option>
                   ))}
                 </select>
@@ -450,15 +496,29 @@ const Services = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Category
-                  </label>
-                  <input
-                    type="text"
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Category
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowCategoryModal(true)}
+                      className="text-xs font-semibold text-[#0099CC] hover:text-[#007aa3] flex items-center gap-1"
+                    >
+                      <FiPlus className="w-3 h-3" />
+                      Add New
+                    </button>
+                  </div>
+                  <select
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
+                  >
+                    <option value="">Select Category</option>
+                    {categoryOptions.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
@@ -479,6 +539,73 @@ const Services = () => {
                   className="w-full bg-[#0099CC] hover:bg-[#007aa3] text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
                 >
                   {editingService ? 'Update' : 'Create'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add Category Modal */}
+      {showCategoryModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[60]">
+          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-sm w-full p-6 shadow-xl">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Add New Category
+              </h3>
+              <button
+                onClick={() => setShowCategoryModal(false)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateCategory}>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Category Name
+                  </label>
+                  <input
+                    type="text"
+                    value={newCategoryData.name}
+                    onChange={(e) => setNewCategoryData({ ...newCategoryData, name: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    placeholder="e.g., Massage, Therapy"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Description (Optional)
+                  </label>
+                  <textarea
+                    value={newCategoryData.description}
+                    onChange={(e) => setNewCategoryData({ ...newCategoryData, description: e.target.value })}
+                    rows={2}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-6">
+                <button
+                  type="button"
+                  onClick={() => setShowCategoryModal(false)}
+                  className="flex-1 px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg font-medium text-sm transition-colors duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={categorySubmitting}
+                  className="flex-1 bg-[#0099CC] hover:bg-[#007aa3] disabled:bg-gray-400 text-white font-medium py-2 px-4 rounded-lg text-sm transition-colors duration-200 flex items-center justify-center"
+                >
+                  {categorySubmitting ? 'Creating...' : 'Add Category'}
                 </button>
               </div>
             </form>

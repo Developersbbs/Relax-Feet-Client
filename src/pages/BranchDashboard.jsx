@@ -42,7 +42,7 @@ const BranchDashboard = () => {
     const user = useSelector(selectUser);
 
     const [summary, setSummary] = useState({ branchSummary: [], systemTotals: {} });
-    const [products, setProducts] = useState([]);
+    // const [products, setProducts] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState(null);
     const [branchBills, setBranchBills] = useState([]);
     const [loadingMain, setLoadingMain] = useState(true);
@@ -56,13 +56,9 @@ const BranchDashboard = () => {
             if (!quiet) setLoadingMain(true);
             else setRefreshing(true);
 
-            const [summaryRes, productRes] = await Promise.all([
-                instance.get('/bills/branch-summary'),
-                instance.get('/products'),
-            ]);
+            const summaryRes = await instance.get('/bills/branch-summary');
 
             setSummary(summaryRes.data);
-            setProducts(productRes.data.products || []);
             setError('');
         } catch (err) {
             setError('Failed to load dashboard data. ' + (err.response?.data?.message || err.message));
@@ -89,8 +85,7 @@ const BranchDashboard = () => {
     };
 
     // ── Derived stock data
-    const lowStock = products.filter(p => p.quantity > 0 && p.quantity < 10);
-    const outOfStock = products.filter(p => p.quantity === 0);
+    // Products functionality removed
     const { systemTotals, branchSummary } = summary;
 
     if (loadingMain) {
@@ -166,31 +161,7 @@ const BranchDashboard = () => {
                     />
                 </div>
 
-                {/* ── Stock Alerts ── */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Link to="/stock-report" className="group bg-white dark:bg-gray-800 rounded-2xl shadow-md border border-gray-100 dark:border-gray-700 p-5 flex items-center gap-4 hover:border-yellow-400 transition-all">
-                        <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl">
-                            <AlertTriangle className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
-                        </div>
-                        <div className="flex-1">
-                            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Low Stock Products</p>
-                            <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{lowStock.length}</p>
-                            <p className="text-xs text-gray-400">Products with less than 10 units</p>
-                        </div>
-                        <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-yellow-500 transition-colors" />
-                    </Link>
-                    <Link to="/stock-report" className="group bg-white dark:bg-gray-800 rounded-2xl shadow-md border border-gray-100 dark:border-gray-700 p-5 flex items-center gap-4 hover:border-red-400 transition-all">
-                        <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-xl">
-                            <Package className="w-6 h-6 text-red-600 dark:text-red-400" />
-                        </div>
-                        <div className="flex-1">
-                            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Out of Stock</p>
-                            <p className="text-2xl font-bold text-red-600 dark:text-red-400">{outOfStock.length}</p>
-                            <p className="text-xs text-gray-400">Products at zero inventory</p>
-                        </div>
-                        <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-red-500 transition-colors" />
-                    </Link>
-                </div>
+                {/* Stock Alerts Removed */}
 
                 {/* ── Branch-wise Table ── */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md border border-gray-100 dark:border-gray-700 overflow-hidden">
@@ -305,35 +276,7 @@ const BranchDashboard = () => {
                     </div>
                 )}
 
-                {/* ── Low Stock Product Detail ── */}
-                {lowStock.length > 0 && (
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md border border-yellow-200 dark:border-yellow-800 overflow-hidden">
-                        <div className="px-6 py-4 border-b border-yellow-100 dark:border-yellow-800 flex items-center gap-2">
-                            <AlertTriangle className="w-5 h-5 text-yellow-500" />
-                            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Low Stock Alert — Top Items</h2>
-                        </div>
-                        <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                            {lowStock.slice(0, 9).map(p => (
-                                <div key={p._id} className="flex items-center justify-between bg-yellow-50 dark:bg-yellow-900/20 rounded-xl px-4 py-3 border border-yellow-100 dark:border-yellow-800">
-                                    <div>
-                                        <p className="text-sm font-semibold text-gray-900 dark:text-white">{p.name}</p>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">{p.category?.name || 'Uncategorized'}</p>
-                                    </div>
-                                    <span className={`text-sm font-bold px-2 py-1 rounded-lg ${p.quantity <= 3 ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'}`}>
-                                        {p.quantity} left
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                        {lowStock.length > 9 && (
-                            <div className="px-6 pb-4">
-                                <Link to="/stock-report" className="text-sm text-[#0099CC] dark:text-[#b3e5fc] hover:underline font-medium">
-                                    View all {lowStock.length} low-stock products →
-                                </Link>
-                            </div>
-                        )}
-                    </div>
-                )}
+                {/* Low Stock Product Detail Removed */}
             </div>
         </div>
     );

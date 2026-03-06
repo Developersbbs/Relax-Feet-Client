@@ -11,11 +11,9 @@ const Reports = () => {
   // Reports state
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState({
-    totalProducts: 0,
     totalCustomers: 0,
     totalBills: 0,
     totalRevenue: 0,
-    lowStockProducts: 0,
     totalServices: 0
   });
 
@@ -25,28 +23,23 @@ const Reports = () => {
       setLoading(true);
 
       // Fetch multiple stats in parallel
-      const [productsRes, customersRes, billsRes, servicesRes] = await Promise.all([
-        instance.get('/products').catch(() => ({ data: { products: [] } })),
+      const [customersRes, billsRes, servicesRes] = await Promise.all([
         instance.get('/customers').catch(() => ({ data: { customers: [] } })),
         instance.get('/bills').catch(() => ({ data: { bills: [] } })),
         instance.get('/services').catch(() => ({ data: { services: [] } }))
       ]);
 
       // Calculate stats
-      const products = productsRes.data.products || [];
       const customers = customersRes.data.customers || [];
       const bills = billsRes.data.bills || [];
       const services = servicesRes.data.services || [];
 
       const totalRevenue = bills.reduce((sum, bill) => sum + (bill.total || 0), 0);
-      const lowStockProducts = products.filter(product => product.quantity < 10).length;
 
       setStats({
-        totalProducts: products.length,
         totalCustomers: customers.length,
         totalBills: bills.length,
         totalRevenue,
-        lowStockProducts,
         totalServices: services.length
       });
 
@@ -66,13 +59,6 @@ const Reports = () => {
 
   // Report categories
   const reportCategories = [
-    {
-      title: 'Product Reports',
-      description: 'View inventory, stock levels, and product performance',
-      icon: '📦',
-      path: '/stock-report',
-      color: 'bg-[#f0d6d6] dark:bg-[#0099CC]'
-    },
     {
       title: 'Sales Reports',
       description: 'Analyze sales trends, revenue, and billing data',
@@ -117,17 +103,7 @@ const Reports = () => {
             </div>
           ) : (
             <>
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Products</p>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalProducts}</p>
-                  </div>
-                  <div className="bg-[#f0d6d6] dark:bg-[#0099CC] p-3 rounded-lg">
-                    <span className="text-2xl">📦</span>
-                  </div>
-                </div>
-              </div>
+              {/* Total Customers */}
 
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                 <div className="flex items-center justify-between">
@@ -165,17 +141,7 @@ const Reports = () => {
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Low Stock Items</p>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.lowStockProducts}</p>
-                  </div>
-                  <div className="bg-[#f0d6d6] dark:bg-[#0099CC] p-3 rounded-lg">
-                    <span className="text-2xl">⚠️</span>
-                  </div>
-                </div>
-              </div>
+              {/* Total Services */}
 
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                 <div className="flex items-center justify-between">
@@ -252,15 +218,7 @@ const Reports = () => {
               Create Bill
             </Link>
 
-            <Link
-              to="/stock-report"
-              className="flex items-center justify-center gap-2 px-4 py-3 bg-[#007aa3] hover:bg-[#0099CC] text-white rounded-lg font-medium transition-colors duration-200"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-              View Analytics
-            </Link>
+            {/* Removed: View Analytics (Stock Report) */}
           </div>
         </div>
       </div>

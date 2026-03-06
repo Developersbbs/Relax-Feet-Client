@@ -2,6 +2,17 @@ import React from "react"
 import { NavLink, useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { logout, selectUser } from "../redux/features/auth/loginSlice"
+import {
+  HiWrenchScrewdriver,
+  HiUsers,
+  HiDocumentText,
+  HiUserGroup,
+  HiBell,
+  HiChartBar,
+  HiBuildingOffice,
+  HiPresentationChartLine,
+  HiArrowLeftOnRectangle
+} from "react-icons/hi2"
 
 const Sidebar = ({ onNavigate }) => {
   const dispatch = useDispatch()
@@ -42,15 +53,14 @@ const Sidebar = ({ onNavigate }) => {
   // Get navigation items based on user role
   const getNavigationItems = (userRole) => {
     const allItems = [
-      { to: "/services", icon: "🔧", label: "Services" },
-      { to: "/categories", icon: "🏷️", label: "Categories" },
-      { to: "/manage-customers", icon: "🧑‍🤝‍🧑", label: "Customers" },
-      { to: "/manage-bill", icon: "🧾", label: "Bills" },
-      { to: "/user-management", icon: "👥", label: "Users" },
-      { to: "/notifications", icon: "🔔", label: "Notifications" },
-      { to: "/reports", icon: "📊", label: "Reports" },
-      { to: "/branches", icon: "🏢", label: "Branches" },
-      { to: "/branch-dashboard", icon: "📉", label: "Branch Analytics" },
+      { to: "/services", icon: <HiWrenchScrewdriver />, label: "Services" },
+      { to: "/manage-customers", icon: <HiUsers />, label: "Customers" },
+      { to: "/manage-bill", icon: <HiDocumentText />, label: "Bills" },
+      { to: "/user-management", icon: <HiUserGroup />, label: "Users" },
+      { to: "/notifications", icon: <HiBell />, label: "Notifications" },
+      { to: "/reports", icon: <HiChartBar />, label: "Reports" },
+      { to: "/branches", icon: <HiBuildingOffice />, label: "Branches" },
+      { to: "/branch-dashboard", icon: <HiPresentationChartLine />, label: "Branch Analytics" },
     ]
 
     // Superadmin sees all items
@@ -65,17 +75,17 @@ const Sidebar = ({ onNavigate }) => {
       )
     }
 
-    // Stockmanager: categories (renamed or repurposed maybe? but user said only service)
+    // Stockmanager: repurposed maybe? but user said only service
     if (userRole === 'stockmanager') {
       return allItems.filter(item =>
-        ['/categories', '/notifications'].includes(item.to)
+        ['/notifications'].includes(item.to)
       )
     }
 
     // Branch Admin: full branch control (bills, customers, users, reports)
     if (userRole === 'branchadmin') {
       return allItems.filter(item =>
-        ['/manage-bill', '/manage-customers', '/categories', '/services', '/reports', '/notifications'].includes(item.to)
+        ['/manage-bill', '/manage-customers', '/services', '/reports', '/notifications'].includes(item.to)
       )
     }
 
@@ -137,7 +147,7 @@ const Sidebar = ({ onNavigate }) => {
               <img
                 src="/FettleHealth.png"
                 alt="Fettle Health and Heal"
-                className="h-16 md:h-20 w-auto max-w-full object-contain drop-shadow-lg transition-transform duration-300 hover:scale-105"
+                className="h-32 md:h-40 w-auto max-w-full object-contain drop-shadow-lg transition-transform duration-300 hover:scale-105"
                 onError={(e) => {
                   e.target.style.display = 'none';
                 }}
@@ -169,7 +179,7 @@ const Sidebar = ({ onNavigate }) => {
             {navigationItems.map((item, index) => (
               <div key={index} onClick={handleNavigation}>
                 <NavLink to={item.to} className={linkClass}>
-                  <span className="text-lg md:text-xl">{item.icon}</span>
+                  <span className="text-lg md:text-xl flex items-center">{item.icon}</span>
                   <span>{item.label}</span>
                 </NavLink>
               </div>
@@ -180,9 +190,9 @@ const Sidebar = ({ onNavigate }) => {
           <div className="p-3 md:p-4 border-t border-teal-100 dark:border-gray-600 transition-colors duration-300">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-2 md:gap-3 px-3 md:px-4 py-3 md:py-3 rounded-lg transition-all duration-200 font-medium bg-[#0099CC] dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-[#0099CC] dark:hover:bg-red-900/40 hover:text-white dark:hover:text-white hover:shadow-lg transform hover:scale-105"
+              className="w-full flex items-center justify-center gap-2 md:gap-3 px-3 md:px-4 py-3 md:py-3 rounded-lg transition-all duration-200 font-medium bg-[#0099CC] dark:bg-red-900/20 text-white dark:text-red-400 hover:bg-[#007aa3] dark:hover:bg-red-900/40 hover:text-white dark:hover:text-white hover:shadow-lg transform hover:scale-105"
             >
-              <span className="text-lg md:text-xl">🚪</span>
+              <HiArrowLeftOnRectangle className="text-lg md:text-xl" />
               <span>Logout</span>
             </button>
           </div>
