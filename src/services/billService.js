@@ -2,6 +2,190 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Edit, Trash2, Eye, FileText, Calendar, DollarSign, AlertCircle, Search, Filter, Download, Printer, X, User, Package } from 'lucide-react';
 import { useSelector } from 'react-redux';
 
+const getInvoiceHTML = (bill, logoSrc = '/Asset 2.svg') => {
+  const customer = bill.customerId || {};
+  const branch = bill.branchId || {};
+  const branchName = branch.name || 'HEALTH AND HEAL';
+  const branchAddress = branch.address || 'No: 18, First Floor, Prakasam Street, Janaki Nagar, Valasaravakkam, Chennai - 600087.';
+  const branchGst = branch.gstNumber || '33AAOFH2184C1ZL';
+  const branchContact = branch.contactNumber || '9042716037';
+  const branchEmail = branch.email || 'info@fettlehealthandheal.com';
+  const branchWebsite = branch.website || 'www.fettlehealthandheal.com';
+  const bankName = branch.bankDetails?.bankName || 'HDFC';
+  const bankAccount = branch.bankDetails?.accountNumber || '50200108255392';
+  const bankBranchName = branch.bankDetails?.branchBankName || 'VALASARAVAKKAM, Chennai - 600087';
+  const bankIfsc = branch.bankDetails?.ifscCode || 'HDFC0000024';
+  const bankUpi = branch.bankDetails?.upiId || 'healthandhealhh-1@okhdfcbank';
+
+  const numToWords = (num) => {
+    const a = ['', 'one ', 'two ', 'three ', 'four ', 'five ', 'six ', 'seven ', 'eight ', 'nine ', 'ten ', 'eleven ', 'twelve ', 'thirteen ', 'fourteen ', 'fifteen ', 'sixteen ', 'seventeen ', 'eighteen ', 'nineteen '];
+    const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+    if ((num = num.toString()).length > 9) return 'overflow';
+    const n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+    if (!n) return;
+    let str = '';
+    str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'crore ' : '';
+    str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'lakh ' : '';
+    str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'thousand ' : '';
+    str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred ' : '';
+    str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : '';
+    return str.trim() + ' rupees';
+  };
+
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Invoice - ${bill.billNumber}</title>
+        <style>
+          body { font-family: 'Times New Roman', serif; margin: 0; padding: 20px; font-size: 13px; color: #000; }
+          .invoice-container { max-width: 800px; margin: 0 auto; border: 2px solid #000; padding: 0; }
+          .header-text { text-align: center; font-weight: bold; font-size: 18px; padding: 8px; border-bottom: 2px solid #000; text-transform: uppercase; }
+          .top-header { border-bottom: 1px solid #000; padding: 10px 0; }
+          .logo { width: 100%; display: block; height: auto; object-fit: contain; padding: 5px 0; }
+          
+          .info-row { display: flex; border-bottom: 1px solid #000; }
+          .info-left, .info-right { width: 50%; padding: 8px 12px; }
+          .info-right { border-left: 1px solid #000; }
+          
+          .bold { font-weight: bold; }
+          .mt-5 { margin-top: 5px; }
+          
+          table { width: 100%; border-collapse: collapse; text-align: center; table-layout: fixed; }
+          th, td { border: 1px solid #000; padding: 6px; word-wrap: break-word; }
+          th { border-bottom: 2px solid #000; font-weight: bold; }
+          
+          .desc-cell { text-align: left; padding-left: 10px; vertical-align: top; height: 18rem; }
+          .amount-cell { text-align: right; padding-right: 8px; font-weight: bold; vertical-align: top; }
+          
+          .footer-section { padding: 10px 12px; }
+          .sign-box-outer { display: flex; justify-content: flex-end; margin-top: 15px; }
+          .sign-box { border: 1px solid #000; width: 250px; text-align: center; height: 90px; position: relative; }
+          
+          .computer-gen { text-align: center; font-size: 11px; margin-top: 15px; max-width: 800px; margin-inline: auto; opacity: 0.8; }
+          
+          @media print { body { padding: 0; } .invoice-container { border-width: 2px; } }
+        </style>
+      </head>
+      <body>
+        <div class="invoice-container">
+          <div class="header-text">TAX INVOICE</div>
+          <div class="top-header">
+            <img src="${logoSrc}" alt="Logo" class="logo" />
+          </div>
+          
+          <div class="info-row">
+            <div class="info-left">
+              <div class="bold" style="font-size: 14px;">${branchName}</div>
+              <div>${branchAddress}</div>
+              <div class="bold mt-5">GSTIN: ${branchGst}</div>
+              <div class="bold">Contact: ${branchContact}</div>
+            </div>
+            <div class="info-right">
+              <div class="bold">BILL TO:</div>
+              <div class="bold" style="font-size: 14px;">${customer?.name || ''}</div>
+              ${customer?.address?.street ? `<div>${customer.address.street.toUpperCase()}</div>` : ''}
+              ${customer?.address?.city || customer?.address?.zipCode ? `<div>${(customer?.address?.city || '').toUpperCase()} ${(customer?.address?.zipCode || '')}</div>` : ''}
+              <div>${customer?.phone ? 'CONTACT: ' + customer.phone : customer?.email || ''}</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-left">
+              <div class="bold">Mail id: ${branchEmail}</div>
+              <div class="bold">Website: ${branchWebsite}</div>
+            </div>
+            <div class="info-right">
+              <div class="bold">INVOICE NO: ${bill?.billNumber || ''}</div>
+              <div class="bold">INVOICE DATE : ${bill?.billDate ? new Date(bill.billDate).toLocaleDateString('en-GB').replace(/\//g, '.') : ''}</div>
+              <div class="bold">MODE OF PAYMENT: ${(bill?.paymentMethod || '').toUpperCase()}</div>
+            </div>
+          </div>
+          
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 8%;">S.NO</th>
+                <th style="width: 47%;">DESCRIPTION</th>
+                <th style="width: 15%;">HSN</th>
+                <th style="width: 15%;">RATE</th>
+                <th style="width: 15%;">AMOUNT</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${(bill?.items || []).map((item, index) => {
+    const taxRate = bill?.taxPercent || 18;
+    const sgst = bill?.taxPercent > 0 ? ((bill.taxAmount || 0) / 2).toFixed(2) : '0.00';
+    const cgst = bill?.taxPercent > 0 ? ((bill.taxAmount || 0) / 2).toFixed(2) : '0.00';
+    const subtotalItem = (item?.total || 0).toFixed(2);
+
+    return `
+                <tr>
+                  <td style="vertical-align: top; padding-top: 15px; font-weight: bold;">${index + 1}</td>
+                  <td class="desc-cell" style="padding-top: 15px;">
+                    <div style="font-weight: bold;">${(item?.name || '').toUpperCase()}</div>
+                    
+                    <div style="margin-top: 60px; text-align: right; padding-right: 15px; font-weight: bold;">
+                      <div>SGST ${taxRate / 2}%</div>
+                      <div style="margin-top: 8px;">CGST ${taxRate / 2}%</div>
+                      <div style="margin-top: 8px;">TOTAL GST ${taxRate}%</div>
+                      <div style="margin-top: 40px;">ROUND OFF</div>
+                    </div>
+                  </td>
+                  <td style="vertical-align: top; padding-top: 15px; font-weight: bold;">999315</td>
+                  <td style="vertical-align: top; padding-top: 15px; font-weight: bold;">${subtotalItem}</td>
+                  <td class="amount-cell" style="padding-top: 15px;">
+                    <div>${subtotalItem}</div>
+                    <div style="margin-top: 60px;">${sgst}</div>
+                    <div style="margin-top: 8px;">${cgst}</div>
+                    <div style="margin-top: 8px;">${(bill.taxAmount || 0).toFixed(2)}</div>
+                    <div style="margin-top: 40px;">0.00</div>
+                  </td>
+                </tr>
+                `;
+  }).join('')}
+              <tr>
+                <td colspan="3" style="border-right: none;"></td>
+                <td class="bold" style="text-align: right; padding-right: 10px;">GRAND TOTAL</td>
+                <td class="bold" style="text-align: right; padding-right: 8px; font-size: 14px; background-color: #f9f9f9;">${(bill?.totalAmount || 0).toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <div class="footer-section">
+            <div class="bold" style="font-size: 12px; margin-bottom: 10px;">Amount Chargeable (in words): <span style="text-transform: uppercase;">${numToWords(Math.floor(bill.totalAmount || 0))}</span> ONLY.</div>
+            
+            <div style="display: flex; justify-content: space-between;">
+              <div style="width: 55%;">
+                <div class="bold" style="font-size: 12px; text-decoration: underline; margin-bottom: 5px;">Clinic Bank Details:</div>
+                <div style="font-size: 12px;"><strong>Bank Name:</strong> ${bankName}</div>
+                <div style="font-size: 12px;"><strong>A/c No:</strong> ${bankAccount}</div>
+                <div style="font-size: 12px;"><strong>Branch:</strong> ${bankBranchName}</div>
+                <div style="font-size: 12px;"><strong>IFSC CODE:</strong> ${bankIfsc}</div>
+                <div style="font-size: 12px;"><strong>UPI ID:</strong> ${bankUpi}</div>
+                
+                <div style="margin-top: 15px; font-size: 11px; line-height: 1.4;">
+                  <div class="bold">Declaration:</div>
+                  We declare that this invoice shows the actual price of treatment and that all particulars are true and correct.
+                </div>
+              </div>
+              
+              <div style="width: 40%; text-align: right;">
+                <div class="sign-box-outer">
+                  <div class="sign-box">
+                    <div style="font-size: 11px; font-weight: bold; margin-top: 8px;">FOR ${branchName}</div>
+                    <div style="position: absolute; bottom: 8px; width: 100%; font-size: 11px; font-weight: bold; left: 0;">Authorised Signatory</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="computer-gen">This is computer generated invoice</div>
+      </body>
+    </html>
+  `;
+};
+
 const ManageBills = () => {
   const [bills, setBills] = useState([]);
   const [customers, setCustomers] = useState([]);
@@ -303,128 +487,79 @@ const ManageBills = () => {
 
   // Print functionality
   const handlePrint = (bill) => {
-    const printWindow = window.open('', '_blank');
-    const customer = bill.customerId;
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Invoice - ${bill.billNumber}</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 20px; }
-            .company-name { font-size: 24px; font-weight: bold; color: #333; }
-            .invoice-details { display: flex; justify-content: space-between; margin-bottom: 20px; }
-            .customer-info, .invoice-info { width: 45%; }
-            .items-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-            .items-table th, .items-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-            .items-table th { background-color: #f2f2f2; }
-            .totals { margin-left: auto; width: 300px; }
-            .total-row { display: flex; justify-content: space-between; padding: 5px 0; }
-            .total-row.final { border-top: 2px solid #333; font-weight: bold; font-size: 18px; }
-            .footer { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ccc; }
-            @media print { body { margin: 0; } }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <div class="company-name">Your Company Name</div>
-            <div>123 Business Street, City, State - 123456</div>
-            <div>Phone: (555) 123-4567 | Email: info@company.com</div>
-          </div>
-          <div class="invoice-details">
-            <div class="customer-info">
-              <h3>Bill To:</h3>
-              <div><strong>${customer.name}</strong></div>
-              <div>${customer.email}</div>
-              <div>${customer.phone || ''}</div>
-            </div>
-            <div class="invoice-info">
-              <h3>Invoice Details:</h3>
-              <div><strong>Invoice #:</strong> ${bill.billNumber}</div>
-              <div><strong>Date:</strong> ${new Date(bill.billDate).toLocaleDateString()}</div>
-              <div><strong>Payment Status:</strong> ${bill.paymentStatus.toUpperCase()}</div>
-              <div><strong>Payment Method:</strong> ${bill.paymentMethod.toUpperCase()}</div>
-            </div>
-          </div>
-          <table class="items-table">
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${bill.items.map(item => `
-                <tr>
-                  <td>${item.name}</td>
-                  <td>${item.quantity}</td>
-                  <td>₹${item.price.toLocaleString()}</td>
-                  <td>₹${item.total.toLocaleString()}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-          <div class="totals">
-            <div class="total-row">
-              <span>Subtotal:</span>
-              <span>₹${bill.subtotal.toLocaleString()}</span>
-            </div>
-            ${bill.taxAmount > 0 ? `
-            <div class="total-row">
-              <span>Tax:</span>
-              <span>₹${bill.taxAmount.toLocaleString()}</span>
-            </div>
-            ` : ''}
-            ${bill.discount > 0 ? `
-            <div class="total-row">
-              <span>Discount:</span>
-              <span>₹${bill.discount.toLocaleString()}</span>
-            </div>
-            ` : ''}
-            <div class="total-row final">
-              <span>Total:</span>
-              <span>₹${bill.totalAmount.toLocaleString()}</span>
-            </div>
-            <div class="total-row">
-              <span>Paid:</span>
-              <span>₹${bill.paidAmount.toLocaleString()}</span>
-            </div>
-            <div class="total-row">
-              <span>Due:</span>
-              <span>₹${bill.dueAmount.toLocaleString()}</span>
-            </div>
-          </div>
-          ${bill.notes ? `
-            <div style="margin-top: 20px;">
-              <strong>Notes:</strong>
-              <div style="margin-top: 5px; padding: 10px; background-color: #f9f9f9; border-radius: 5px;">
-                ${bill.notes}
-              </div>
-            </div>
-          ` : ''}
-          <div class="footer">
-            <div>Thank you for your business!</div>
-            <div style="font-size: 12px; color: #666; margin-top: 10px;">
-              This is a computer-generated invoice.
-            </div>
-          </div>
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
-    printWindow.focus();
-    setTimeout(() => {
-      printWindow.print();
-      printWindow.close();
-    }, 250);
+    try {
+      const printWindow = window.open('', '_blank', 'width=800,height=600');
+      if (!printWindow) {
+        alert('Please allow popups for this site to print bills');
+        return;
+      }
+
+      const htmlContent = getInvoiceHTML(bill, '/Asset 2.svg');
+
+      printWindow.document.write(htmlContent);
+      printWindow.document.close();
+
+      printWindow.onload = () => {
+        printWindow.focus();
+        printWindow.print();
+        setTimeout(() => {
+          printWindow.close();
+        }, 1000);
+      };
+
+      // Fallback
+      setTimeout(() => {
+        if (!printWindow.closed) {
+          printWindow.focus();
+          printWindow.print();
+          setTimeout(() => {
+            printWindow.close();
+          }, 1000);
+        }
+      }, 500);
+
+    } catch (error) {
+      console.error('Print failed:', error);
+    }
   };
 
-  // Download as PDF functionality (using browser's print to PDF)
-  const handleDownload = (bill) => {
-    handlePrint(bill); // Users can use browser's "Save as PDF" option
+  // Download as PDF functionality
+  const handleDownload = async (bill) => {
+    try {
+      // In this version we'll use a local instance of html2pdf if available, 
+      // or redirect to print as a reliable fallback for synced design.
+      // Since this is a service file, let's try to match the CreateBill.jsx logic if html2pdf is present.
+      if (typeof html2pdf !== 'undefined') {
+        let logoBase64 = '/Asset 2.svg';
+        try {
+          const response = await fetch('/Asset 2.svg');
+          const blob = await response.blob();
+          logoBase64 = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+        } catch (err) {
+          console.error('Failed to encode logo to Base64:', err);
+        }
+
+        const htmlContent = getInvoiceHTML(bill, logoBase64);
+        const opt = {
+          margin: 10,
+          filename: `invoice-${bill.billNumber}.pdf`,
+          image: { type: 'jpeg', quality: 1 },
+          html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        await html2pdf().set(opt).from(htmlContent).save();
+      } else {
+        handlePrint(bill);
+      }
+    } catch (error) {
+      console.error('Download failed:', error);
+      handlePrint(bill);
+    }
   };
 
   const resetForm = () => {
@@ -669,13 +804,12 @@ const ManageBills = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        bill.paymentStatus === 'paid'
-                          ? 'bg-green-100 text-green-800'
-                          : bill.paymentStatus === 'partial'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-red-100 text-red-800'
-                      }`}>
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${bill.paymentStatus === 'paid'
+                        ? 'bg-green-100 text-green-800'
+                        : bill.paymentStatus === 'partial'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-red-100 text-red-800'
+                        }`}>
                         {bill.paymentStatus.charAt(0).toUpperCase() + bill.paymentStatus.slice(1)}
                       </span>
                     </td>
@@ -695,13 +829,6 @@ const ManageBills = () => {
                           title="Print"
                         >
                           <Printer className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDownload(bill)}
-                          className="text-green-600 hover:text-green-900 p-1 rounded transition-colors"
-                          title="Download"
-                        >
-                          <Download className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => setSelectedBill(bill)}
@@ -1009,11 +1136,10 @@ const ManageBills = () => {
                     </div>
                     <div className="text-right">
                       <div className="text-sm text-gray-500 capitalize">{customer.customerType}</div>
-                      <div className={`text-xs px-2 py-1 rounded-full ${
-                        customer.status === 'active'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}>
+                      <div className={`text-xs px-2 py-1 rounded-full ${customer.status === 'active'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                        }`}>
                         {customer.status}
                       </div>
                     </div>
@@ -1068,13 +1194,12 @@ const ManageBills = () => {
                     </div>
                     <div className="text-right">
                       <div className="font-bold text-green-600">₹{product.price.toLocaleString()}</div>
-                      <div className={`text-xs px-2 py-1 rounded-full ${
-                        (product.quantity || 0) === 0
-                          ? 'bg-red-100 text-red-800'
-                          : (product.quantity || 0) <= 10
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-green-100 text-green-800'
-                      }`}>
+                      <div className={`text-xs px-2 py-1 rounded-full ${(product.quantity || 0) === 0
+                        ? 'bg-red-100 text-red-800'
+                        : (product.quantity || 0) <= 10
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-green-100 text-green-800'
+                        }`}>
                         Stock: {product.quantity || 0}
                       </div>
                     </div>
@@ -1105,13 +1230,6 @@ const ManageBills = () => {
                   Print
                 </button>
                 <button
-                  onClick={() => handleDownload(selectedBill)}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Download
-                </button>
-                <button
                   onClick={() => setSelectedBill(null)}
                   className="text-gray-400 hover:text-gray-600"
                 >
@@ -1136,13 +1254,12 @@ const ManageBills = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Payment Status</label>
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        selectedBill.paymentStatus === 'paid'
-                          ? 'bg-green-100 text-green-800'
-                          : selectedBill.paymentStatus === 'partial'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-red-100 text-red-800'
-                      }`}>
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${selectedBill.paymentStatus === 'paid'
+                        ? 'bg-green-100 text-green-800'
+                        : selectedBill.paymentStatus === 'partial'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-red-100 text-red-800'
+                        }`}>
                         {selectedBill.paymentStatus.charAt(0).toUpperCase() + selectedBill.paymentStatus.slice(1)}
                       </span>
                     </div>
