@@ -64,13 +64,10 @@ const ManageBills = () => {
     dueAmount: 0,
     billDate: new Date().toISOString().split('T')[0],
     dueDate: '',
-    notes: '',
-    branchId: ''
+    notes: ''
   });
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [branchFilter, setBranchFilter] = useState('all');
-  const [branches, setBranches] = useState([]);
   const [dateRange, setDateRange] = useState({ startDate: '', endDate: '' });
 
 
@@ -140,15 +137,6 @@ const ManageBills = () => {
         totalPages: billsData.totalPages || 0,
         totalItems: billsData.total || 0
       });
-
-      // Fetch branches
-      const branchesResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/branches`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
-      if (branchesResponse.ok) {
-        const branchesData = await branchesResponse.json();
-        setBranches(branchesData.branches || branchesData || []);
-      }
 
       // Fetch services
       await fetchServices();
@@ -241,12 +229,6 @@ const ManageBills = () => {
     if (statusFilter !== 'all') {
       filtered = filtered.filter(bill => bill.paymentStatus === statusFilter);
     }
-    if (branchFilter !== 'all') {
-      filtered = filtered.filter(bill => {
-        const billBranchId = bill.branchId?._id || bill.branchId;
-        return String(billBranchId) === String(branchFilter);
-      });
-    }
     if (dateRange.startDate && dateRange.endDate) {
       filtered = filtered.filter(bill => {
         const billDate = new Date(bill.billDate);
@@ -256,7 +238,7 @@ const ManageBills = () => {
       });
     }
     setFilteredBills(filtered);
-  }, [bills, searchTerm, statusFilter, branchFilter, dateRange]);
+  }, [bills, searchTerm, statusFilter, dateRange]);
 
   const selectCustomer = (customer) => {
     setFormData(prev => ({
@@ -453,7 +435,6 @@ const ManageBills = () => {
 
       const billData = {
         customerId: formData.customerId,
-        branchId: formData.branchId || undefined,
         items: formData.items,
         subtotal: formData.subtotal,
         discountPercent: formData.discountPercent,
@@ -490,10 +471,8 @@ const ManageBills = () => {
       }
 
       const data = await response.json();
-      console.error('Bill API error:', data); // debug
       if (!response.ok) {
-        const msg = data.errors ? data.errors.join('; ') : (data.message || `Failed to ${modalMode} bill`);
-        throw new Error(msg);
+        throw new Error(data.message || `Failed to ${modalMode} bill`);
       }
 
       setSuccess(`Bill ${modalMode === 'create' ? 'created' : 'updated'} successfully!`);
@@ -516,199 +495,112 @@ const ManageBills = () => {
       }
 
       const customer = bill.customerId;
-      const branch = bill.branchId || {};
-      const branchName = branch.name || 'HEALTH AND HEAL';
-      const branchAddress = branch.address || 'No: 18, First Floor, Prakasam Street, Janaki Nagar, Valasaravakkam, Chennai - 600087.';
-      const branchGst = branch.gstNumber || '33AAOFH2184C1ZL';
-      const branchContact = branch.contactNumber || '9042716037';
-      const branchEmail = branch.email || 'info@fettlehealthandheal.com';
-      const branchWebsite = branch.website || 'www.fettlehealthandheal.com';
-      const bankName = branch.bankDetails?.bankName || 'HDFC';
-      const bankAccount = branch.bankDetails?.accountNumber || '50200108255392';
-      const bankBranchName = branch.bankDetails?.branchBankName || 'VALASARAVAKKAM, Chennai - 600087';
-      const bankIfsc = branch.bankDetails?.ifscCode || 'HDFC0000024';
-      const bankUpi = branch.bankDetails?.upiId || 'healthandhealhh-1@okhdfcbank';
       const htmlContent = `
         <!DOCTYPE html>
         <html>
           <head>
             <title>Invoice - ${bill.billNumber}</title>
             <style>
-              body { font-family: 'Times New Roman', serif; margin: 0; padding: 20px; font-size: 13px; color: #000; }
-              .invoice-container { max-width: 800px; margin: 0 auto; border: 1px solid #000; padding: 10px; }
-              .header-text { text-align: center; font-weight: bold; font-size: 16px; padding: 5px; }
-              .top-header {border-bottom: 1px solid #000; padding: 0; }
-              .logo { width: 100%; display: block; height: auto; object-fit: contain; }
-              
-              .info-row { display: flex; border-bottom: 1px solid #000; }
-              .info-left, .info-right { width: 50%; padding: 5px 10px; }
-              .info-right { border-left: 1px solid #000; }
-              
-              .bold { font-weight: bold; }
-              .mt-5 { margin-top: 5px; }
-              
-              table { width: 100%; border-collapse: collapse; text-align: center; }
-              th, td { border: 1px solid #000; padding: 5px; }
-              th { border-bottom: 2px solid #000; }
-              
-              .desc-cell { text-align: left; padding-left: 10px; vertical-align: top; height: 15rem; }
-              
-              .totals-row { text-align: right; border-bottom: none; }
-              .totals-val { border-bottom: none; }
-              
-              .footer-section { padding: 5px 10px; border-top: 1px solid #000; }
-Items
-￼Add Item
-Service *
-DIAMOND
-￼Change
-Service Item
-
-              .footer-split { display: flex; justify-content: space-between; border-top: 1px solid #000; padding-top: 20px;}
-              .sign-box { border: 1px solid #000; padding: 10px; width: 250px; text-align: center; height: 80px; display: flex; flex-direction: column; justify-content: space-between;}
-              .sign-box span { font-size: 11px; }
-              
-              .computer-gen { text-align: center; font-size: 11px; margin-top: 10px; max-width: 800px; margin-inline: auto; }
-              
-              @media print { body { padding: 0; } }
+              body { font-family: Arial, sans-serif; margin: 20px; }
+              .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 20px; }
+              .company-name { font-size: 24px; font-weight: bold; color: #333; }
+              .invoice-details { display: flex; justify-content: space-between; margin-bottom: 20px; }
+              .customer-info, .invoice-info { width: 45%; }
+              .items-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+              .items-table th, .items-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+              .items-table th { background-color: #f2f2f2; }
+              .totals { margin-left: auto; width: 300px; }
+              .total-row { display: flex; justify-between; padding: 5px 0; }
+              .total-row.final { border-top: 2px solid #333; font-weight: bold; font-size: 18px; }
+              .footer { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ccc; }
+              @media print { body { margin: 0; } }
             </style>
           </head>
           <body>
-            <div class="header-text">TAX INVOICE</div>
-            <div class="invoice-container">
-              <div class="top-header">
-                <img src="/Asset 2.svg" alt="Fettle Health and Heal" class="logo" />
+            <div class="header">
+              <div class="company-name">Relax Feet</div>
+              <div>10, Padi Pudhu Nagar Main Rd, Pudhu Nagar, Anna Nagar West, Anna Nagar West Extension, Chennai, Tamil Nadu 600101</div>
+              <div>Phone: 9585274079 | Email: info@relaxfeet.com</div>
+            </div>
+            <div class="invoice-details">
+              <div class="customer-info">
+                <h3>Bill To:</h3>
+                <div><strong>${customer.name}</strong></div>
+                <div>${customer.email}</div>
+                <div>${customer.phone || ''}</div>
               </div>
-              
-              <div class="info-row">
-                <div class="info-left">
-                  <div class="bold">${branchName}</div>
-                  <div>${branchAddress}</div>
-                  <div class="bold mt-5">GSTIN: ${branchGst}</div>
-                  <div class="bold">Contact: ${branchContact}</div>
-                </div>
-                <div class="info-right">
-                  <div class="bold">BILL TO:</div>
-                  <div class="bold text-lg">${customer?.name || ''}</div>
-                  ${customer?.address?.street ? `<div>${customer.address.street.toUpperCase()}</div>` : ''}
-                  ${customer?.address?.city || customer?.address?.zipCode ? `<div>${(customer?.address?.city || '').toUpperCase()} ${(customer?.address?.zipCode || '')}</div>` : ''}
-                  <div>${customer?.phone ? 'CONTACT: ' + customer.phone : customer?.email || ''}</div>
-                </div>
-              </div>
-              <div class="info-row">
-                <div class="info-left">
-                  <div class="bold">Mail id: ${branchEmail}</div>
-                  <div class="bold">Website: ${branchWebsite}</div>
-                </div>
-                <div class="info-right">
-                  <div class="bold">INVOICE NO: ${bill?.billNumber || ''}</div>
-                  <div class="bold">INVOICE DATE : ${bill?.billDate ? new Date(bill.billDate).toLocaleDateString('en-GB').replace(/\//g, '.') : ''}</div>
-                  <div class="bold">MODE OF PAYMENT: ${(bill?.paymentMethod || '').toUpperCase()}</div>
-                </div>
-              </div>
-              
-              <table>
-                <thead>
-                  <tr>
-                    <th width="5%">S.NO</th>
-                    <th width="45%">DESCRIPTION</th>
-                    <th width="15%">HSN</th>
-                    <th width="15%">RATE</th>
-                    <th width="20%">AMOUNT</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${(bill?.items || []).map((item, index) => {
-        const sgst = bill?.taxPercent > 0 ? ((bill.taxAmount || 0) / 2).toFixed(2) : '0.00';
-        const cgst = bill?.taxPercent > 0 ? ((bill.taxAmount || 0) / 2).toFixed(2) : '0.00';
-        const baseRate = (item?.total || 0).toFixed(2);
-
-        return `
-                    <tr>
-                      <td style="vertical-align: top; padding-top: 40px; font-weight: bold;">${index + 1}</td>
-                      <td class="desc-cell" style="padding-top: 40px;">
-                        <div style="font-weight: bold;">${(item?.name || '').toUpperCase()}</div>
-                        
-                        <div style="margin-top: 50px; text-align: right; padding-right: 10px; font-weight: bold;">
-                          <div>SGST ${bill?.taxPercent > 0 ? bill.taxPercent / 2 : 9}%</div>
-                          <div style="margin-top: 5px;">CGST ${bill?.taxPercent > 0 ? bill.taxPercent / 2 : 9}%</div>
-                          <div style="margin-top: 5px;">TOTAL GST ${bill?.taxPercent > 0 ? bill.taxPercent : 18}%</div>
-                        </div>
-                        
-                        <div style="margin-top: 30px; text-align: right; padding-right: 10px; font-weight: bold;">
-                          ROUND OFF
-                        </div>
-                      </td>
-                      <td style="vertical-align: top; padding-top: 40px;">
-                        <div style="font-weight: bold;">999315</div>
-                      </td>
-                      <td style="vertical-align: top; padding-top: 40px;">
-                        <div style="font-weight: bold;">${baseRate}</div>
-                      </td>
-                      <td style="vertical-align: top; padding-top: 40px; font-weight: bold; text-align: right; padding-right: 5px;">
-                        <div>${baseRate}</div>
-                        <div style="margin-top: 50px;">${sgst}</div>
-                        <div style="margin-top: 5px;">${cgst}</div>
-                        <div style="margin-top: 5px;">${bill?.taxAmount > 0 ? (bill.taxAmount || 0).toFixed(2) : '0.00'}</div>
-                        <div style="margin-top: 15px;">${((bill?.totalAmount || 0) - (bill?.taxAmount || 0)).toFixed(2)}</div>
-                        <div style="margin-top: 30px;">${(bill?.totalAmount || 0).toFixed(2)}</div>
-                      </td>
-                    </tr>
-                    `;
-      }).join('')}
-                  <tr>
-                    <td colspan="3" style="border-right: none;"></td>
-                    <td class="bold">GRAND TOTAL</td>
-                    <td class="bold" style="text-align: right; padding-right: 5px;">${(bill?.totalAmount || 0).toFixed(2)}</td>
-                  </tr>
-                </tbody>
-              </table>
-              
-              <div class="footer-section">
-                <div class="bold" style="font-size: 11px;">Amount Chargeable (in words): <span id="wordsAmount" style="text-transform: uppercase;"></span> ONLY.</div>
-                
-                <div class="bold mt-5" style="font-size: 11px;">Clinic Bank Details: ${branchName}</div>
-                <div class="bold" style="font-size: 11px;">Bank Name: ${bankName}</div>
-                <div class="bold" style="font-size: 11px;">A/c No: ${bankAccount}</div>
-                <div class="bold" style="font-size: 11px;">Branch Name: ${bankBranchName}</div>
-                <div class="bold" style="font-size: 11px;">IFSC CODE: ${bankIfsc}</div>
-                <div class="bold" style="font-size: 11px;">upi id : ${bankUpi}</div>
-                
-                <table style="width: 100%; border: none; margin-top: 15px; border-top: 1px solid #000; padding-top: 15px; table-layout: fixed;">
-                  <tr>
-                    <td style="width: 60%; vertical-align: top; border: none; padding: 0; text-align: left;">
-                      <div style="font-size: 11px;">Declaration: We declare that this invoice shows</div>
-                      <div style="font-size: 11px;">the actual price of treatment and that all</div>
-                      <div style="font-size: 11px;">particulars are true and correct.</div>
-                    </td>
-                    <td style="width: 40%; vertical-align: top; border: none; padding: 0; text-align: right;">
-                      <div style="display: inline-block; width: 250px; height: 80px; border: 1px solid #000; text-align: center; position: relative; margin-top: 10px;">
-                        <div style="position: absolute; top: 10px; width: 100%; font-size: 11px;">FOR ${branchName}</div>
-                        <div style="position: absolute; bottom: 10px; width: 100%; font-size: 11px;">Authorised Signatory</div>
-                      </div>
-                    </td>
-                  </tr>
-                </table>
+              <div class="invoice-info">
+                <h3>Invoice Details:</h3>
+                <div><strong>Invoice #:</strong> ${bill.billNumber}</div>
+                <div><strong>Date:</strong> ${new Date(bill.billDate).toLocaleDateString()}</div>
+                <div><strong>Payment Status:</strong> ${bill.paymentStatus.toUpperCase()}</div>
+                <div><strong>Payment Method:</strong> ${bill.paymentMethod.toUpperCase()}</div>
               </div>
             </div>
-            <div class="computer-gen">This is computer generated invoice</div>
-            <script>
-              function numberToWords(num) {
-                const a = ['','one ','two ','three ','four ', 'five ','six ','seven ','eight ','nine ','ten ','eleven ','twelve ','thirteen ','fourteen ','fifteen ','sixteen ','seventeen ','eighteen ','nineteen '];
-                const b = ['', '', 'twenty','thirty','forty','fifty', 'sixty','seventy','eighty','ninety'];
-                if ((num = num.toString()).length > 9) return 'overflow';
-                const n = ('000000000' + num).substr(-9).match(/^(\\d{2})(\\d{2})(\\d{2})(\\d{1})(\\d{2})$/);
-                if (!n) return;
-                let str = '';
-                str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'crore ' : '';
-                str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'lakh ' : '';
-                str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'thousand ' : '';
-                str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred ' : '';
-                str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : '';
-                return str.trim() + ' rupees';
-              }
-              document.getElementById('wordsAmount').innerText = numberToWords(Math.floor(${bill.totalAmount}));
-            </script>
+            <table class="items-table">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${bill.items.map(item => `
+                  <tr>
+                    <td>${item.name}</td>
+                    <td>${item.quantity}</td>
+                    <td>₹${item.price.toLocaleString()}</td>
+                    <td>₹${item.total.toLocaleString()}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+            <div class="totals">
+              <div class="total-row">
+                <span>Subtotal:</span>
+                <span>₹${bill.subtotal.toLocaleString()}</span>
+              </div>
+              ${bill.discountPercent > 0 ? `
+              <div class="total-row">
+                <span>Discount (${bill.discountPercent}%):</span>
+                <span>₹${((bill.subtotal * bill.discountPercent) / 100).toLocaleString()}</span>
+              </div>
+              ` : ''}
+              ${bill.taxPercent > 0 ? `
+              <div class="total-row">
+                <span>Tax (${bill.taxPercent}%):</span>
+                <span>₹${bill.taxAmount.toLocaleString()}</span>
+              </div>
+              ` : ''}
+              <div class="total-row final">
+                <span>Total:</span>
+                <span>₹${bill.totalAmount.toLocaleString()}</span>
+              </div>
+              <div class="total-row">
+                <span>Paid:</span>
+                <span>₹${bill.paidAmount.toLocaleString()}</span>
+              </div>
+              <div class="total-row">
+                <span>Due:</span>
+                <span>₹${bill.dueAmount.toLocaleString()}</span>
+              </div>
+            </div>
+            ${bill.notes ? `
+              <div style="margin-top: 20px;">
+                <strong>Notes:</strong>
+                <div style="margin-top: 5px; padding: 10px; background-color: #f9f9f9; border-radius: 5px;">
+                  ${bill.notes}
+                </div>
+              </div>
+            ` : ''}
+            <div class="footer">
+              <div>Thank you for your business!</div>
+              <div style="font-size: 12px; color: #666; margin-top: 10px;">
+                This is a computer-generated invoice.
+              </div>
+            </div>
           </body>
         </html>
       `;
@@ -746,189 +638,111 @@ Service Item
   const handleDownload = (bill) => {
     try {
       const customer = bill.customerId;
-      const branch = bill.branchId || {};
-      const branchName = branch.name || 'HEALTH AND HEAL';
-      const branchAddress = branch.address || 'No: 18, First Floor, Prakasam Street, Janaki Nagar, Valasaravakkam, Chennai - 600087.';
-      const branchGst = branch.gstNumber || '33AAOFH2184C1ZL';
-      const branchContact = branch.contactNumber || '9042716037';
-      const branchEmail = branch.email || 'info@fettlehealthandheal.com';
-      const branchWebsite = branch.website || 'www.fettlehealthandheal.com';
-      const bankName = branch.bankDetails?.bankName || 'HDFC';
-      const bankAccount = branch.bankDetails?.accountNumber || '50200108255392';
-      const bankBranchName = branch.bankDetails?.branchBankName || 'VALASARAVAKKAM, Chennai - 600087';
-      const bankIfsc = branch.bankDetails?.ifscCode || 'HDFC0000024';
-      const bankUpi = branch.bankDetails?.upiId || 'healthandhealhh-1@okhdfcbank';
       const htmlContent = `
         <!DOCTYPE html>
         <html>
           <head>
             <title>Invoice - ${bill.billNumber}</title>
             <style>
-              body { font-family: 'Times New Roman', serif; margin: 0; padding: 20px; font-size: 13px; color: #000; }
-              .invoice-container { max-width: 800px; margin: 0 auto; border: 1px solid #000; padding: 10px; }
-              .header-text { text-align: center; font-weight: bold; font-size: 16px; padding: 5px; }
-              .top-header { border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 0; }
-              .logo { width: 100%; display: block; height: auto; object-fit: contain; }
-              
-              .info-section { display: flex; border-bottom: 1px solid #000; }
-              .info-left, .info-right { width: 50%; padding: 5px 10px; }
-              .info-right { border-left: 1px solid #000; }
-              
-              .bold { font-weight: bold; }
-              .mt-5 { margin-top: 5px; }
-              
-              table { width: 100%; border-collapse: collapse; text-align: center; }
-              th, td { border: 1px solid #000; padding: 5px; }
-              th { border-bottom: 2px solid #000; }
-              
-              .desc-cell { text-align: left; padding-left: 10px; vertical-align: top; height: 15rem; }
-              
-              .totals-row { text-align: right; border-bottom: none; }
-              .totals-val { border-bottom: none; }
-              
-              .footer-section { padding: 5px 10px; border-top: 1px solid #000; }
-              .footer-split { display: flex; justify-content: space-between; border-top: 1px solid #000; padding-top: 20px;}
-              .sign-box { border: 1px solid #000; padding: 10px; width: 250px; text-align: center; height: 80px; display: flex; flex-direction: column; justify-content: space-between;}
-              .sign-box span { font-size: 11px; }
-              
-              .computer-gen { text-align: center; font-size: 11px; margin-top: 10px; max-width: 800px; margin-inline: auto; }
+              body { font-family: Arial, sans-serif; margin: 20px; }
+              .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 20px; }
+              .company-name { font-size: 24px; font-weight: bold; color: #333; }
+              .invoice-details { display: flex; justify-content: space-between; margin-bottom: 20px; }
+              .customer-info, .invoice-info { width: 45%; }
+              .items-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+              .items-table th, .items-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+              .items-table th { background-color: #f2f2f2; }
+              .totals { margin-left: auto; width: 300px; }
+              .total-row { display: flex; justify-between; padding: 5px 0; }
+              .total-row.final { border-top: 2px solid #333; font-weight: bold; font-size: 18px; }
+              .footer { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ccc; }
             </style>
           </head>
           <body>
-            <div class="header-text">TAX INVOICE</div>
-            <div class="invoice-container">
-              <div class="top-header">
-                <img src="/Asset 2.svg" alt="Fettle Health and Heal" class="logo" />
+            <div class="header">
+              <div class="company-name">Shree Sai Engineering</div>
+              <div>4/12, Karambakkam, Devi Nagar, Porur, Chennai, Tamil Nadu 600116</div>
+              <div>Phone: 93442 96658 | Email: info@shreesaiepoxy.com</div>
+            </div>
+            <div class="invoice-details">
+              <div class="customer-info">
+                <h3>Bill To:</h3>
+                <div><strong>${customer.name}</strong></div>
+                <div>${customer.email}</div>
+                <div>${customer.phone || ''}</div>
               </div>
-              
-              <div class="info-row">
-                <div class="info-left">
-                  <div class="bold">${branchName}</div>
-                  <div>${branchAddress}</div>
-                  <div class="bold mt-5">GSTIN: ${branchGst}</div>
-                  <div class="bold">Contact: ${branchContact}</div>
-                  <div class="bold">Mail id: ${branchEmail}</div>
-                  <div class="bold">Website: ${branchWebsite}</div>
-                </div>
-                <div class="info-right">
-                  <div class="bold">BILL TO:</div>
-                  <div class="bold text-lg">${customer?.name || ''}</div>
-                  ${customer?.address?.street ? `<div>${customer.address.street.toUpperCase()}</div>` : ''}
-                  ${customer?.address?.city || customer?.address?.zipCode ? `<div>${(customer?.address?.city || '').toUpperCase()} ${(customer?.address?.zipCode || '')}</div>` : ''}
-                  <div>${customer?.phone ? 'CONTACT: ' + customer.phone : customer?.email || ''}</div>
-                </div>
-              </div>
-              <div class="info-row">
-                <div class="info-left"></div>
-                <div class="info-right">
-                  <div class="bold">INVOICE NO: ${bill?.billNumber || ''}</div>
-                  <div class="bold">INVOICE DATE : ${bill?.billDate ? new Date(bill.billDate).toLocaleDateString('en-GB').replace(/\//g, '.') : ''}</div>
-                  <div class="bold">MODE OF PAYMENT: ${(bill?.paymentMethod || '').toUpperCase()}</div>
-                </div>
-              </div>
-              
-              <table>
-                <thead>
-                  <tr>
-                    <th width="5%">S.NO</th>
-                    <th width="45%">DESCRIPTION</th>
-                    <th width="15%">HSN</th>
-                    <th width="15%">RATE</th>
-                    <th width="20%">AMOUNT</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${(bill?.items || []).map((item, index) => {
-        const sgst = bill?.taxPercent > 0 ? ((bill.taxAmount || 0) / 2).toFixed(2) : '0.00';
-        const cgst = bill?.taxPercent > 0 ? ((bill.taxAmount || 0) / 2).toFixed(2) : '0.00';
-        const baseRate = (item?.total || 0).toFixed(2);
-
-        return `
-                    <tr>
-                      <td style="vertical-align: top; padding-top: 40px; font-weight: bold;">${index + 1}</td>
-                      <td class="desc-cell" style="padding-top: 40px;">
-                        <div style="font-weight: bold;">${(item?.name || '').toUpperCase()}</div>
-                        
-                        <div style="margin-top: 50px; text-align: right; padding-right: 10px; font-weight: bold;">
-                          <div>SGST ${bill?.taxPercent > 0 ? bill.taxPercent / 2 : 9}%</div>
-                          <div style="margin-top: 5px;">CGST ${bill?.taxPercent > 0 ? bill.taxPercent / 2 : 9}%</div>
-                          <div style="margin-top: 5px;">TOTAL GST ${bill?.taxPercent > 0 ? bill.taxPercent : 18}%</div>
-                        </div>
-                        
-                        <div style="margin-top: 30px; text-align: right; padding-right: 10px; font-weight: bold;">
-                          ROUND OFF
-                        </div>
-                      </td>
-                      <td style="vertical-align: top; padding-top: 40px;">
-                        <div style="font-weight: bold;">999315</div>
-                      </td>
-                      <td style="vertical-align: top; padding-top: 40px;">
-                        <div style="font-weight: bold;">${baseRate}</div>
-                      </td>
-                      <td style="vertical-align: top; padding-top: 40px; font-weight: bold; text-align: right; padding-right: 5px;">
-                        <div>${baseRate}</div>
-                        <div style="margin-top: 50px;">${sgst}</div>
-                        <div style="margin-top: 5px;">${cgst}</div>
-                        <div style="margin-top: 5px;">${bill?.taxAmount > 0 ? (bill.taxAmount || 0).toFixed(2) : '0.00'}</div>
-                        <div style="margin-top: 15px;">${((bill?.totalAmount || 0) - (bill?.taxAmount || 0)).toFixed(2)}</div>
-                        <div style="margin-top: 30px;">${(bill?.totalAmount || 0).toFixed(2)}</div>
-                      </td>
-                    </tr>
-                    `;
-      }).join('')}
-                  <tr>
-                    <td colspan="3" style="border-right: none;"></td>
-                    <td class="bold">GRAND TOTAL</td>
-                    <td class="bold" style="text-align: right; padding-right: 5px;">${(bill?.totalAmount || 0).toFixed(2)}</td>
-                  </tr>
-                </tbody>
-              </table>
-              
-              <div class="footer-section">
-                <div class="bold" style="font-size: 11px;">Amount Chargeable (in words): <span id="wordsAmountDL" style="text-transform: uppercase;"></span> ONLY.</div>
-                
-                <div class="bold mt-5" style="font-size: 11px;">Clinic Bank Details: ${branchName}</div>
-                <div class="bold" style="font-size: 11px;">Bank Name: ${bankName}</div>
-                <div class="bold" style="font-size: 11px;">A/c No: ${bankAccount}</div>
-                <div class="bold" style="font-size: 11px;">Branch Name: ${bankBranchName}</div>
-                <div class="bold" style="font-size: 11px;">IFSC CODE: ${bankIfsc}</div>
-                <div class="bold" style="font-size: 11px;">upi id : ${bankUpi}</div>
-                
-                <table style="width: 100%; border: none; margin-top: 15px; border-top: 1px solid #000; padding-top: 15px; table-layout: fixed;">
-                  <tr>
-                    <td style="width: 60%; vertical-align: top; border: none; padding: 0; text-align: left;">
-                      <div style="font-size: 11px;">Declaration: We declare that this invoice shows</div>
-                      <div style="font-size: 11px;">the actual price of treatment and that all</div>
-                      <div style="font-size: 11px;">particulars are true and correct.</div>
-                    </td>
-                    <td style="width: 40%; vertical-align: top; border: none; padding: 0; text-align: right;">
-                      <div style="display: inline-block; width: 250px; height: 80px; border: 1px solid #000; text-align: center; position: relative; margin-top: 10px;">
-                        <div style="position: absolute; top: 10px; width: 100%; font-size: 11px;">FOR ${branchName}</div>
-                        <div style="position: absolute; bottom: 10px; width: 100%; font-size: 11px;">Authorised Signatory</div>
-                      </div>
-                    </td>
-                  </tr>
-                </table>
+              <div class="invoice-info">
+                <h3>Invoice Details:</h3>
+                <div><strong>Invoice #:</strong> ${bill.billNumber}</div>
+                <div><strong>Date:</strong> ${new Date(bill.billDate).toLocaleDateString()}</div>
+                <div><strong>Payment Status:</strong> ${bill.paymentStatus.toUpperCase()}</div>
+                <div><strong>Payment Method:</strong> ${bill.paymentMethod.toUpperCase()}</div>
               </div>
             </div>
-            <div class="computer-gen">This is computer generated invoice</div>
-            <script>
-              function numberToWords(num) {
-                const a = ['','one ','two ','three ','four ', 'five ','six ','seven ','eight ','nine ','ten ','eleven ','twelve ','thirteen ','fourteen ','fifteen ','sixteen ','seventeen ','eighteen ','nineteen '];
-                const b = ['', '', 'twenty','thirty','forty','fifty', 'sixty','seventy','eighty','ninety'];
-                if ((num = num.toString()).length > 9) return 'overflow';
-                const n = ('000000000' + num).substr(-9).match(/^(\\d{2})(\\d{2})(\\d{2})(\\d{1})(\\d{2})$/);
-                if (!n) return;
-                let str = '';
-                str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'crore ' : '';
-                str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'lakh ' : '';
-                str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'thousand ' : '';
-                str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred ' : '';
-                str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : '';
-                return str.trim() + ' rupees';
-              }
-              document.getElementById('wordsAmountDL').innerText = numberToWords(Math.floor(${bill.totalAmount}));
-            </script>
+            <table class="items-table">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${bill.items.map(item => `
+                  <tr>
+                    <td>${item.name}</td>
+                    <td>${item.quantity}</td>
+                    <td>₹${item.price.toLocaleString()}</td>
+                    <td>₹${item.total.toLocaleString()}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+            <div class="totals">
+              <div class="total-row">
+                <span>Subtotal:</span>
+                <span>₹${bill.subtotal.toLocaleString()}</span>
+              </div>
+              ${bill.discountPercent > 0 ? `
+              <div class="total-row">
+                <span>Discount (${bill.discountPercent}%):</span>
+                <span>₹${((bill.subtotal * bill.discountPercent) / 100).toLocaleString()}</span>
+              </div>
+              ` : ''}
+              ${bill.taxPercent > 0 ? `
+              <div class="total-row">
+                <span>Tax (${bill.taxPercent}%):</span>
+                <span>₹${bill.taxAmount.toLocaleString()}</span>
+              </div>
+              ` : ''}
+              <div class="total-row final">
+                <span>Total:</span>
+                <span>₹${bill.totalAmount.toLocaleString()}</span>
+              </div>
+              <div class="total-row">
+                <span>Paid:</span>
+                <span>₹${bill.paidAmount.toLocaleString()}</span>
+              </div>
+              <div class="total-row">
+                <span>Due:</span>
+                <span>₹${bill.dueAmount.toLocaleString()}</span>
+              </div>
+            </div>
+            ${bill.notes ? `
+              <div style="margin-top: 20px;">
+                <strong>Notes:</strong>
+                <div style="margin-top: 5px; padding: 10px; background-color: #f9f9f9; border-radius: 5px;">
+                  ${bill.notes}
+                </div>
+              </div>
+            ` : ''}
+            <div class="footer">
+              <div>Thank you for your business!</div>
+              <div style="font-size: 12px; color: #666; margin-top: 10px;">
+                This is a computer-generated invoice.
+              </div>
+            </div>
           </body>
         </html>
       `;
@@ -1110,21 +924,6 @@ Service Item
                 <option value="partial">Partial</option>
               </select>
             </div>
-            {user?.role === 'superadmin' && branches.length > 0 && (
-              <div className="relative">
-                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <select
-                  value={branchFilter}
-                  onChange={(e) => setBranchFilter(e.target.value)}
-                  className="pl-10 pr-8 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-[#0099CC] appearance-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white min-w-40"
-                >
-                  <option value="all">All Branches</option>
-                  {branches.map(branch => (
-                    <option key={branch._id} value={branch._id}>{branch.name} ({branch.code})</option>
-                  ))}
-                </select>
-              </div>
-            )}
             <div className="flex gap-2">
               <input
                 type="date"
@@ -1473,21 +1272,6 @@ Service Item
                       <span className="font-bold text-gray-900 dark:text-white">₹{formData.totalAmount.toLocaleString()}</span>
                     </div>
                     <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
-                      {user?.role === 'superadmin' && branches.length > 0 && (
-                        <div className="flex justify-between py-2">
-                          <span className="text-gray-600 dark:text-gray-400">Branch:</span>
-                          <select
-                            value={formData.branchId}
-                            onChange={(e) => setFormData({ ...formData, branchId: e.target.value })}
-                            className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
-                          >
-                            <option value="">-- Auto Select --</option>
-                            {branches.map(branch => (
-                              <option key={branch._id} value={branch._id}>{branch.name} ({branch.code})</option>
-                            ))}
-                          </select>
-                        </div>
-                      )}
                       <div className="flex justify-between py-2">
                         <span className="text-gray-600 dark:text-gray-400">Payment Status:</span>
                         <select

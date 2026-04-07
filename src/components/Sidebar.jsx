@@ -142,17 +142,19 @@ const Sidebar = ({ onNavigate }) => {
             <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full blur-xl transform translate-x-8 -translate-y-8"></div>
             <div className="absolute bottom-0 left-0 w-14 h-14 bg-white/10 rounded-full blur-lg transform -translate-x-6 translate-y-6"></div>
 
-            <div className="relative z-10 flex flex-col items-center justify-center gap-2 py-4 w-full">
-              {/* Logo Container for Contrast and Size */}
-              <div className="bg-white p-1.5 md:p-2.5 rounded-xl shadow-md w-[92%] max-w-[320px] flex justify-center items-center transition-transform duration-300 hover:scale-[1.03]">
-                <img
-                  src="/Asset 2.svg"
-                  alt="Fettle Health and Heal"
-                  className="w-full h-auto object-contain drop-shadow-sm min-h-[50px] md:min-h-[60px] scale-105"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                  }}
-                />
+            <div className="relative z-10 flex flex-col items-center justify-center gap-2 py-1">
+              {/* Logo */}
+              <img
+                src="/FettleHealth.png"
+                alt="Fettle Health and Heal"
+                className="h-32 md:h-40 w-auto max-w-full object-contain drop-shadow-lg transition-transform duration-300 hover:scale-105"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                }}
+              />
+              {/* Brand text fallback / subtitle */}
+              <div className="text-center">
+                <p className="text-white/90 text-xs font-medium tracking-widest uppercase">Physio & Wellness Studio</p>
               </div>
             </div>
           </div>
