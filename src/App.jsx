@@ -14,6 +14,7 @@ import ManageBills from './pages/CreateBill'
 import Notifications from './pages/Notifications'
 import Services from './pages/Services'
 import Reports from './pages/Reports'
+import CategoryManagement from './pages/CategoryManagement'
 import Pages from './pages/Pages'
 import BranchManagement from './pages/BranchManagement'
 import BranchDashboard from './pages/BranchDashboard'
@@ -73,6 +74,10 @@ const App = () => {
         {
           path: '/reports',
           element: <Reports />
+        },
+        {
+          path: '/categories',
+          element: <CategoryManagement />
         },
         {
           path: '/pages',

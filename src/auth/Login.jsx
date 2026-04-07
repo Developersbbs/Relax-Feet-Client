@@ -61,7 +61,7 @@ const Login = () => {
               <img
                 src="/FettleHealth.png"
                 alt="Fettle Health and Heal"
-                className="h-48 w-auto object-contain"
+                className="h-20 w-auto object-contain"
                 onError={(e) => { e.target.style.display = 'none'; }}
               />
             </div>
