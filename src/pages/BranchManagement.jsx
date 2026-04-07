@@ -123,7 +123,7 @@ const BranchManagement = () => {
                             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                                 <div className="flex items-center gap-3">
                                     <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-                                        <FiMapPin className="text-[#0099CC] dark:text-blue-300" />
+                                        <FiMapPin className="text-blue-600 dark:text-blue-300" />
                                     </div>
                                     <div>
                                         <p className="text-2xl font-bold text-gray-900 dark:text-white">{(branches || []).length}</p>
@@ -145,13 +145,13 @@ const BranchManagement = () => {
                                     placeholder="Search branches..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                    className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                                 />
                             </div>
                         </div>
                         <button
                             onClick={() => { resetForm(); setShowModal(true); }}
-                            className="flex items-center gap-2 px-4 py-2 bg-[#0099CC] hover:bg-[#007aa3] text-white rounded-lg transition-colors duration-200"
+                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200"
                         >
                             <FiPlus />
                             Add Branch
@@ -162,7 +162,7 @@ const BranchManagement = () => {
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
                     {isLoading ? (
                         <div className="p-8 text-center">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0099CC] mx-auto"></div>
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
                             <p className="mt-2 text-gray-600 dark:text-gray-400">Loading branches...</p>
                         </div>
                     ) : filteredBranches.length === 0 ? (
@@ -208,7 +208,7 @@ const BranchManagement = () => {
                                                 <div className="flex gap-3">
                                                     <button
                                                         onClick={() => handleEdit(branch)}
-                                                        className="text-[#0099CC] hover:text-[#007aa3] dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                                                        className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
                                                     >
                                                         <FiEdit2 size={18} />
                                                     </button>
@@ -246,7 +246,7 @@ const BranchManagement = () => {
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                         required
-                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                                     />
                                 </div>
                                 <div>
@@ -258,7 +258,7 @@ const BranchManagement = () => {
                                         value={formData.code}
                                         onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
                                         required
-                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white uppercase"
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white uppercase"
                                     />
                                 </div>
                                 <div>
@@ -270,7 +270,7 @@ const BranchManagement = () => {
                                         value={formData.contactNumber}
                                         onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
                                         required
-                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                                     />
                                 </div>
                                 <div>
@@ -282,7 +282,7 @@ const BranchManagement = () => {
                                         onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                                         required
                                         rows="3"
-                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                                     ></textarea>
                                 </div>
                                 <div className="flex items-center">
@@ -291,7 +291,7 @@ const BranchManagement = () => {
                                         id="isActive"
                                         checked={formData.isActive}
                                         onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                                        className="h-4 w-4 text-[#0099CC] bg-gray-100 border-gray-300 rounded focus:ring-[#0099CC] dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                        className="h-4 w-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                     />
                                     <label htmlFor="isActive" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                                         Active Branch
@@ -307,7 +307,7 @@ const BranchManagement = () => {
                                     </button>
                                     <button
                                         type="submit"
-                                        className="px-4 py-2 text-white bg-[#0099CC] hover:bg-[#007aa3] rounded-lg transition-colors"
+                                        className="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
                                     >
                                         {editingBranch ? 'Update' : 'Create'}
                                     </button>
