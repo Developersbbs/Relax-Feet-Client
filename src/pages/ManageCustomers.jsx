@@ -181,7 +181,7 @@ const ManageCustomers = () => {
       // setModalMode('view');
       // setShowModal(true);
     } finally {
-      setLoading(false);
+       setLoading(false);
     }
   };
 
@@ -357,10 +357,11 @@ const ManageCustomers = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${customer.status === 'active'
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        customer.status === 'active'
                           ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300'
                           : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300'
-                        }`}>
+                      }`}>
                         {customer.status.charAt(0).toUpperCase() + customer.status.slice(1)}
                       </span>
                     </td>
@@ -414,9 +415,9 @@ const ManageCustomers = () => {
 
             {/* --- Loading indicator inside modal for detailed view --- */}
             {modalMode === 'view' && loading && (
-              <div className="flex justify-center items-center py-4">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              </div>
+                 <div className="flex justify-center items-center py-4">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                 </div>
             )}
 
             {modalMode === 'view' && !loading && selectedCustomer ? (
@@ -446,11 +447,11 @@ const ManageCustomers = () => {
                     <label className="block text-sm font-medium text-gray-700">Credit Limit</label>
                     <p className="mt-1 text-sm text-gray-900 dark:text-slate-100">₹{selectedCustomer?.creditLimit?.toLocaleString() || '0'}</p>
                   </div>
-                  <div>
+                   <div>
                     <label className="block text-sm font-medium text-gray-700">Outstanding Balance</label>
                     <p className={`mt-1 text-sm ${selectedCustomer?.outstandingBalance > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                      ₹{selectedCustomer?.outstandingBalance?.toLocaleString() || '0'}
-                    </p>
+                       ₹{selectedCustomer?.outstandingBalance?.toLocaleString() || '0'}
+                     </p>
                   </div>
                   {selectedCustomer?.gstNumber && (
                     <div>
@@ -506,7 +507,7 @@ const ManageCustomers = () => {
                           </thead>
                           <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-gray-600 dark:divide-gray-600">
                             {selectedCustomer.bills
-                              .filter(bill =>
+                              .filter(bill => 
                                 bill.billNumber?.toLowerCase().includes(billSearchTerm.toLowerCase()) ||
                                 bill.paymentStatus?.toLowerCase().includes(billSearchTerm.toLowerCase()) ||
                                 bill.totalAmount?.toString().includes(billSearchTerm)
@@ -519,12 +520,13 @@ const ManageCustomers = () => {
                                   </td>
                                   <td className="px-4 py-3 text-sm text-gray-900 dark:text-slate-100 whitespace-nowrap">₹{bill.totalAmount?.toLocaleString() || "0"}</td>
                                   <td className="px-4 py-3 text-sm whitespace-nowrap">
-                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${bill.paymentStatus === "paid"
+                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                      bill.paymentStatus === "paid"
                                         ? "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300"
                                         : bill.paymentStatus === "partial"
-                                          ? "bg-yellow-100 text-yellow-800"
-                                          : "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300"
-                                      }`}>
+                                        ? "bg-yellow-100 text-yellow-800"
+                                        : "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300"
+                                    }`}>
                                       {bill.paymentStatus?.charAt(0).toUpperCase() + (bill.paymentStatus?.slice(1) || "")}
                                     </span>
                                   </td>
@@ -532,15 +534,15 @@ const ManageCustomers = () => {
                               ))}
                           </tbody>
                         </table>
-                        {selectedCustomer.bills.filter(bill =>
+                        {selectedCustomer.bills.filter(bill => 
                           bill.billNumber?.toLowerCase().includes(billSearchTerm.toLowerCase()) ||
                           bill.paymentStatus?.toLowerCase().includes(billSearchTerm.toLowerCase()) ||
                           bill.totalAmount?.toString().includes(billSearchTerm)
                         ).length === 0 && (
-                            <div className="text-center py-4 text-sm text-gray-500 dark:text-slate-400">
-                              No bills found matching your search.
-                            </div>
-                          )}
+                          <div className="text-center py-4 text-sm text-gray-500 dark:text-slate-400">
+                            No bills found matching your search.
+                          </div>
+                        )}
                       </div>
                     </div>
                   ) : (
@@ -681,7 +683,7 @@ const ManageCustomers = () => {
                         value={formData.address.street}
                         onChange={handleAddressChange}
                         disabled={modalMode === 'view'}
-                        className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:bg-gray-100"
+                          className="text-sm text-[#0099CC] dark:text-[#0099CC] focus:outline-none focus:ring-2 focus:ring-[#0099CC] focus:border-transparent disabled:bg-gray-100"
                       />
                       <input
                         type="text"
@@ -690,7 +692,7 @@ const ManageCustomers = () => {
                         value={formData.address.city}
                         onChange={handleAddressChange}
                         disabled={modalMode === 'view'}
-                        className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:bg-gray-100"
+                          className="text-sm text-[#0099CC] dark:text-[#0099CC] focus:outline-none focus:ring-2 focus:ring-[#0099CC] focus:border-transparent disabled:bg-gray-100"
                       />
                       <input
                         type="text"
@@ -699,7 +701,7 @@ const ManageCustomers = () => {
                         value={formData.address.state}
                         onChange={handleAddressChange}
                         disabled={modalMode === 'view'}
-                        className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:bg-gray-100"
+                          className="text-sm text-[#0099CC] dark:text-[#0099CC] focus:outline-none focus:ring-2 focus:ring-[#0099CC] focus:border-transparent disabled:bg-gray-100"
                       />
                       <input
                         type="text"
@@ -708,7 +710,7 @@ const ManageCustomers = () => {
                         value={formData.address.zipCode}
                         onChange={handleAddressChange}
                         disabled={modalMode === 'view'}
-                        className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:bg-gray-100"
+                          className="text-sm text-[#0099CC] dark:text-[#0099CC] focus:outline-none focus:ring-2 focus:ring-[#0099CC] focus:border-transparent disabled:bg-gray-100"
                       />
                       <input
                         type="text"
@@ -717,13 +719,12 @@ const ManageCustomers = () => {
                         value={formData.address.country}
                         onChange={handleAddressChange}
                         disabled={modalMode === 'view'}
-                        className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:bg-gray-100"
+                          className="text-sm text-[#0099CC] dark:text-[#0099CC] focus:outline-none focus:ring-2 focus:ring-[#0099CC] focus:border-transparent disabled:bg-gray-100"
                       />
                     </div>
                   </div>
                   <div className="md:col-span-2">
-                    <label htmlFor="notes" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Notes
+                    <label htmlFor="notes" className="block text-sm font-medium text-[#0099CC] dark:text-[#0099CC]">
                     </label>
                     <textarea
                       id="notes"
@@ -732,7 +733,7 @@ const ManageCustomers = () => {
                       value={formData.notes}
                       onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                       disabled={modalMode === 'view'}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:bg-gray-100"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-amber-700 focus:border-blue-500 disabled:bg-gray-100"
                     />
                   </div>
                 </div>

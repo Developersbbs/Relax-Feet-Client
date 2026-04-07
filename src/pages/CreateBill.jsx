@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../redux/features/auth/loginSlice';
-import { Plus, Edit, Trash2, Eye, FileText, Calendar, DollarSign, AlertCircle, Search, Filter, Download, Printer, X, User, Activity, ChevronDown } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, FileText, Calendar, DollarSign, AlertCircle, Search, Filter, Download, Printer, X, User, Activity } from 'lucide-react';
 
 const customerFormInitialState = {
   name: '',
@@ -55,12 +55,12 @@ const ManageBills = () => {
     subtotal: 0,
     discountPercent: 0,
     discountAmount: 0,
-    taxPercent: 18,
+    taxPercent: 0,
     taxAmount: 0,
     totalAmount: 0,
     paymentStatus: 'pending',
     paymentMethod: 'cash',
-    paidAmount: '',
+    paidAmount: 0,
     dueAmount: 0,
     billDate: new Date().toISOString().split('T')[0],
     dueDate: '',
@@ -960,12 +960,12 @@ Service Item
       subtotal: 0,
       discountPercent: 0,
       discountAmount: 0,
-      taxPercent: 18,
+      taxPercent: 0,
       taxAmount: 0,
       totalAmount: 0,
       paymentStatus: 'pending',
       paymentMethod: 'cash',
-      paidAmount: '',
+      paidAmount: 0,
       dueAmount: 0,
       billDate: new Date().toISOString().split('T')[0],
       dueDate: '',
@@ -996,7 +996,7 @@ Service Item
       totalAmount: bill.totalAmount || 0,
       paymentStatus: bill.paymentStatus || 'pending',
       paymentMethod: bill.paymentMethod || 'cash',
-      paidAmount: bill.paidAmount === 0 ? 0 : bill.paidAmount || '',
+      paidAmount: bill.paidAmount || 0,
       dueAmount: bill.dueAmount || 0,
       billDate: bill.billDate ? new Date(bill.billDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
       dueDate: bill.dueDate ? new Date(bill.dueDate).toISOString().split('T')[0] : '',
@@ -1325,230 +1325,237 @@ Service Item
       {/* Create/Edit Bill Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-6xl my-8 max-h-[90vh] flex flex-col transition-colors duration-300 shadow-2xl">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-4xl my-8 max-h-[90vh] overflow-y-auto transition-colors duration-300">
+            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">{modalMode === 'edit' ? 'Edit Bill' : 'Create New Bill'}</h2>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Customer *</label>
+                  {formData.customerId ? (
+                    <div className="mt-1 p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700">
+                      <div className="font-medium text-gray-900 dark:text-white">{formData.customerName}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">{formData.customerEmail}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">{formData.customerPhone}</div>
+                      {modalMode === 'create' && (
+                        <button type="button" onClick={openCustomerSelector} className="mt-2 text-[#0099CC] dark:text-[#007aa3] text-sm hover:text-[#007aa3] dark:hover:text-[#007aa3]">
+                          Change Customer
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    <button type="button" onClick={openCustomerSelector} className="mt-1 w-full px-4 py-2 border border-dashed border-gray-300 dark:border-gray-600 rounded-md text-gray-600 dark:text-gray-400 hover:border-[#0099CC] hover:text-[#0099CC] dark:hover:text-[#0099CC] flex items-center justify-center bg-white dark:bg-gray-700">
+                      <User className="w-5 h-5 mr-2" />
+                      Select Customer
+                    </button>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Bill Date *</label>
+                  <input
+                    type="date"
+                    value={formData.billDate}
+                    onChange={(e) => setFormData({ ...formData, billDate: e.target.value })}
+                    required
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+              </div>
 
-            {/* Header */}
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800 rounded-t-lg shrink-0">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <FileText className="w-6 h-6 text-[#0099CC]" />
-                {modalMode === 'edit' ? 'Edit Bill' : 'Create New Bill'}
-              </h2>
-              <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-400">
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            {/* Form Body */}
-            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-100 dark:bg-gray-900">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-                {/* LEFT SIDE: 3 Cards */}
-                <div className="lg:col-span-2 space-y-5">
-
-                  {/* CARD 1: Bill Details */}
-                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5">
-                    <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-4 border-b border-gray-100 dark:border-gray-700 pb-2">1. Bill Details</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Customer *</label>
-                        {formData.customerId ? (
-                          <div className="p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700">
-                            <div className="font-medium text-gray-900 dark:text-white">{formData.customerName}</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">{formData.customerEmail}</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">{formData.customerPhone}</div>
-                            {modalMode === 'create' && (
-                              <button type="button" onClick={openCustomerSelector} className="mt-2 text-sm text-[#0099CC] hover:underline">Change Customer</button>
-                            )}
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Items</h3>
+                  <button type="button" onClick={addItem} className="text-sm bg-[#0099CC] text-white px-3 py-1 rounded hover:bg-[#007aa3]">
+                    Add Item
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {formData.items.map((item, index) => (
+                    <div key={index} className="grid grid-cols-12 gap-2 items-end p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <div className="col-span-5">
+                        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300">Service *</label>
+                        {item.serviceId ? (
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm font-medium text-gray-900 dark:text-white">{item.name}</span>
+                            <button type="button" onClick={() => openServiceSelector(index)} className="text-[#0099CC] dark:text-[#007aa3] text-sm hover:text-[#007aa3] dark:hover:text-[#007aa3]">
+                              Change
+                            </button>
                           </div>
                         ) : (
-                          <button type="button" onClick={openCustomerSelector} className="w-full px-4 py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-500 dark:text-gray-400 hover:border-[#0099CC] hover:text-[#0099CC] flex items-center justify-center gap-2 bg-white dark:bg-gray-700 transition-colors">
-                            <User className="w-5 h-5" /> Select Customer
+                          <button type="button" onClick={() => openServiceSelector(index)} className="w-full px-2 py-1 border border-dashed border-gray-300 dark:border-gray-600 rounded text-gray-600 dark:text-gray-400 hover:border-[#0099CC] hover:text-[#0099CC] dark:hover:text-[#0099CC] text-sm flex items-center justify-center bg-white dark:bg-gray-600">
+                            <Activity className="w-4 h-4 mr-1" />
+                            Select Service
                           </button>
                         )}
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bill Date *</label>
+                      <div className="col-span-2">
+                        <div className="text-xs text-gray-500 dark:text-gray-400 py-2">Service Item</div>
+                      </div>
+                      <div className="col-span-2">
+                        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300">Price (₹)</label>
+                        {item.serviceId ? (
+                          <div className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-gray-100 dark:bg-gray-500 text-gray-900 dark:text-white">
+                            {item.price.toLocaleString()}
+                          </div>
+                        ) : (
+                          <input
+                            type="number"
+                            value={item.price}
+                            onChange={(e) => handleItemChange(index, 'price', Number(e.target.value))}
+                            min="0"
+                            step="0.01"
+                            required
+                            className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm focus:outline-none focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                          />
+                        )}
+                      </div>
+                      <div className="col-span-2">
+                        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300">Total (₹)</label>
                         <input
-                          type="date" value={formData.billDate} required
-                          onChange={(e) => setFormData({ ...formData, billDate: e.target.value })}
-                          className="block w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                          type="text"
+                          value={item.total.toLocaleString()}
+                          readOnly
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-gray-100 dark:bg-gray-500 text-gray-900 dark:text-white"
                         />
                       </div>
-                    </div>
-                  </div>
-
-                  {/* CARD 2: Services & Items */}
-                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5">
-                    <div className="flex justify-between items-center mb-4 border-b border-gray-100 dark:border-gray-700 pb-2">
-                      <h3 className="text-base font-semibold text-gray-900 dark:text-white">2. Services & Items</h3>
-                      <button type="button" onClick={addItem} className="text-sm bg-[#0099CC] text-white px-3 py-1.5 rounded-lg hover:bg-[#007aa3] flex items-center gap-1 shadow-sm transition-colors">
-                        <Plus className="w-4 h-4" /> Add Row
-                      </button>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="hidden md:grid grid-cols-12 gap-2 px-2 pb-1 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        <div className="col-span-5">Service / Item</div>
-                        <div className="col-span-2 text-center">Type</div>
-                        <div className="col-span-2 text-right">Rate (₹)</div>
-                        <div className="col-span-2 text-right">Amount (₹)</div>
-                        <div className="col-span-1 text-center">Del</div>
-                      </div>
-                      {formData.items.map((item, index) => (
-                        <div key={index} className="grid grid-cols-1 md:grid-cols-12 gap-2 items-center p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-white dark:hover:bg-gray-700 rounded-lg border border-gray-100 dark:border-gray-600 transition-colors">
-                          <div className="col-span-1 md:col-span-5">
-                            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 md:hidden">Service</label>
-                            {item.serviceId ? (
-                              <div className="flex justify-between items-center bg-blue-50 dark:bg-gray-800 border border-blue-100 dark:border-gray-600 rounded-md px-3 py-2 cursor-pointer hover:border-[#0099CC]" onClick={() => openServiceSelector(index)}>
-                                <span className="text-sm font-medium text-gray-900 dark:text-white truncate">{item.name}</span>
-                                <ChevronDown className="w-4 h-4 text-gray-400 shrink-0" />
-                              </div>
-                            ) : (
-                              <button type="button" onClick={() => openServiceSelector(index)} className="w-full px-3 py-2 border border-dashed border-gray-300 dark:border-gray-500 rounded-md text-gray-500 hover:border-[#0099CC] hover:text-[#0099CC] text-sm flex items-center bg-white dark:bg-gray-800 transition-colors">
-                                <Search className="w-4 h-4 mr-2 shrink-0" /> Search Service...
-                              </button>
-                            )}
-                          </div>
-                          <div className="col-span-1 md:col-span-2 hidden md:flex justify-center">
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300">Service</span>
-                          </div>
-                          <div className="col-span-1 md:col-span-2">
-                            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 md:hidden">Rate (₹)</label>
-                            {item.serviceId ? (
-                              <div className="text-sm text-right text-gray-900 dark:text-white font-medium px-2 py-2">{item.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                            ) : (
-                              <input type="number" value={item.price || ''} onChange={(e) => handleItemChange(index, 'price', Number(e.target.value))} min="0" step="0.01" required placeholder="0.00" className="w-full px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm text-right focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-800 text-gray-900 dark:text-white" />
-                            )}
-                          </div>
-                          <div className="col-span-1 md:col-span-2">
-                            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 md:hidden">Amount (₹)</label>
-                            <div className="text-sm text-right text-gray-900 dark:text-white font-bold px-2 py-2">{item.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                          </div>
-                          <div className="col-span-1 md:col-span-1 flex justify-end md:justify-center">
-                            <button type="button" onClick={() => removeItem(index)} className="text-gray-400 hover:text-red-600 dark:hover:text-red-400 p-2 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" disabled={formData.items.length === 1} title="Remove Row">
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* CARD 3: Payment & Notes */}
-                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5">
-                    <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-4 border-b border-gray-100 dark:border-gray-700 pb-2">3. Payment & Notes</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Notes</label>
-                        <textarea rows="4" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                          className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                          placeholder="Additional notes..." />
-                      </div>
-                      <div className="space-y-3">
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
-                            <select value={formData.paymentStatus} onChange={(e) => setFormData({ ...formData, paymentStatus: e.target.value })} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-                              <option value="pending">Pending</option>
-                              <option value="partial">Partial</option>
-                              <option value="paid">Paid</option>
-                            </select>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Method</label>
-                            <select value={formData.paymentMethod} onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-                              <option value="cash">Cash</option>
-                              <option value="card">Card</option>
-                              <option value="upi">UPI</option>
-                              <option value="bank_transfer">Bank Transfer</option>
-                            </select>
-                          </div>
-                        </div>
-                        {user?.role === 'superadmin' && branches.length > 0 && (
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Branch</label>
-                            <select value={formData.branchId} onChange={(e) => setFormData({ ...formData, branchId: e.target.value })} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-                              <option value="">-- Auto Select --</option>
-                              {branches.map(branch => (
-                                <option key={branch._id} value={branch._id}>{branch.name} ({branch.code})</option>
-                              ))}
-                            </select>
-                          </div>
-                        )}
+                      <div className="col-span-1">
+                        <button type="button" onClick={() => removeItem(index)} className="text-red-600 hover:text-red-900 dark:text-red-500 dark:hover:text-red-400 text-sm p-1" disabled={formData.items.length === 1}>
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
                     </div>
-                  </div>
-
+                  ))}
                 </div>
+              </div>
 
-                {/* RIGHT SIDE: Checkout Summary */}
-                <div className="lg:col-span-1">
-                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 sticky top-4 flex flex-col overflow-hidden">
-                    <div className="bg-gray-800 text-white p-4 text-center">
-                      <h3 className="font-bold text-lg tracking-wider">CHECKOUT SUMMARY</h3>
-                      <p className="text-gray-400 text-xs mt-0.5">Invoice Preview</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Notes</label>
+                  <textarea
+                    rows="3"
+                    value={formData.notes}
+                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    placeholder="Additional notes..."
+                  />
+                </div>
+                <div>
+                  <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                    <div className="flex justify-between py-2">
+                      <span className="text-gray-600 dark:text-gray-400">Subtotal:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">₹{formData.subtotal.toLocaleString()}</span>
                     </div>
-                    <div className="p-4 space-y-3 text-sm bg-gray-50 dark:bg-gray-900 flex-1">
-                      <div className="flex justify-between items-center text-gray-600 dark:text-gray-400">
-                        <span>Items:</span>
-                        <span className="font-semibold text-gray-900 dark:text-white">{formData.items.length}</span>
-                      </div>
-                      <div className="flex justify-between items-center text-gray-600 dark:text-gray-400 pt-2 border-t border-gray-200 dark:border-gray-700">
-                        <span>Subtotal:</span>
-                        <span className="font-semibold text-gray-900 dark:text-white">₹{formData.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                      </div>
-                      <div className="flex justify-between items-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-2">
-                        <span className="text-gray-600 dark:text-gray-400 font-medium">Tax (%):</span>
-                        <div className="relative w-24">
-                          <input type="number" value={formData.taxPercent} onChange={(e) => setFormData({ ...formData, taxPercent: Number(e.target.value) })} min="0" max="100" step="0.01" className="w-full pl-2 pr-6 py-1 border-none focus:ring-0 text-right bg-transparent text-gray-900 dark:text-white font-medium" />
-                          <span className="absolute right-2 top-1.5 text-gray-400 text-xs">%</span>
-                        </div>
-                      </div>
-                      <div className="flex justify-between items-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-2">
-                        <span className="text-gray-600 dark:text-gray-400 font-medium">Discount (%):</span>
-                        <div className="relative w-24">
-                          <input type="number" value={formData.discountPercent} onChange={(e) => setFormData({ ...formData, discountPercent: Number(e.target.value) })} min="0" max="100" step="0.01" className="w-full pl-2 pr-6 py-1 border-none focus:ring-0 text-right bg-transparent text-gray-900 dark:text-white font-medium" />
-                          <span className="absolute right-2 top-1.5 text-gray-400 text-xs">%</span>
-                        </div>
-                      </div>
-                      <div className="pt-3 border-t-2 border-dashed border-gray-300 dark:border-gray-700">
-                        <div className="flex justify-between items-end">
-                          <span className="font-bold text-base text-gray-800 dark:text-gray-200 uppercase">Total:</span>
-                          <span className="font-black text-2xl text-[#0099CC]">₹{formData.totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                        </div>
-                      </div>
-                      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-3 rounded-xl relative overflow-hidden">
-                        <div className="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
-                        <div className="flex justify-between items-center mb-2 pl-2">
-                          <span className="text-gray-600 dark:text-gray-400 font-medium text-sm">Customer Paid:</span>
-                          <div className="relative w-36">
-                            <span className="absolute left-3 top-1.5 text-gray-500 font-medium text-sm">₹</span>
-                            <input type="number" value={formData.paidAmount} onChange={(e) => setFormData({ ...formData, paidAmount: e.target.value === '' ? '' : Number(e.target.value) })} min="0" step="0.01" placeholder="e.g. 1000" className="w-full pl-7 pr-3 py-1.5 border border-green-300 dark:border-green-700 rounded-lg text-right bg-green-50 dark:bg-gray-900 text-green-900 dark:text-green-400 font-bold focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm" />
-                          </div>
-                        </div>
-                        <div className="flex justify-between items-center pl-2">
-                          <span className="text-gray-600 dark:text-gray-400 font-medium text-sm">Balance Due:</span>
-                          <span className={`font-bold text-lg ${formData.dueAmount > 0 ? 'text-red-500' : 'text-gray-400'}`}>₹{formData.dueAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                        </div>
-                      </div>
+                    <div className="flex justify-between py-2">
+                      <span className="text-gray-600 dark:text-gray-400">Tax (%):</span>
+                      <input
+                        type="number"
+                        value={formData.taxPercent}
+                        onChange={(e) => setFormData({ ...formData, taxPercent: Number(e.target.value) })}
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        className="w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-right bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                      />
                     </div>
-                    <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 space-y-2 shrink-0">
-                      <button type="submit" disabled={submitting} className={`w-full py-3 px-4 rounded-xl shadow-lg font-bold text-white uppercase tracking-wider transition-all ${submitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-[#0099CC] to-[#007aa3] hover:from-[#007aa3] hover:to-[#005c7a] hover:shadow-xl'}`}>
-                        {submitting ? (
-                          <span className="flex items-center justify-center gap-2">
-                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                            {modalMode === 'edit' ? 'Updating...' : 'Processing...'}
-                          </span>
-                        ) : (
-                          modalMode === 'edit' ? 'Update Invoice' : 'Issue Invoice'
-                        )}
-                      </button>
-                      <button type="button" onClick={() => setShowModal(false)} className="w-full py-2.5 px-4 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 font-medium transition-colors text-sm">
-                        Cancel
-                      </button>
+                    <div className="flex justify-between py-2">
+                      <span className="text-gray-600 dark:text-gray-400">Discount (%):</span>
+                      <input
+                        type="number"
+                        value={formData.discountPercent}
+                        onChange={(e) => setFormData({ ...formData, discountPercent: Number(e.target.value) })}
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        className="w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-right bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                      />
+                    </div>
+                    <div className="flex justify-between py-2 border-t border-gray-200 dark:border-gray-600 mt-2">
+                      <span className="font-semibold text-gray-900 dark:text-white">Total:</span>
+                      <span className="font-bold text-gray-900 dark:text-white">₹{formData.totalAmount.toLocaleString()}</span>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+                      {user?.role === 'superadmin' && branches.length > 0 && (
+                        <div className="flex justify-between py-2">
+                          <span className="text-gray-600 dark:text-gray-400">Branch:</span>
+                          <select
+                            value={formData.branchId}
+                            onChange={(e) => setFormData({ ...formData, branchId: e.target.value })}
+                            className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                          >
+                            <option value="">-- Auto Select --</option>
+                            {branches.map(branch => (
+                              <option key={branch._id} value={branch._id}>{branch.name} ({branch.code})</option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+                      <div className="flex justify-between py-2">
+                        <span className="text-gray-600 dark:text-gray-400">Payment Status:</span>
+                        <select
+                          value={formData.paymentStatus}
+                          onChange={(e) => setFormData({ ...formData, paymentStatus: e.target.value })}
+                          className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                        >
+                          <option value="pending">Pending</option>
+                          <option value="partial">Partial</option>
+                          <option value="paid">Paid</option>
+                        </select>
+                      </div>
+                      <div className="flex justify-between py-2">
+                        <span className="text-gray-600 dark:text-gray-400">Payment Method:</span>
+                        <select
+                          value={formData.paymentMethod}
+                          onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
+                          className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                        >
+                          <option value="cash">Cash</option>
+                          <option value="card">Card</option>
+                          <option value="upi">UPI</option>
+                          <option value="bank_transfer">Bank Transfer</option>
+                        </select>
+                      </div>
+                      <div className="flex justify-between py-2">
+                        <span className="text-gray-600 dark:text-gray-400">Paid Amount (₹):</span>
+                        <input
+                          type="number"
+                          value={formData.paidAmount}
+                          onChange={(e) => setFormData({ ...formData, paidAmount: Number(e.target.value) })}
+                          min="0"
+                          step="0.01"
+                          className="w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-right bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                        />
+                      </div>
+                      <div className="flex justify-between py-2">
+                        <span className="text-gray-600 dark:text-gray-400">Due Amount:</span>
+                        <span className="font-medium text-gray-900 dark:text-white">₹{formData.dueAmount.toLocaleString()}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
+              </div>
 
+              <div className="flex justify-end space-x-3 mt-6">
+                <button type="button" onClick={() => setShowModal(false)} className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className={`px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-300 ${submitting
+                    ? 'bg-gray-400 cursor-not-allowed opacity-70'
+                    : 'bg-[#0099CC] hover:bg-[#007aa3] text-white focus:ring-amber-700'
+                    }`}
+                >
+                  <div className="flex items-center gap-2">
+                    {submitting ? (
+                      <>
+                        <div className="w-4 h-4 border border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>{modalMode === 'edit' ? 'Updating...' : 'Creating...'}</span>
+                      </>
+                    ) : (
+                      modalMode === 'edit' ? 'Update Bill' : 'Create Bill'
+                    )}
+                  </div>
+                </button>
               </div>
             </form>
           </div>
