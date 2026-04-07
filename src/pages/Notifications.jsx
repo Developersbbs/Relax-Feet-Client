@@ -80,12 +80,12 @@ const Notifications = () => {
   useEffect(() => {
     loadNotifications({ page: 1, status: statusFilter });
     setPage(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter]);
 
   useEffect(() => {
     loadNotifications();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
   const handleMarkAsRead = async (notificationId) => {
@@ -132,9 +132,9 @@ const Notifications = () => {
       setMeta((prev) =>
         prev
           ? {
-            ...prev,
-            total: Math.max(prev.total - 1, 0)
-          }
+              ...prev,
+              total: Math.max(prev.total - 1, 0)
+            }
           : prev
       );
     } catch (error) {
@@ -214,7 +214,7 @@ const Notifications = () => {
         <div>
           <h1 className="text-2xl font-semibold text-slate-900">Notifications</h1>
           <p className="text-sm text-slate-600">
-            Stay informed about system updates and billing notifications.
+            Review stock alerts and stay informed about inventory changes.
           </p>
         </div>
 
@@ -224,10 +224,11 @@ const Notifications = () => {
               key={tab.value}
               type="button"
               onClick={() => setStatusFilter(tab.value)}
-              className={`px-3 py-2.5 text-sm font-medium rounded-md transition-colors duration-150 min-w-[80px] touch-manipulation ${statusFilter === tab.value
+              className={`px-3 py-2.5 text-sm font-medium rounded-md transition-colors duration-150 min-w-[80px] touch-manipulation ${
+                statusFilter === tab.value
                   ? 'bg-[#0099CC] text-white shadow'
                   : 'text-slate-600 hover:bg-slate-100'
-                }`}
+              }`}
             >
               {tab.label}
             </button>
@@ -275,8 +276,9 @@ const Notifications = () => {
               type="button"
               onClick={handleSaveSettings}
               disabled={isSavingSettings}
-              className={`inline-flex items-center justify-center rounded-lg bg-amber-700 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#007aa3] disabled:cursor-not-allowed disabled:opacity-70 min-h-[44px] touch-manipulation ${isSavingSettings ? 'cursor-not-allowed opacity-70' : 'hover:bg-[#007aa3]'
-                }`}
+              className={`inline-flex items-center justify-center rounded-lg bg-amber-700 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#007aa3] disabled:cursor-not-allowed disabled:opacity-70 min-h-[44px] touch-manipulation ${
+                isSavingSettings ? 'cursor-not-allowed opacity-70' : 'hover:bg-[#007aa3]'
+              }`}
             >
               {isSavingSettings ? (
                 <>
@@ -343,6 +345,9 @@ const Notifications = () => {
                       </>
                     )}
                   </div>
+                  {item.productId?.name && (
+                    <span className="text-xs uppercase tracking-wide text-slate-400 font-medium">Product: {item.productId.name}</span>
+                  )}
                 </div>
 
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-2 mt-3">
@@ -360,10 +365,11 @@ const Notifications = () => {
                       type="button"
                       onClick={() => handleMarkAsRead(item._id)}
                       disabled={loadingActions.has(item._id)}
-                      className={`inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-[#e0f5fb] px-3 py-2 text-sm font-medium text-[#0099CC] transition hover:bg-amber-100 min-h-[44px] min-w-[100px] justify-center touch-manipulation ${loadingActions.has(item._id)
+                      className={`inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-[#e0f5fb] px-3 py-2 text-sm font-medium text-[#0099CC] transition hover:bg-amber-100 min-h-[44px] min-w-[100px] justify-center touch-manipulation ${
+                        loadingActions.has(item._id)
                           ? 'opacity-70 cursor-not-allowed bg-gray-50'
                           : 'hover:bg-amber-100'
-                        }`}
+                      }`}
                     >
                       {loadingActions.has(item._id) ? (
                         <>
@@ -384,10 +390,11 @@ const Notifications = () => {
                       type="button"
                       onClick={() => handleDelete(item._id)}
                       disabled={deletingNotifications.has(item._id)}
-                      className={`inline-flex items-center gap-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-medium text-rose-600 transition hover:bg-rose-100 min-h-[44px] min-w-[100px] justify-center touch-manipulation ${deletingNotifications.has(item._id)
+                      className={`inline-flex items-center gap-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-medium text-rose-600 transition hover:bg-rose-100 min-h-[44px] min-w-[100px] justify-center touch-manipulation ${
+                        deletingNotifications.has(item._id)
                           ? 'opacity-70 cursor-not-allowed bg-gray-50'
                           : 'hover:bg-rose-100'
-                        }`}
+                      }`}
                     >
                       {deletingNotifications.has(item._id) ? (
                         <>
@@ -483,6 +490,12 @@ const Notifications = () => {
                   <h4 className="text-lg sm:text-xl font-semibold text-slate-900 mb-2 sm:mb-3 leading-tight">
                     {selectedNotification.message}
                   </h4>
+                  {selectedNotification.productId?.name && (
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm font-medium">
+                      <InformationCircleIcon className="h-4 w-4" />
+                      Product: {selectedNotification.productId.name}
+                    </div>
+                  )}
                 </div>
 
                 {/* Details */}
@@ -528,10 +541,11 @@ const Notifications = () => {
                         handleClosePopup();
                       }}
                       disabled={loadingActions.has(selectedNotification._id)}
-                      className={`flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-amber-700 px-4 py-2.5 sm:py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#007aa3] min-h-[44px] touch-manipulation ${loadingActions.has(selectedNotification._id)
+                      className={`flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-amber-700 px-4 py-2.5 sm:py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#007aa3] min-h-[44px] touch-manipulation ${
+                        loadingActions.has(selectedNotification._id)
                           ? 'opacity-70 cursor-not-allowed bg-gray-400'
                           : 'hover:bg-[#007aa3]'
-                        }`}
+                      }`}
                     >
                       {loadingActions.has(selectedNotification._id) ? (
                         <>
@@ -555,10 +569,11 @@ const Notifications = () => {
                         handleClosePopup();
                       }}
                       disabled={deletingNotifications.has(selectedNotification._id)}
-                      className={`flex-1 inline-flex items-center justify-center gap-2 rounded-lg border border-rose-200 bg-rose-50 px-4 py-2.5 sm:py-3 text-sm font-semibold text-rose-600 transition hover:bg-rose-100 min-h-[44px] touch-manipulation ${deletingNotifications.has(selectedNotification._id)
+                      className={`flex-1 inline-flex items-center justify-center gap-2 rounded-lg border border-rose-200 bg-rose-50 px-4 py-2.5 sm:py-3 text-sm font-semibold text-rose-600 transition hover:bg-rose-100 min-h-[44px] touch-manipulation ${
+                        deletingNotifications.has(selectedNotification._id)
                           ? 'opacity-70 cursor-not-allowed bg-gray-50'
                           : 'hover:bg-rose-100'
-                        }`}
+                      }`}
                     >
                       {deletingNotifications.has(selectedNotification._id) ? (
                         <>

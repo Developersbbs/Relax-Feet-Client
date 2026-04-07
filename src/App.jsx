@@ -9,9 +9,11 @@ import { ToastContainer } from 'react-toastify'
 import Sidebar from './components/Sidebar'
 import Layout from './layout/Layout'
 import { setUser } from './redux/features/auth/loginSlice'
+import ProductManagement from './pages/ProductManagement'
 import ManageCustomers from './pages/ManageCustomers'
 import ManageBills from './pages/CreateBill'
 import Notifications from './pages/Notifications'
+import StockReport from './pages/StockReport'
 import Services from './pages/Services'
 import Reports from './pages/Reports'
 import CategoryManagement from './pages/CategoryManagement'
@@ -60,6 +62,10 @@ const App = () => {
           element: <Services />
         },
         {
+          path: '/products',
+          element: <ProductManagement />
+        },
+        {
           path: '/manage-customers',
           element: <ManageCustomers />
         },
@@ -74,6 +80,10 @@ const App = () => {
         {
           path: '/reports',
           element: <Reports />
+        },
+        {
+          path: '/stock-report',
+          element: <StockReport />
         },
         {
           path: '/categories',

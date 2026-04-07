@@ -156,7 +156,7 @@ const CategoryManagement = () => {
               <span className="truncate">Category Management</span>
             </h1>
             <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
-              Manage your categories - {categories.length} categories total
+              Manage your product categories - {categories.length} categories total
             </p>
           </div>
           {canModify && (
@@ -205,10 +205,11 @@ const CategoryManagement = () => {
                 <h3 className="text-lg sm:text-xl font-bold text-[#0099CC] dark:text-white truncate flex-1 mr-2">
                   {category.name}
                 </h3>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${category.status === 'active'
+                <span className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
+                  category.status === 'active'
                     ? 'bg-green-100 text-green-800'
                     : 'bg-red-100 text-red-800'
-                  }`}>
+                }`}>
                   {category.status}
                 </span>
               </div>
@@ -223,10 +224,11 @@ const CategoryManagement = () => {
                   </button>
                   <button
                     onClick={() => handleStatusToggle(category)}
-                    className={`py-2 px-4 rounded-lg transition-colors font-medium text-sm sm:text-base ${category.status === 'active'
+                    className={`py-2 px-4 rounded-lg transition-colors font-medium text-sm sm:text-base ${
+                      category.status === 'active'
                         ? 'bg-red-100 hover:bg-red-200 text-red-700'
                         : 'bg-green-100 hover:bg-green-200 text-green-700'
-                      }`}
+                    }`}
                   >
                     {category.status === 'active' ? '🚫 Deactivate' : '✅ Activate'}
                   </button>
@@ -298,16 +300,17 @@ const CategoryManagement = () => {
                   type="button"
                   onClick={handleSubmit}
                   disabled={loading}
-                  className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold transition-colors text-sm sm:text-base order-1 sm:order-2 ${loading
+                  className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold transition-colors text-sm sm:text-base order-1 sm:order-2 ${
+                    loading
                       ? "bg-gray-400 cursor-not-allowed text-white"
                       : "bg-amber-700 hover:bg-amber-800 text-white shadow-lg hover:shadow-xl"
-                    }`}
+                  }`}
                 >
                   {loading
                     ? "Saving..."
                     : editingCategory
-                      ? "Update Category"
-                      : "Create Category"}
+                    ? "Update Category"
+                    : "Create Category"}
                 </button>
               </div>
             </div>
