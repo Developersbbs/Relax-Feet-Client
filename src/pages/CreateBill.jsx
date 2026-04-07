@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../redux/features/auth/loginSlice';
-import { Plus, Edit, Trash2, Eye, FileText, Calendar, DollarSign, AlertCircle, Search, Filter, Download, Printer, X, User, Activity, ChevronDown, Ticket } from 'lucide-react';
-import { toast } from 'react-toastify';
+import { Plus, Edit, Trash2, Eye, FileText, Calendar, DollarSign, AlertCircle, Search, Filter, Download, Printer, X, User, Activity, ChevronDown } from 'lucide-react';
 
 const customerFormInitialState = {
   name: '',
@@ -66,14 +65,9 @@ const ManageBills = () => {
     billDate: new Date().toISOString().split('T')[0],
     dueDate: '',
     notes: '',
-    branchId: '',
-    couponCode: '',
-    couponDiscount: 0
+    branchId: ''
   });
   const [searchTerm, setSearchTerm] = useState('');
-  const [couponLoading, setCouponLoading] = useState(false);
-  const [couponApplied, setCouponApplied] = useState(false);
-  const [appliedCouponData, setAppliedCouponData] = useState(null);
   const [statusFilter, setStatusFilter] = useState('all');
   const [branchFilter, setBranchFilter] = useState('all');
   const [branches, setBranches] = useState([]);
@@ -417,25 +411,11 @@ const ManageBills = () => {
     setShowItemSelector(true);
   };
 
-  // Calculate totals with PERCENTAGE-based discount, tax, and COUPON
+  // Calculate totals with PERCENTAGE-based discount and tax
   useEffect(() => {
     const subtotal = formData.items.reduce((sum, item) => sum + (item.total || 0), 0);
-    const standardDiscount = (subtotal * (formData.discountPercent || 0)) / 100;
-
-    let couponDiscount = 0;
-    if (appliedCouponData) {
-      if (appliedCouponData.discountType === 'percentage') {
-        couponDiscount = (subtotal * appliedCouponData.discountValue) / 100;
-        if (appliedCouponData.maxDiscountAmount && couponDiscount > appliedCouponData.maxDiscountAmount) {
-          couponDiscount = appliedCouponData.maxDiscountAmount;
-        }
-      } else {
-        couponDiscount = appliedCouponData.discountValue;
-      }
-    }
-
-    const totalDiscount = standardDiscount + couponDiscount;
-    const taxableAmount = Math.max(subtotal - totalDiscount, 0);
+    const discountAmount = (subtotal * (formData.discountPercent || 0)) / 100;
+    const taxableAmount = Math.max(subtotal - discountAmount, 0);
     const taxAmount = (taxableAmount * (formData.taxPercent || 0)) / 100;
     const totalAmount = taxableAmount + taxAmount;
     const dueAmount = Math.max(totalAmount - (formData.paidAmount || 0), 0);
@@ -443,57 +423,12 @@ const ManageBills = () => {
     setFormData(prev => ({
       ...prev,
       subtotal,
-      discountAmount: totalDiscount,
-      couponDiscount,
+      discountAmount,
       taxAmount,
       totalAmount,
       dueAmount
     }));
-  }, [formData.items, formData.discountPercent, formData.taxPercent, formData.paidAmount, appliedCouponData]);
-
-  const handleApplyCoupon = async () => {
-    if (!formData.couponCode.trim()) {
-      toast.error('Please enter a coupon code');
-      return;
-    }
-
-    setCouponLoading(true);
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/coupons/validate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          code: formData.couponCode,
-          billAmount: formData.subtotal
-        })
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        setAppliedCouponData(data.coupon);
-        setCouponApplied(true);
-        toast.success(`Coupon "${data.coupon.code}" applied!`);
-      } else {
-        toast.error(data.message || 'Invalid coupon code');
-        setAppliedCouponData(null);
-        setCouponApplied(false);
-      }
-    } catch (error) {
-      toast.error('Error validating coupon');
-    } finally {
-      setCouponLoading(false);
-    }
-  };
-
-  const removeCoupon = () => {
-    setAppliedCouponData(null);
-    setCouponApplied(false);
-    setFormData(prev => ({ ...prev, couponCode: '' }));
-    toast.info('Coupon removed');
-  };
+  }, [formData.items, formData.discountPercent, formData.taxPercent, formData.paidAmount]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -530,8 +465,7 @@ const ManageBills = () => {
         dueAmount: formData.dueAmount,
         billDate: formData.billDate,
         dueDate: formData.dueDate,
-        notes: formData.notes,
-        couponCode: couponApplied ? appliedCouponData.code : undefined
+        notes: formData.notes
       };
 
       let response;
@@ -1576,53 +1510,6 @@ Service Item
                           <span className="absolute right-2 top-1.5 text-gray-400 text-xs">%</span>
                         </div>
                       </div>
-
-                      {/* Coupon Section */}
-                      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 space-y-2">
-                        <div className="flex items-center gap-2 text-[#0099CC] font-semibold text-xs uppercase tracking-wider">
-                          <Ticket size={14} />
-                          Coupon Code
-                        </div>
-                        {couponApplied ? (
-                          <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/30 p-2 rounded-lg border border-blue-100 dark:border-blue-800">
-                            <div className="flex flex-col">
-                              <span className="font-bold text-[#0099CC] text-sm">{appliedCouponData.code}</span>
-                              <span className="text-[10px] text-green-600 dark:text-green-400 font-medium">Applied Successfully</span>
-                            </div>
-                            <button type="button" onClick={removeCoupon} className="p-1 hover:bg-white dark:hover:bg-gray-700 rounded-full text-red-500 transition-colors">
-                              <X size={14} />
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="flex gap-1">
-                            <input
-                              type="text"
-                              placeholder="Enter Code"
-                              className="flex-1 px-2 py-1.5 text-xs border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-1 focus:ring-[#0099CC] outline-none bg-transparent dark:text-white uppercase"
-                              value={formData.couponCode}
-                              onChange={(e) => setFormData({ ...formData, couponCode: e.target.value.toUpperCase() })}
-                            />
-                            <button
-                              type="button"
-                              onClick={handleApplyCoupon}
-                              disabled={couponLoading || !formData.couponCode}
-                              className="px-3 py-1.5 bg-[#0099CC] text-white text-xs font-bold rounded-lg hover:bg-[#007aa3] disabled:opacity-50 transition-colors"
-                            >
-                              {couponLoading ? '...' : 'APPLY'}
-                            </button>
-                          </div>
-                        )}
-                      </div>
-
-                      {formData.couponDiscount > 0 && (
-                        <div className="flex justify-between items-center text-green-600 dark:text-green-400 py-1">
-                          <span className="text-xs font-medium uppercase transition-all flex items-center gap-1">
-                            <Ticket size={12} />
-                            Coupon Discount:
-                          </span>
-                          <span className="font-bold">-₹{formData.couponDiscount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                        </div>
-                      )}
                       <div className="pt-3 border-t-2 border-dashed border-gray-300 dark:border-gray-700">
                         <div className="flex justify-between items-end">
                           <span className="font-bold text-base text-gray-800 dark:text-gray-200 uppercase">Total:</span>
