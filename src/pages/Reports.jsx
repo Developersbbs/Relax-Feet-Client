@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import instance from '../services/instance';
+import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 
@@ -26,10 +26,18 @@ const Reports = () => {
 
       // Fetch multiple stats in parallel
       const [productsRes, customersRes, billsRes, servicesRes] = await Promise.all([
-        instance.get('/products').catch(() => ({ data: { products: [] } })),
-        instance.get('/customers').catch(() => ({ data: { customers: [] } })),
-        instance.get('/bills').catch(() => ({ data: { bills: [] } })),
-        instance.get('/services').catch(() => ({ data: { services: [] } }))
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/products`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }).catch(() => ({ data: { products: [] } })),
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/customers`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }).catch(() => ({ data: { customers: [] } })),
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/bills`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }).catch(() => ({ data: { bills: [] } })),
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/services`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }).catch(() => ({ data: { services: [] } }))
       ]);
 
       // Calculate stats

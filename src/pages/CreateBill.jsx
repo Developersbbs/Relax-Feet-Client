@@ -129,11 +129,11 @@ const ManageBills = () => {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-
+      
       if (!customersResponse.ok) {
         throw new Error(`Failed to fetch customers: ${customersResponse.status}`);
       }
-
+      
       const customersData = await customersResponse.json();
       setCustomers(customersData.customers || []);
       setFilteredCustomers(customersData.customers || []);
@@ -144,11 +144,11 @@ const ManageBills = () => {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-
+      
       if (!billsResponse.ok) {
         throw new Error(`Failed to fetch bills: ${billsResponse.status}`);
       }
-
+      
       const billsData = await billsResponse.json();
 
       // Update bills and pagination state
@@ -178,7 +178,7 @@ const ManageBills = () => {
         .filter(bill => bill.paymentStatus !== 'paid')
         .reduce((sum, bill) => sum + (bill.dueAmount || 0), 0);
       const totalRevenue = billsData.bills.reduce((sum, bill) => sum + (bill.totalAmount || 0), 0);
-
+      
       // Update stats state
       setStats({
         totalBills: billsData.total || 0,
@@ -187,20 +187,20 @@ const ManageBills = () => {
         pendingPayments,
         totalRevenue
       });
-
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      setStats({
-        totalBills: 0,
-        todayBills: 0,
-        monthlyBills: 0,
-        pendingPayments: 0,
-        totalRevenue: 0
-      });
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
+      
+   } catch (error) {
+     console.error('Error fetching data:', error);
+     setStats({
+       totalBills: 0,
+       todayBills: 0,
+       monthlyBills: 0,
+       pendingPayments: 0,
+       totalRevenue: 0
+     });
+     setError(error.message);
+   } finally {
+     setLoading(false);
+   }
   }, [fetchProducts, fetchServices]);
 
   useEffect(() => {
@@ -230,7 +230,7 @@ const ManageBills = () => {
       setFilteredCustomers(customers || []);
     } else {
       const searchTerm = customerSearchTerm.toLowerCase();
-      const filtered = customers.filter(customer =>
+      const filtered = customers.filter(customer => 
         customer.name?.toLowerCase().includes(searchTerm) ||
         customer.email?.toLowerCase().includes(searchTerm) ||
         customer.phone?.toLowerCase().includes(searchTerm) ||
@@ -247,7 +247,7 @@ const ManageBills = () => {
       filtered = filtered.filter(bill =>
         bill.billNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (bill.customerId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          bill.customerId?.email?.toLowerCase().includes(searchTerm.toLowerCase()))
+        bill.customerId?.email?.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
     if (statusFilter !== 'all') {
@@ -464,7 +464,7 @@ const ManageBills = () => {
     e.preventDefault();
 
     if (submitting) return; // Prevent multiple clicks during loading
-
+    
     setSubmitting(true);
     setError('');
     setSuccess('');
@@ -1005,7 +1005,6 @@ const ManageBills = () => {
             <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Bill Number</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Branch</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Customer</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Amount</th>
@@ -1025,10 +1024,6 @@ const ManageBills = () => {
                       <div className="text-sm font-medium text-gray-900 dark:text-white">{bill.billNumber}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900 dark:text-white">{bill.branchId?.name || 'N/A'}</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">{bill.branchId?.code || 'N/A'}</div>
-                    </td>
-                    <td className="px-6 py-4">
                       <div className="text-sm text-gray-900 dark:text-white">{bill.customerId?.name}</div>
                       <div className="text-sm text-gray-500 dark:text-gray-400">{bill.customerId?.email}</div>
                     </td>
@@ -1039,10 +1034,11 @@ const ManageBills = () => {
                       <div className="text-sm text-gray-900 dark:text-white">₹{bill.totalAmount?.toLocaleString() || '0'}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${bill.paymentStatus === 'paid' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' :
-                          bill.paymentStatus === 'partial' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' :
-                            'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
-                        }`}>
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        bill.paymentStatus === 'paid' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' :
+                        bill.paymentStatus === 'partial' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' :
+                        'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
+                      }`}>
                         {bill.paymentStatus.charAt(0).toUpperCase() + bill.paymentStatus.slice(1)}
                       </span>
                     </td>
@@ -1144,10 +1140,11 @@ const ManageBills = () => {
                   <button
                     key={pageNumber}
                     onClick={() => handlePageChange(pageNumber)}
-                    className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${pageNumber === pagination.currentPage
+                    className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                      pageNumber === pagination.currentPage
                         ? 'z-10 bg-[#f8e6e6] border-[#720000] text-[#720000] dark:bg-[#3d0000] dark:border-[#720000] dark:text-[#8a1a1a]'
                         : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600'
-                      }`}
+                    }`}
                   >
                     {pageNumber}
                   </button>
@@ -1198,12 +1195,12 @@ const ManageBills = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Bill Date *</label>
-                  <input
-                    type="date"
-                    value={formData.billDate}
-                    onChange={(e) => setFormData({ ...formData, billDate: e.target.value })}
-                    required
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-[#720000] focus:border-[#720000] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  <input 
+                    type="date" 
+                    value={formData.billDate} 
+                    onChange={(e) => setFormData({ ...formData, billDate: e.target.value })} 
+                    required 
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-[#720000] focus:border-[#720000] bg-white dark:bg-gray-700 text-gray-900 dark:text-white" 
                   />
                 </div>
               </div>
@@ -1271,11 +1268,11 @@ const ManageBills = () => {
                       </div>
                       <div className="col-span-2">
                         <label className="block text-xs font-medium text-gray-700 dark:text-gray-300">Total (₹)</label>
-                        <input
-                          type="text"
-                          value={item.total.toLocaleString()}
-                          readOnly
-                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-gray-100 dark:bg-gray-500 text-gray-900 dark:text-white"
+                        <input 
+                          type="text" 
+                          value={item.total.toLocaleString()} 
+                          readOnly 
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-gray-100 dark:bg-gray-500 text-gray-900 dark:text-white" 
                         />
                       </div>
                       <div className="col-span-1">
@@ -1291,12 +1288,12 @@ const ManageBills = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Notes</label>
-                  <textarea
-                    rows="3"
-                    value={formData.notes}
-                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-[#720000] focus:border-[#720000] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    placeholder="Additional notes..."
+                  <textarea 
+                    rows="3" 
+                    value={formData.notes} 
+                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })} 
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-[#720000] focus:border-[#720000] bg-white dark:bg-gray-700 text-gray-900 dark:text-white" 
+                    placeholder="Additional notes..." 
                   />
                 </div>
                 <div>
@@ -1307,26 +1304,26 @@ const ManageBills = () => {
                     </div>
                     <div className="flex justify-between py-2">
                       <span className="text-gray-600 dark:text-gray-400">Tax (%):</span>
-                      <input
-                        type="number"
-                        value={formData.taxPercent}
-                        onChange={(e) => setFormData({ ...formData, taxPercent: Number(e.target.value) })}
-                        min="0"
-                        max="100"
-                        step="0.01"
-                        className="w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-right bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                      <input 
+                        type="number" 
+                        value={formData.taxPercent} 
+                        onChange={(e) => setFormData({ ...formData, taxPercent: Number(e.target.value) })} 
+                        min="0" 
+                        max="100" 
+                        step="0.01" 
+                        className="w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-right bg-white dark:bg-gray-600 text-gray-900 dark:text-white" 
                       />
                     </div>
                     <div className="flex justify-between py-2">
                       <span className="text-gray-600 dark:text-gray-400">Discount (%):</span>
-                      <input
-                        type="number"
-                        value={formData.discountPercent}
-                        onChange={(e) => setFormData({ ...formData, discountPercent: Number(e.target.value) })}
-                        min="0"
-                        max="100"
-                        step="0.01"
-                        className="w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-right bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                      <input 
+                        type="number" 
+                        value={formData.discountPercent} 
+                        onChange={(e) => setFormData({ ...formData, discountPercent: Number(e.target.value) })} 
+                        min="0" 
+                        max="100" 
+                        step="0.01" 
+                        className="w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-right bg-white dark:bg-gray-600 text-gray-900 dark:text-white" 
                       />
                     </div>
                     <div className="flex justify-between py-2 border-t border-gray-200 dark:border-gray-600 mt-2">
@@ -1336,9 +1333,9 @@ const ManageBills = () => {
                     <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
                       <div className="flex justify-between py-2">
                         <span className="text-gray-600 dark:text-gray-400">Payment Status:</span>
-                        <select
-                          value={formData.paymentStatus}
-                          onChange={(e) => setFormData({ ...formData, paymentStatus: e.target.value })}
+                        <select 
+                          value={formData.paymentStatus} 
+                          onChange={(e) => setFormData({ ...formData, paymentStatus: e.target.value })} 
                           className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
                         >
                           <option value="pending">Pending</option>
@@ -1348,9 +1345,9 @@ const ManageBills = () => {
                       </div>
                       <div className="flex justify-between py-2">
                         <span className="text-gray-600 dark:text-gray-400">Payment Method:</span>
-                        <select
-                          value={formData.paymentMethod}
-                          onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
+                        <select 
+                          value={formData.paymentMethod} 
+                          onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })} 
                           className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
                         >
                           <option value="cash">Cash</option>
@@ -1361,13 +1358,13 @@ const ManageBills = () => {
                       </div>
                       <div className="flex justify-between py-2">
                         <span className="text-gray-600 dark:text-gray-400">Paid Amount (₹):</span>
-                        <input
-                          type="number"
-                          value={formData.paidAmount}
-                          onChange={(e) => setFormData({ ...formData, paidAmount: Number(e.target.value) })}
-                          min="0"
-                          step="0.01"
-                          className="w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-right bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                        <input 
+                          type="number" 
+                          value={formData.paidAmount} 
+                          onChange={(e) => setFormData({ ...formData, paidAmount: Number(e.target.value) })} 
+                          min="0" 
+                          step="0.01" 
+                          className="w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-right bg-white dark:bg-gray-600 text-gray-900 dark:text-white" 
                         />
                       </div>
                       <div className="flex justify-between py-2">
@@ -1386,10 +1383,11 @@ const ManageBills = () => {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className={`px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-300 ${submitting
+                  className={`px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-300 ${
+                    submitting
                       ? 'bg-gray-400 cursor-not-allowed opacity-70'
                       : 'bg-[#720000] hover:bg-[#8a1a1a] text-white focus:ring-amber-700'
-                    }`}
+                  }`}
                 >
                   <div className="flex items-center gap-2">
                     {submitting ? (
@@ -1440,10 +1438,10 @@ const ManageBills = () => {
             <div className="mb-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Search by name, email, or phone..."
-                  value={customerSearchTerm}
+                <input 
+                  type="text" 
+                  placeholder="Search by name, email, or phone..." 
+                  value={customerSearchTerm} 
                   onChange={(e) => setCustomerSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#720000] focus:border-[#720000] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   autoFocus
@@ -1519,10 +1517,11 @@ const ManageBills = () => {
                     <button
                       type="submit"
                       disabled={customerFormSubmitting}
-                      className={`px-4 py-2 rounded-md text-white ${customerFormSubmitting
+                      className={`px-4 py-2 rounded-md text-white ${
+                        customerFormSubmitting
                           ? 'bg-orange-400 cursor-not-allowed opacity-80'
                           : 'bg-[#720000] hover:bg-[#8a1a1a] transition-colors'
-                        }`}
+                      }`}
                     >
                       {customerFormSubmitting ? 'Creating...' : 'Create Customer'}
                     </button>

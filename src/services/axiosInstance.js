@@ -1,19 +1,15 @@
-// axiosInstance.js
 import axios from 'axios';
 
-const baseURL = `${import.meta.env.VITE_API_BASE_URL}/api`;
-
-const instance = axios.create({
-  baseURL,
-  timeout: 10000,
+const axiosInstance = axios.create({
+  baseURL: `${import.meta.env.VITE_API_BASE_URL}/api`,
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true,
+  withCredentials: true
 });
 
-// Add request interceptor to include auth token
-instance.interceptors.request.use(
+// Request interceptor to add auth token
+axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -26,12 +22,13 @@ instance.interceptors.request.use(
   }
 );
 
-// Add response interceptor to handle auth errors
-instance.interceptors.response.use(
+// Response interceptor for error handling
+axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Handle common errors (e.g., 401 Unauthorized)
     if (error.response?.status === 401) {
-      // Token expired or invalid - redirect to login
+      // Handle unauthorized access (e.g., redirect to login)
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/login';
@@ -40,4 +37,4 @@ instance.interceptors.response.use(
   }
 );
 
-export default instance;
+export default axiosInstance;

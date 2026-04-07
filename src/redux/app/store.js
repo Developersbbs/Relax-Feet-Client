@@ -3,7 +3,6 @@ import registerReducer from "../features/auth/registerSlice";
 import loginReducer from "../features/auth/loginSlice";
 import userReducer from "../features/auth/userSlice";
 import productReducer from "../features/products/productSlice";
-import branchReducer from "../features/branches/branchSlice";
 // import purchaseReducer from "../features/purchases/purchaseSlice";
 
 const store = configureStore({
@@ -12,10 +11,9 @@ const store = configureStore({
     login: loginReducer,
     user: userReducer,
     products: productReducer,
-    branch: branchReducer,
     //  purchases: purchaseReducer, 
   },
-  middleware: (getDefaultMiddleware) =>
+   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE']

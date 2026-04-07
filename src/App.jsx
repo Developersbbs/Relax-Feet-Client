@@ -18,7 +18,6 @@ import Services from './pages/Services'
 import Reports from './pages/Reports'
 import CategoryManagement from './pages/CategoryManagement'
 import Pages from './pages/Pages'
-import BranchManagement from './pages/BranchManagement'
 
 
 
@@ -28,7 +27,7 @@ const App = () => {
   const dispatch = useDispatch();
 
 
-  useEffect(() => {
+   useEffect(() => {
     const savedUser = localStorage.getItem("user")
     const savedToken = localStorage.getItem("token")
 
@@ -36,74 +35,70 @@ const App = () => {
       dispatch(setUser({ user: JSON.parse(savedUser), token: savedToken }))
     }
   }, [dispatch])
+   
+    const router = createBrowserRouter([
+      {
+        path:'/',
+        element:<Layout/>,
+        children:[
 
-  const router = createBrowserRouter([
-    {
-      path: '/',
-      element: <Layout />,
-      children: [
-
-        {
-          path: '/login',
-          element: <Login />
-        },
-        {
-          path: '/register',
-          element: <Register />
-        },
-        {
-          path: '/',
-          element: <Home />
-        },
-        {
-          path: '/services',
-          element: <Services />
-        },
-        {
-          path: '/products',
-          element: <ProductManagement />
-        },
-        {
-          path: '/manage-customers',
-          element: <ManageCustomers />
-        },
-        {
-          path: '/manage-bill',
-          element: <ManageBills />
-        },
-        {
-          path: '/notifications',
-          element: <Notifications />
-        },
-        {
-          path: '/reports',
-          element: <Reports />
-        },
-        {
-          path: '/stock-report',
-          element: <StockReport />
-        },
-        {
-          path: '/categories',
-          element: <CategoryManagement />
-        },
-        {
-          path: '/pages',
-          element: <Pages />
-        },
-        {
-          path: '/branches',
-          element: <BranchManagement />
-        },
-      ]
-    }
-  ])
+          {
+            path:'/login',
+            element:<Login/>
+          },
+          {
+            path:'/register',
+            element:<Register/>
+          },
+          {
+            path:'/',
+            element:<Home/>
+          },
+          {
+            path:'/services',
+            element:<Services/>
+          },
+          {
+            path:'/products',
+            element:<ProductManagement/>
+          },
+          {
+            path:'/manage-customers',
+            element:<ManageCustomers/>
+          },
+          {
+            path:'/manage-bill',
+            element:<ManageBills/>
+          },
+          {
+            path:'/notifications',
+            element:<Notifications/>
+          },
+          {
+            path:'/reports',
+            element:<Reports/>
+          },
+          {
+            path:'/stock-report',
+            element:<StockReport/>
+          },
+          {
+            path:'/categories',
+            element:<CategoryManagement/>
+          },
+          {
+            path:'/pages',
+            element:<Pages/>
+          },
+        ]
+      }
+    ])
   return (
     <>
-
-      <RouterProvider router={router} />
-      <ToastContainer position='bottom-right' autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
-
+    
+    <RouterProvider router={router}/>
+    <ToastContainer position='bottom-right' autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover/>
+   
     </>
   )
 }
