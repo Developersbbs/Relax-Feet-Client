@@ -1,10 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { selectUser } from '../redux/features/auth/loginSlice';
-import { Clock, Activity, Users, FileText, DollarSign, Package, AlertTriangle, XCircle, TrendingUp, UserPlus, ShoppingCart, Eye } from 'lucide-react';
 import billApiService from '../services/billApiService';
 import customerService from '../services/customerService';
 import axios from 'axios';
+
 const Home = () => {
   const user = useSelector(selectUser);
   const [dashboardData, setDashboardData] = useState({});

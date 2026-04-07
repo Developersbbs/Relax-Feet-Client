@@ -1,194 +1,8 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../redux/features/auth/loginSlice';
 import { Plus, Edit, Trash2, Eye, FileText, Calendar, DollarSign, AlertCircle, Search, Filter, Download, Printer, X, User, Activity, ChevronDown, Ticket } from 'lucide-react';
 import { toast } from 'react-toastify';
-import html2pdf from 'html2pdf.js';
-import html2canvas from 'html2canvas';
-
-const getInvoiceHTML = (bill, logoSrc = '/Asset 2.svg') => {
-  const customer = bill.customerId || {};
-  const branch = bill.branchId || {};
-  const branchName = branch.name || 'HEALTH AND HEAL';
-  const branchAddress = branch.address || 'No: 18, First Floor, Prakasam Street, Janaki Nagar, Valasaravakkam, Chennai - 600087.';
-  const branchGst = branch.gstNumber || '33AAOFH2184C1ZL';
-  const branchContact = branch.contactNumber || '9042716037';
-  const branchEmail = branch.email || 'info@fettlehealthandheal.com';
-  const branchWebsite = branch.website || 'www.fettlehealthandheal.com';
-  const bankName = branch.bankDetails?.bankName || 'HDFC';
-  const bankAccount = branch.bankDetails?.accountNumber || '50200108255392';
-  const bankBranchName = branch.bankDetails?.branchBankName || 'VALASARAVAKKAM, Chennai - 600087';
-  const bankIfsc = branch.bankDetails?.ifscCode || 'HDFC0000024';
-  const bankUpi = branch.bankDetails?.upiId || 'healthandhealhh-1@okhdfcbank';
-
-  const numToWords = (num) => {
-    const a = ['', 'one ', 'two ', 'three ', 'four ', 'five ', 'six ', 'seven ', 'eight ', 'nine ', 'ten ', 'eleven ', 'twelve ', 'thirteen ', 'fourteen ', 'fifteen ', 'sixteen ', 'seventeen ', 'eighteen ', 'nineteen '];
-    const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
-    if ((num = num.toString()).length > 9) return 'overflow';
-    const n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
-    if (!n) return;
-    let str = '';
-    str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'crore ' : '';
-    str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'lakh ' : '';
-    str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'thousand ' : '';
-    str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred ' : '';
-    str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : '';
-    return str.trim() + ' rupees';
-  };
-
-  return `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>Invoice - ${bill.billNumber}</title>
-        <style>
-          body { font-family: 'Times New Roman', serif; margin: 0; padding: 20px; font-size: 13px; color: #000; }
-          .invoice-container { max-width: 800px; margin: 0 auto; border: 2px solid #000; padding: 0; }
-          .header-text { text-align: center; font-weight: bold; font-size: 18px; padding: 8px; border-bottom: 2px solid #000; text-transform: uppercase; }
-          .top-header { border-bottom: 1px solid #000; padding: 10px 0; }
-          .logo { width: 100%; display: block; height: auto; object-fit: contain; padding: 5px 0; }
-          
-          .info-row { display: flex; border-bottom: 1px solid #000; }
-          .info-left, .info-right { width: 50%; padding: 8px 12px; }
-          .info-right { border-left: 1px solid #000; }
-          
-          .bold { font-weight: bold; }
-          .mt-5 { margin-top: 5px; }
-          
-          table { width: 100%; border-collapse: collapse; text-align: center; table-layout: fixed; }
-          th, td { border: 1px solid #000; padding: 6px; word-wrap: break-word; }
-          th { border-bottom: 2px solid #000; font-weight: bold; }
-          
-          .desc-cell { text-align: left; padding-left: 10px; vertical-align: top; height: 18rem; }
-          .amount-cell { text-align: right; padding-right: 8px; font-weight: bold; vertical-align: top; }
-          
-          .footer-section { padding: 10px 12px; }
-          .sign-box-outer { display: flex; justify-content: flex-end; margin-top: 15px; }
-          .sign-box { border: 1px solid #000; width: 250px; text-align: center; height: 90px; position: relative; }
-          
-          .computer-gen { text-align: center; font-size: 11px; margin-top: 15px; max-width: 800px; margin-inline: auto; opacity: 0.8; }
-          
-          @media print { body { padding: 0; } .invoice-container { border-width: 2px; } }
-        </style>
-      </head>
-      <body>
-        <div class="invoice-container">
-          <div class="header-text">TAX INVOICE</div>
-          <div class="top-header">
-            <img src="${logoSrc}" alt="Logo" class="logo" />
-          </div>
-          
-          <div class="info-row">
-            <div class="info-left">
-              <div class="bold" style="font-size: 14px;">${branchName}</div>
-              <div>${branchAddress}</div>
-              <div class="bold mt-5">GSTIN: ${branchGst}</div>
-              <div class="bold">Contact: ${branchContact}</div>
-            </div>
-            <div class="info-right">
-              <div class="bold">BILL TO:</div>
-              <div class="bold" style="font-size: 14px;">${customer?.name || ''}</div>
-              ${customer?.address?.street ? `<div>${customer.address.street.toUpperCase()}</div>` : ''}
-              ${customer?.address?.city || customer?.address?.zipCode ? `<div>${(customer?.address?.city || '').toUpperCase()} ${(customer?.address?.zipCode || '')}</div>` : ''}
-              <div>${customer?.phone ? 'CONTACT: ' + customer.phone : customer?.email || ''}</div>
-            </div>
-          </div>
-          <div class="info-row">
-            <div class="info-left">
-              <div class="bold">Mail id: ${branchEmail}</div>
-              <div class="bold">Website: ${branchWebsite}</div>
-            </div>
-            <div class="info-right">
-              <div class="bold">INVOICE NO: ${bill?.billNumber || ''}</div>
-              <div class="bold">INVOICE DATE : ${bill?.billDate ? new Date(bill.billDate).toLocaleDateString('en-GB').replace(/\//g, '.') : ''}</div>
-              <div class="bold">MODE OF PAYMENT: ${(bill?.paymentMethod || '').toUpperCase()}</div>
-            </div>
-          </div>
-          
-          <table>
-            <thead>
-              <tr>
-                <th style="width: 8%;">S.NO</th>
-                <th style="width: 47%;">DESCRIPTION</th>
-                <th style="width: 15%;">HSN</th>
-                <th style="width: 15%;">RATE</th>
-                <th style="width: 15%;">AMOUNT</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${(bill?.items || []).map((item, index) => {
-    const taxRate = bill?.taxPercent || 18;
-    const sgst = bill?.taxPercent > 0 ? ((bill.taxAmount || 0) / 2).toFixed(2) : '0.00';
-    const cgst = bill?.taxPercent > 0 ? ((bill.taxAmount || 0) / 2).toFixed(2) : '0.00';
-    const subtotalItem = (item?.total || 0).toFixed(2);
-
-    return `
-                <tr>
-                  <td style="vertical-align: top; padding-top: 15px; font-weight: bold;">${index + 1}</td>
-                  <td class="desc-cell" style="padding-top: 15px;">
-                    <div style="font-weight: bold;">${(item?.name || '').toUpperCase()}</div>
-                    
-                    <div style="margin-top: 60px; text-align: right; padding-right: 15px; font-weight: bold;">
-                      <div>SGST ${taxRate / 2}%</div>
-                      <div style="margin-top: 8px;">CGST ${taxRate / 2}%</div>
-                      <div style="margin-top: 8px;">TOTAL GST ${taxRate}%</div>
-                      <div style="margin-top: 40px;">ROUND OFF</div>
-                    </div>
-                  </td>
-                  <td style="vertical-align: top; padding-top: 15px; font-weight: bold;">999315</td>
-                  <td style="vertical-align: top; padding-top: 15px; font-weight: bold;">${subtotalItem}</td>
-                  <td class="amount-cell" style="padding-top: 15px;">
-                    <div>${subtotalItem}</div>
-                    <div style="margin-top: 60px;">${sgst}</div>
-                    <div style="margin-top: 8px;">${cgst}</div>
-                    <div style="margin-top: 8px;">${(bill.taxAmount || 0).toFixed(2)}</div>
-                    <div style="margin-top: 40px;">0.00</div>
-                  </td>
-                </tr>
-                `;
-  }).join('')}
-              <tr>
-                <td colspan="3" style="border-right: none;"></td>
-                <td class="bold" style="text-align: right; padding-right: 10px;">GRAND TOTAL</td>
-                <td class="bold" style="text-align: right; padding-right: 8px; font-size: 14px; background-color: #f9f9f9;">${(bill?.totalAmount || 0).toFixed(2)}</td>
-              </tr>
-            </tbody>
-          </table>
-          
-          <div class="footer-section">
-            <div class="bold" style="font-size: 12px; margin-bottom: 10px;">Amount Chargeable (in words): <span style="text-transform: uppercase;">${numToWords(Math.floor(bill.totalAmount || 0))}</span> ONLY.</div>
-            
-            <div style="display: flex; justify-content: space-between;">
-              <div style="width: 55%;">
-                <div class="bold" style="font-size: 12px; text-decoration: underline; margin-bottom: 5px;">Clinic Bank Details:</div>
-                <div style="font-size: 12px;"><strong>Bank Name:</strong> ${bankName}</div>
-                <div style="font-size: 12px;"><strong>A/c No:</strong> ${bankAccount}</div>
-                <div style="font-size: 12px;"><strong>Branch:</strong> ${bankBranchName}</div>
-                <div style="font-size: 12px;"><strong>IFSC CODE:</strong> ${bankIfsc}</div>
-                <div style="font-size: 12px;"><strong>UPI ID:</strong> ${bankUpi}</div>
-                
-                <div style="margin-top: 15px; font-size: 11px; line-height: 1.4;">
-                  <div class="bold">Declaration:</div>
-                  We declare that this invoice shows the actual price of treatment and that all particulars are true and correct.
-                </div>
-              </div>
-              
-              <div style="width: 40%; text-align: right;">
-                <div class="sign-box-outer">
-                  <div class="sign-box">
-                    <div style="font-size: 11px; font-weight: bold; margin-top: 8px;">FOR ${branchName}</div>
-                    <div style="position: absolute; bottom: 8px; width: 100%; font-size: 11px; font-weight: bold; left: 0;">Authorised Signatory</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="computer-gen">This is computer generated invoice</div>
-      </body>
-    </html>
-  `;
-};
 
 const customerFormInitialState = {
   name: '',
@@ -198,7 +12,6 @@ const customerFormInitialState = {
 };
 
 const ManageBills = () => {
-  const invoiceRef = useRef(null);
   const user = useSelector(selectUser);
   const [bills, setBills] = useState([]);
   const [filteredBills, setFilteredBills] = useState([]);
@@ -226,7 +39,6 @@ const ManageBills = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalMode, setModalMode] = useState('create');
   const [selectedBill, setSelectedBill] = useState(null);
-
   const [showCustomerSelector, setShowCustomerSelector] = useState(false);
   const [showCustomerForm, setShowCustomerForm] = useState(false);
   const [customerFormData, setCustomerFormData] = useState(() => ({ ...customerFormInitialState }));
@@ -744,22 +556,16 @@ const ManageBills = () => {
       }
 
       const data = await response.json();
+      console.error('Bill API error:', data); // debug
       if (!response.ok) {
-        console.error('Bill API error:', data); // Log the error cleanly
         const msg = data.errors ? data.errors.join('; ') : (data.message || `Failed to ${modalMode} bill`);
         throw new Error(msg);
       }
 
       setSuccess(`Bill ${modalMode === 'create' ? 'created' : 'updated'} successfully!`);
-
-      // Fetch latest bills to ensure the new bill is in state for download/share
-      await fetchData();
-
-
-
       setShowModal(false);
       resetForm();
-
+      fetchData();
     } catch (err) {
       setError(err.message || 'Failed to process the bill. Please try again.');
     } finally {
@@ -775,7 +581,203 @@ const ManageBills = () => {
         return;
       }
 
-      const htmlContent = getInvoiceHTML(bill, '/Asset 2.svg');
+      const customer = bill.customerId;
+      const branch = bill.branchId || {};
+      const branchName = branch.name || 'HEALTH AND HEAL';
+      const branchAddress = branch.address || 'No: 18, First Floor, Prakasam Street, Janaki Nagar, Valasaravakkam, Chennai - 600087.';
+      const branchGst = branch.gstNumber || '33AAOFH2184C1ZL';
+      const branchContact = branch.contactNumber || '9042716037';
+      const branchEmail = branch.email || 'info@fettlehealthandheal.com';
+      const branchWebsite = branch.website || 'www.fettlehealthandheal.com';
+      const bankName = branch.bankDetails?.bankName || 'HDFC';
+      const bankAccount = branch.bankDetails?.accountNumber || '50200108255392';
+      const bankBranchName = branch.bankDetails?.branchBankName || 'VALASARAVAKKAM, Chennai - 600087';
+      const bankIfsc = branch.bankDetails?.ifscCode || 'HDFC0000024';
+      const bankUpi = branch.bankDetails?.upiId || 'healthandhealhh-1@okhdfcbank';
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Invoice - ${bill.billNumber}</title>
+            <style>
+              body { font-family: 'Times New Roman', serif; margin: 0; padding: 20px; font-size: 13px; color: #000; }
+              .invoice-container { max-width: 800px; margin: 0 auto; border: 1px solid #000; padding: 10px; }
+              .header-text { text-align: center; font-weight: bold; font-size: 16px; padding: 5px; }
+              .top-header {border-bottom: 1px solid #000; padding: 0; }
+              .logo { width: 100%; display: block; height: auto; object-fit: contain; }
+              
+              .info-row { display: flex; border-bottom: 1px solid #000; }
+              .info-left, .info-right { width: 50%; padding: 5px 10px; }
+              .info-right { border-left: 1px solid #000; }
+              
+              .bold { font-weight: bold; }
+              .mt-5 { margin-top: 5px; }
+              
+              table { width: 100%; border-collapse: collapse; text-align: center; }
+              th, td { border: 1px solid #000; padding: 5px; }
+              th { border-bottom: 2px solid #000; }
+              
+              .desc-cell { text-align: left; padding-left: 10px; vertical-align: top; height: 15rem; }
+              
+              .totals-row { text-align: right; border-bottom: none; }
+              .totals-val { border-bottom: none; }
+              
+              .footer-section { padding: 5px 10px; border-top: 1px solid #000; }
+Items
+￼Add Item
+Service *
+DIAMOND
+￼Change
+Service Item
+
+              .footer-split { display: flex; justify-content: space-between; border-top: 1px solid #000; padding-top: 20px;}
+              .sign-box { border: 1px solid #000; padding: 10px; width: 250px; text-align: center; height: 80px; display: flex; flex-direction: column; justify-content: space-between;}
+              .sign-box span { font-size: 11px; }
+              
+              .computer-gen { text-align: center; font-size: 11px; margin-top: 10px; max-width: 800px; margin-inline: auto; }
+              
+              @media print { body { padding: 0; } }
+            </style>
+          </head>
+          <body>
+            <div class="header-text">TAX INVOICE</div>
+            <div class="invoice-container">
+              <div class="top-header">
+                <img src="/Asset 2.svg" alt="Fettle Health and Heal" class="logo" />
+              </div>
+              
+              <div class="info-row">
+                <div class="info-left">
+                  <div class="bold">${branchName}</div>
+                  <div>${branchAddress}</div>
+                  <div class="bold mt-5">GSTIN: ${branchGst}</div>
+                  <div class="bold">Contact: ${branchContact}</div>
+                </div>
+                <div class="info-right">
+                  <div class="bold">BILL TO:</div>
+                  <div class="bold text-lg">${customer?.name || ''}</div>
+                  ${customer?.address?.street ? `<div>${customer.address.street.toUpperCase()}</div>` : ''}
+                  ${customer?.address?.city || customer?.address?.zipCode ? `<div>${(customer?.address?.city || '').toUpperCase()} ${(customer?.address?.zipCode || '')}</div>` : ''}
+                  <div>${customer?.phone ? 'CONTACT: ' + customer.phone : customer?.email || ''}</div>
+                </div>
+              </div>
+              <div class="info-row">
+                <div class="info-left">
+                  <div class="bold">Mail id: ${branchEmail}</div>
+                  <div class="bold">Website: ${branchWebsite}</div>
+                </div>
+                <div class="info-right">
+                  <div class="bold">INVOICE NO: ${bill?.billNumber || ''}</div>
+                  <div class="bold">INVOICE DATE : ${bill?.billDate ? new Date(bill.billDate).toLocaleDateString('en-GB').replace(/\//g, '.') : ''}</div>
+                  <div class="bold">MODE OF PAYMENT: ${(bill?.paymentMethod || '').toUpperCase()}</div>
+                </div>
+              </div>
+              
+              <table>
+                <thead>
+                  <tr>
+                    <th width="5%">S.NO</th>
+                    <th width="45%">DESCRIPTION</th>
+                    <th width="15%">HSN</th>
+                    <th width="15%">RATE</th>
+                    <th width="20%">AMOUNT</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${(bill?.items || []).map((item, index) => {
+        const sgst = bill?.taxPercent > 0 ? ((bill.taxAmount || 0) / 2).toFixed(2) : '0.00';
+        const cgst = bill?.taxPercent > 0 ? ((bill.taxAmount || 0) / 2).toFixed(2) : '0.00';
+        const baseRate = (item?.total || 0).toFixed(2);
+
+        return `
+                    <tr>
+                      <td style="vertical-align: top; padding-top: 40px; font-weight: bold;">${index + 1}</td>
+                      <td class="desc-cell" style="padding-top: 40px;">
+                        <div style="font-weight: bold;">${(item?.name || '').toUpperCase()}</div>
+                        
+                        <div style="margin-top: 50px; text-align: right; padding-right: 10px; font-weight: bold;">
+                          <div>SGST ${bill?.taxPercent > 0 ? bill.taxPercent / 2 : 9}%</div>
+                          <div style="margin-top: 5px;">CGST ${bill?.taxPercent > 0 ? bill.taxPercent / 2 : 9}%</div>
+                          <div style="margin-top: 5px;">TOTAL GST ${bill?.taxPercent > 0 ? bill.taxPercent : 18}%</div>
+                        </div>
+                        
+                        <div style="margin-top: 30px; text-align: right; padding-right: 10px; font-weight: bold;">
+                          ROUND OFF
+                        </div>
+                      </td>
+                      <td style="vertical-align: top; padding-top: 40px;">
+                        <div style="font-weight: bold;">999315</div>
+                      </td>
+                      <td style="vertical-align: top; padding-top: 40px;">
+                        <div style="font-weight: bold;">${baseRate}</div>
+                      </td>
+                      <td style="vertical-align: top; padding-top: 40px; font-weight: bold; text-align: right; padding-right: 5px;">
+                        <div>${baseRate}</div>
+                        <div style="margin-top: 50px;">${sgst}</div>
+                        <div style="margin-top: 5px;">${cgst}</div>
+                        <div style="margin-top: 5px;">${bill?.taxAmount > 0 ? (bill.taxAmount || 0).toFixed(2) : '0.00'}</div>
+                        <div style="margin-top: 15px;">${((bill?.totalAmount || 0) - (bill?.taxAmount || 0)).toFixed(2)}</div>
+                        <div style="margin-top: 30px;">${(bill?.totalAmount || 0).toFixed(2)}</div>
+                      </td>
+                    </tr>
+                    `;
+      }).join('')}
+                  <tr>
+                    <td colspan="3" style="border-right: none;"></td>
+                    <td class="bold">GRAND TOTAL</td>
+                    <td class="bold" style="text-align: right; padding-right: 5px;">${(bill?.totalAmount || 0).toFixed(2)}</td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <div class="footer-section">
+                <div class="bold" style="font-size: 11px;">Amount Chargeable (in words): <span id="wordsAmount" style="text-transform: uppercase;"></span> ONLY.</div>
+                
+                <div class="bold mt-5" style="font-size: 11px;">Clinic Bank Details: ${branchName}</div>
+                <div class="bold" style="font-size: 11px;">Bank Name: ${bankName}</div>
+                <div class="bold" style="font-size: 11px;">A/c No: ${bankAccount}</div>
+                <div class="bold" style="font-size: 11px;">Branch Name: ${bankBranchName}</div>
+                <div class="bold" style="font-size: 11px;">IFSC CODE: ${bankIfsc}</div>
+                <div class="bold" style="font-size: 11px;">upi id : ${bankUpi}</div>
+                
+                <table style="width: 100%; border: none; margin-top: 15px; border-top: 1px solid #000; padding-top: 15px; table-layout: fixed;">
+                  <tr>
+                    <td style="width: 60%; vertical-align: top; border: none; padding: 0; text-align: left;">
+                      <div style="font-size: 11px;">Declaration: We declare that this invoice shows</div>
+                      <div style="font-size: 11px;">the actual price of treatment and that all</div>
+                      <div style="font-size: 11px;">particulars are true and correct.</div>
+                    </td>
+                    <td style="width: 40%; vertical-align: top; border: none; padding: 0; text-align: right;">
+                      <div style="display: inline-block; width: 250px; height: 80px; border: 1px solid #000; text-align: center; position: relative; margin-top: 10px;">
+                        <div style="position: absolute; top: 10px; width: 100%; font-size: 11px;">FOR ${branchName}</div>
+                        <div style="position: absolute; bottom: 10px; width: 100%; font-size: 11px;">Authorised Signatory</div>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div class="computer-gen">This is computer generated invoice</div>
+            <script>
+              function numberToWords(num) {
+                const a = ['','one ','two ','three ','four ', 'five ','six ','seven ','eight ','nine ','ten ','eleven ','twelve ','thirteen ','fourteen ','fifteen ','sixteen ','seventeen ','eighteen ','nineteen '];
+                const b = ['', '', 'twenty','thirty','forty','fifty', 'sixty','seventy','eighty','ninety'];
+                if ((num = num.toString()).length > 9) return 'overflow';
+                const n = ('000000000' + num).substr(-9).match(/^(\\d{2})(\\d{2})(\\d{2})(\\d{1})(\\d{2})$/);
+                if (!n) return;
+                let str = '';
+                str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'crore ' : '';
+                str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'lakh ' : '';
+                str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'thousand ' : '';
+                str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred ' : '';
+                str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : '';
+                return str.trim() + ' rupees';
+              }
+              document.getElementById('wordsAmount').innerText = numberToWords(Math.floor(${bill.totalAmount}));
+            </script>
+          </body>
+        </html>
+      `;
 
       printWindow.document.write(htmlContent);
       printWindow.document.close();
@@ -807,51 +809,212 @@ const ManageBills = () => {
     }
   };
 
-  const handleDownload = async (bill) => {
+  const handleDownload = (bill) => {
     try {
-      let logoBase64 = '/Asset 2.svg';
-      try {
-        const response = await fetch('/Asset 2.svg');
-        const blob = await response.blob();
-        logoBase64 = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result);
-          reader.onerror = reject;
-          reader.readAsDataURL(blob);
-        });
-      } catch (err) {
-        console.error('Failed to encode logo to Base64:', err);
-      }
+      const customer = bill.customerId;
+      const branch = bill.branchId || {};
+      const branchName = branch.name || 'HEALTH AND HEAL';
+      const branchAddress = branch.address || 'No: 18, First Floor, Prakasam Street, Janaki Nagar, Valasaravakkam, Chennai - 600087.';
+      const branchGst = branch.gstNumber || '33AAOFH2184C1ZL';
+      const branchContact = branch.contactNumber || '9042716037';
+      const branchEmail = branch.email || 'info@fettlehealthandheal.com';
+      const branchWebsite = branch.website || 'www.fettlehealthandheal.com';
+      const bankName = branch.bankDetails?.bankName || 'HDFC';
+      const bankAccount = branch.bankDetails?.accountNumber || '50200108255392';
+      const bankBranchName = branch.bankDetails?.branchBankName || 'VALASARAVAKKAM, Chennai - 600087';
+      const bankIfsc = branch.bankDetails?.ifscCode || 'HDFC0000024';
+      const bankUpi = branch.bankDetails?.upiId || 'healthandhealhh-1@okhdfcbank';
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Invoice - ${bill.billNumber}</title>
+            <style>
+              body { font-family: 'Times New Roman', serif; margin: 0; padding: 20px; font-size: 13px; color: #000; }
+              .invoice-container { max-width: 800px; margin: 0 auto; border: 1px solid #000; padding: 10px; }
+              .header-text { text-align: center; font-weight: bold; font-size: 16px; padding: 5px; }
+              .top-header { border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 0; }
+              .logo { width: 100%; display: block; height: auto; object-fit: contain; }
+              
+              .info-section { display: flex; border-bottom: 1px solid #000; }
+              .info-left, .info-right { width: 50%; padding: 5px 10px; }
+              .info-right { border-left: 1px solid #000; }
+              
+              .bold { font-weight: bold; }
+              .mt-5 { margin-top: 5px; }
+              
+              table { width: 100%; border-collapse: collapse; text-align: center; }
+              th, td { border: 1px solid #000; padding: 5px; }
+              th { border-bottom: 2px solid #000; }
+              
+              .desc-cell { text-align: left; padding-left: 10px; vertical-align: top; height: 15rem; }
+              
+              .totals-row { text-align: right; border-bottom: none; }
+              .totals-val { border-bottom: none; }
+              
+              .footer-section { padding: 5px 10px; border-top: 1px solid #000; }
+              .footer-split { display: flex; justify-content: space-between; border-top: 1px solid #000; padding-top: 20px;}
+              .sign-box { border: 1px solid #000; padding: 10px; width: 250px; text-align: center; height: 80px; display: flex; flex-direction: column; justify-content: space-between;}
+              .sign-box span { font-size: 11px; }
+              
+              .computer-gen { text-align: center; font-size: 11px; margin-top: 10px; max-width: 800px; margin-inline: auto; }
+            </style>
+          </head>
+          <body>
+            <div class="header-text">TAX INVOICE</div>
+            <div class="invoice-container">
+              <div class="top-header">
+                <img src="/Asset 2.svg" alt="Fettle Health and Heal" class="logo" />
+              </div>
+              
+              <div class="info-row">
+                <div class="info-left">
+                  <div class="bold">${branchName}</div>
+                  <div>${branchAddress}</div>
+                  <div class="bold mt-5">GSTIN: ${branchGst}</div>
+                  <div class="bold">Contact: ${branchContact}</div>
+                  <div class="bold">Mail id: ${branchEmail}</div>
+                  <div class="bold">Website: ${branchWebsite}</div>
+                </div>
+                <div class="info-right">
+                  <div class="bold">BILL TO:</div>
+                  <div class="bold text-lg">${customer?.name || ''}</div>
+                  ${customer?.address?.street ? `<div>${customer.address.street.toUpperCase()}</div>` : ''}
+                  ${customer?.address?.city || customer?.address?.zipCode ? `<div>${(customer?.address?.city || '').toUpperCase()} ${(customer?.address?.zipCode || '')}</div>` : ''}
+                  <div>${customer?.phone ? 'CONTACT: ' + customer.phone : customer?.email || ''}</div>
+                </div>
+              </div>
+              <div class="info-row">
+                <div class="info-left"></div>
+                <div class="info-right">
+                  <div class="bold">INVOICE NO: ${bill?.billNumber || ''}</div>
+                  <div class="bold">INVOICE DATE : ${bill?.billDate ? new Date(bill.billDate).toLocaleDateString('en-GB').replace(/\//g, '.') : ''}</div>
+                  <div class="bold">MODE OF PAYMENT: ${(bill?.paymentMethod || '').toUpperCase()}</div>
+                </div>
+              </div>
+              
+              <table>
+                <thead>
+                  <tr>
+                    <th width="5%">S.NO</th>
+                    <th width="45%">DESCRIPTION</th>
+                    <th width="15%">HSN</th>
+                    <th width="15%">RATE</th>
+                    <th width="20%">AMOUNT</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${(bill?.items || []).map((item, index) => {
+        const sgst = bill?.taxPercent > 0 ? ((bill.taxAmount || 0) / 2).toFixed(2) : '0.00';
+        const cgst = bill?.taxPercent > 0 ? ((bill.taxAmount || 0) / 2).toFixed(2) : '0.00';
+        const baseRate = (item?.total || 0).toFixed(2);
 
-      const htmlContent = getInvoiceHTML(bill, logoBase64);
+        return `
+                    <tr>
+                      <td style="vertical-align: top; padding-top: 40px; font-weight: bold;">${index + 1}</td>
+                      <td class="desc-cell" style="padding-top: 40px;">
+                        <div style="font-weight: bold;">${(item?.name || '').toUpperCase()}</div>
+                        
+                        <div style="margin-top: 50px; text-align: right; padding-right: 10px; font-weight: bold;">
+                          <div>SGST ${bill?.taxPercent > 0 ? bill.taxPercent / 2 : 9}%</div>
+                          <div style="margin-top: 5px;">CGST ${bill?.taxPercent > 0 ? bill.taxPercent / 2 : 9}%</div>
+                          <div style="margin-top: 5px;">TOTAL GST ${bill?.taxPercent > 0 ? bill.taxPercent : 18}%</div>
+                        </div>
+                        
+                        <div style="margin-top: 30px; text-align: right; padding-right: 10px; font-weight: bold;">
+                          ROUND OFF
+                        </div>
+                      </td>
+                      <td style="vertical-align: top; padding-top: 40px;">
+                        <div style="font-weight: bold;">999315</div>
+                      </td>
+                      <td style="vertical-align: top; padding-top: 40px;">
+                        <div style="font-weight: bold;">${baseRate}</div>
+                      </td>
+                      <td style="vertical-align: top; padding-top: 40px; font-weight: bold; text-align: right; padding-right: 5px;">
+                        <div>${baseRate}</div>
+                        <div style="margin-top: 50px;">${sgst}</div>
+                        <div style="margin-top: 5px;">${cgst}</div>
+                        <div style="margin-top: 5px;">${bill?.taxAmount > 0 ? (bill.taxAmount || 0).toFixed(2) : '0.00'}</div>
+                        <div style="margin-top: 15px;">${((bill?.totalAmount || 0) - (bill?.taxAmount || 0)).toFixed(2)}</div>
+                        <div style="margin-top: 30px;">${(bill?.totalAmount || 0).toFixed(2)}</div>
+                      </td>
+                    </tr>
+                    `;
+      }).join('')}
+                  <tr>
+                    <td colspan="3" style="border-right: none;"></td>
+                    <td class="bold">GRAND TOTAL</td>
+                    <td class="bold" style="text-align: right; padding-right: 5px;">${(bill?.totalAmount || 0).toFixed(2)}</td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <div class="footer-section">
+                <div class="bold" style="font-size: 11px;">Amount Chargeable (in words): <span id="wordsAmountDL" style="text-transform: uppercase;"></span> ONLY.</div>
+                
+                <div class="bold mt-5" style="font-size: 11px;">Clinic Bank Details: ${branchName}</div>
+                <div class="bold" style="font-size: 11px;">Bank Name: ${bankName}</div>
+                <div class="bold" style="font-size: 11px;">A/c No: ${bankAccount}</div>
+                <div class="bold" style="font-size: 11px;">Branch Name: ${bankBranchName}</div>
+                <div class="bold" style="font-size: 11px;">IFSC CODE: ${bankIfsc}</div>
+                <div class="bold" style="font-size: 11px;">upi id : ${bankUpi}</div>
+                
+                <table style="width: 100%; border: none; margin-top: 15px; border-top: 1px solid #000; padding-top: 15px; table-layout: fixed;">
+                  <tr>
+                    <td style="width: 60%; vertical-align: top; border: none; padding: 0; text-align: left;">
+                      <div style="font-size: 11px;">Declaration: We declare that this invoice shows</div>
+                      <div style="font-size: 11px;">the actual price of treatment and that all</div>
+                      <div style="font-size: 11px;">particulars are true and correct.</div>
+                    </td>
+                    <td style="width: 40%; vertical-align: top; border: none; padding: 0; text-align: right;">
+                      <div style="display: inline-block; width: 250px; height: 80px; border: 1px solid #000; text-align: center; position: relative; margin-top: 10px;">
+                        <div style="position: absolute; top: 10px; width: 100%; font-size: 11px;">FOR ${branchName}</div>
+                        <div style="position: absolute; bottom: 10px; width: 100%; font-size: 11px;">Authorised Signatory</div>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div class="computer-gen">This is computer generated invoice</div>
+            <script>
+              function numberToWords(num) {
+                const a = ['','one ','two ','three ','four ', 'five ','six ','seven ','eight ','nine ','ten ','eleven ','twelve ','thirteen ','fourteen ','fifteen ','sixteen ','seventeen ','eighteen ','nineteen '];
+                const b = ['', '', 'twenty','thirty','forty','fifty', 'sixty','seventy','eighty','ninety'];
+                if ((num = num.toString()).length > 9) return 'overflow';
+                const n = ('000000000' + num).substr(-9).match(/^(\\d{2})(\\d{2})(\\d{2})(\\d{1})(\\d{2})$/);
+                if (!n) return;
+                let str = '';
+                str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'crore ' : '';
+                str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'lakh ' : '';
+                str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'thousand ' : '';
+                str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred ' : '';
+                str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : '';
+                return str.trim() + ' rupees';
+              }
+              document.getElementById('wordsAmountDL').innerText = numberToWords(Math.floor(${bill.totalAmount}));
+            </script>
+          </body>
+        </html>
+      `;
 
-      const opt = {
-        margin: 10,
-        filename: `invoice-${bill.billNumber}.pdf`,
-        image: { type: 'jpeg', quality: 1 },
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          scrollY: 0,
-          backgroundColor: '#ffffff',
-          logging: false,
-          onclone: (clonedDoc) => {
-            clonedDoc.querySelectorAll('link[rel="stylesheet"]').forEach(el => el.remove());
-            clonedDoc.querySelectorAll('style').forEach(el => el.remove());
-          }
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
-
-      await html2pdf().set(opt).from(htmlContent).save();
+      // Create blob and download as HTML file
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `invoice-${bill.billNumber}.html`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
 
     } catch (error) {
-      console.error('Download processing failed completely:', error);
-      alert('Failed to process bill format. Please try again.');
+      console.error('Download failed:', error);
+      alert('Failed to download bill. Please try the print option instead.');
     }
   };
-
-
 
   const resetForm = () => {
     setFormData({
@@ -863,7 +1026,7 @@ const ManageBills = () => {
       subtotal: 0,
       discountPercent: 0,
       discountAmount: 0,
-      taxPercent: 0,
+      taxPercent: 18,
       taxAmount: 0,
       totalAmount: 0,
       paymentStatus: 'pending',
@@ -1111,6 +1274,9 @@ const ManageBills = () => {
                         )}
                         <button onClick={() => handlePrint(bill)} className="text-blue-600 hover:text-blue-900 dark:text-blue-500 dark:hover:text-blue-400 p-1 rounded transition-colors" title="Print">
                           <Printer className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => handleDownload(bill)} className="text-green-600 hover:text-green-900 dark:text-green-500 dark:hover:text-green-400 p-1 rounded transition-colors" title="Download">
+                          <Download className="w-4 h-4" />
                         </button>
                         <button onClick={() => setSelectedBill(bill)} className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-500 dark:hover:text-indigo-400 p-1 rounded transition-colors" title="View">
                           <Eye className="w-4 h-4" />
@@ -1702,177 +1868,132 @@ const ManageBills = () => {
 
       {/* Bill Details Modal */}
       {selectedBill && !showModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 z-50 transition-all duration-300">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl transition-colors duration-300 border border-gray-200 dark:border-gray-700">
-            {/* Modal Header */}
-            <div className="px-8 py-5 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 flex justify-between items-center sticky top-0 z-10 backdrop-blur-sm">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
-                  <FileText className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white leading-tight">Invoice Details</h2>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">#{selectedBill.billNumber}</p>
-                </div>
-                <span className={`ml-4 px-3 py-1 text-xs font-bold rounded-full uppercase tracking-wider ${selectedBill.paymentStatus === 'paid' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300' : selectedBill.paymentStatus === 'partial' ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300' : 'bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-300'}`}>
-                  {selectedBill.paymentStatus}
-                </span>
-              </div>
-
-              <div className="flex items-center space-x-3">
-                <button
-                  onClick={() => handlePrint(selectedBill)}
-                  className="flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 text-sm font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-all shadow-sm active:scale-95"
-                >
-                  <Printer className="w-4 h-4 mr-2 text-blue-500" />
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto transition-colors duration-300">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Bill Details</h2>
+              <div className="flex space-x-2">
+                <button onClick={() => handlePrint(selectedBill)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
+                  <Printer className="w-4 h-4 mr-2" />
                   Print
                 </button>
-                <button
-                  onClick={() => setSelectedBill(null)}
-                  className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-all"
-                >
-                  <X className="w-6 h-6" />
+                <button onClick={() => handleDownload(selectedBill)} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center">
+                  <Download className="w-4 h-4 mr-2" />
+                  Download
+                </button>
+                <button onClick={() => setSelectedBill(null)} className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-400">
+                  <X className="w-5 h-5" />
                 </button>
               </div>
             </div>
-
-            <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-                {/* Customer Information Card */}
-                <div className="lg:col-span-2 bg-gray-50 dark:bg-gray-900/40 rounded-2xl p-6 border border-gray-100 dark:border-gray-700/50">
-                  <div className="flex items-center space-x-2 mb-4">
-                    <User className="w-5 h-5 text-indigo-500" />
-                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Customer Information</h3>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Bill Information</h3>
+                  <div className="space-y-3">
                     <div>
-                      <label className="text-xs font-semibold text-gray-500 uppercase">Full Name</label>
-                      <p className="text-base font-bold text-gray-900 dark:text-white">{selectedBill.customerId?.name || 'N/A'}</p>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Bill Number</label>
+                      <p className="text-sm text-gray-900 dark:text-white">{selectedBill.billNumber}</p>
                     </div>
-                    <div className="flex flex-col space-y-3">
-                      <div className="flex items-center space-x-3">
-                        <Activity className="w-4 h-4 text-emerald-500" />
-                        <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">{selectedBill.customerId?.phone || 'N/A'}</span>
-                      </div>
-                      <div className="flex items-center space-x-3">
-                        <FileText className="w-4 h-4 text-amber-500" />
-                        <span className="text-sm text-gray-700 dark:text-gray-300 font-medium break-all">{selectedBill.customerId?.email || 'N/A'}</span>
-                      </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Bill Date</label>
+                      <p className="text-sm text-gray-900 dark:text-white">{new Date(selectedBill.billDate).toLocaleDateString()}</p>
                     </div>
-                  </div>
-                </div>
-
-                {/* Bill Metadata Card */}
-                <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm">
-                  <div className="flex items-center space-x-2 mb-4">
-                    <Calendar className="w-5 h-5 text-indigo-500" />
-                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Bill Details</h3>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-gray-500">Date</span>
-                      <span className="text-sm font-bold text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-md">
-                        {new Date(selectedBill.billDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Payment Status</label>
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${selectedBill.paymentStatus === 'paid' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' : selectedBill.paymentStatus === 'partial' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'}`}>
+                        {selectedBill.paymentStatus.charAt(0).toUpperCase() + selectedBill.paymentStatus.slice(1)}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-gray-500">Method</span>
-                      <span className="text-sm font-bold text-gray-900 dark:text-white capitalize">{selectedBill.paymentMethod}</span>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Payment Method</label>
+                      <p className="text-sm text-gray-900 dark:text-white capitalize">{selectedBill.paymentMethod}</p>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-gray-500">Branch</span>
-                      <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">{selectedBill.branchId?.name || 'Main Branch'}</span>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Customer Information</h3>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
+                      <p className="text-sm text-gray-900 dark:text-white">{selectedBill.customerId?.name}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                      <p className="text-sm text-gray-900 dark:text-white">{selectedBill.customerId?.email}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Phone</label>
+                      <p className="text-sm text-gray-900 dark:text-white">{selectedBill.customerId?.phone || 'N/A'}</p>
                     </div>
                   </div>
                 </div>
               </div>
-
-              {/* Items Table */}
-              <div className="mb-8 overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700">
-                <table className="w-full text-left">
-                  <thead className="bg-gray-50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300">
-                    <tr>
-                      <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Service/Item Description</th>
-                      <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">Qty</th>
-                      <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-right">Unit Price</th>
-                      <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-right">Line Total</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-                    {selectedBill.items.map((item, index) => (
-                      <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-                        <td className="px-6 py-4">
-                          <span className="text-sm font-bold text-gray-900 dark:text-white">{item.name}</span>
-                        </td>
-                        <td className="px-6 py-4 text-center">
-                          <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 text-xs font-bold text-gray-700 dark:text-gray-300">
-                            {item.quantity}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-right text-sm text-gray-600 dark:text-gray-400 font-medium">₹{item.price.toLocaleString()}</td>
-                        <td className="px-6 py-4 text-right text-sm font-bold text-gray-900 dark:text-white">₹{item.total.toLocaleString()}</td>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Items</h3>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead className="bg-gray-50 dark:bg-gray-700">
+                      <tr>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Item</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Quantity</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Price</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Total</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Bottom Section: Notes and Totals */}
-              <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-                {/* Notes Section */}
-                <div className="lg:col-span-3">
-                  <div className="bg-amber-50 dark:bg-amber-900/10 rounded-2xl p-6 border border-amber-100 dark:border-amber-900/20 h-full">
-                    <div className="flex items-center space-x-2 mb-3">
-                      <FileText className="w-5 h-5 text-amber-600" />
-                      <h3 className="text-sm font-bold text-amber-800 dark:text-amber-500 uppercase tracking-widest">Technician / Internal Notes</h3>
-                    </div>
-                    <p className="text-sm text-amber-900/70 dark:text-amber-300/70 leading-relaxed italic">
-                      {selectedBill.notes || "No additional feedback or notes were recorded for this session."}
-                    </p>
-                  </div>
+                    </thead>
+                    <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                      {selectedBill.items.map((item, index) => (
+                        <tr key={index}>
+                          <td className="px-4 py-2 text-sm text-gray-900 dark:text-white">{item.name}</td>
+                          <td className="px-4 py-2 text-sm text-gray-900 dark:text-white">{item.quantity}</td>
+                          <td className="px-4 py-2 text-sm text-gray-900 dark:text-white">₹{item.price.toLocaleString()}</td>
+                          <td className="px-4 py-2 text-sm text-gray-900 dark:text-white">₹{item.total.toLocaleString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-
-                {/* Calculated Totals Card */}
-                <div className="lg:col-span-2">
-                  <div className="bg-gray-900 dark:bg-gray-950 rounded-2xl p-6 text-white shadow-xl shadow-gray-200 dark:shadow-none">
-                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">Order Summary</h3>
-                    <div className="space-y-4">
-                      <div className="flex justify-between text-sm font-medium">
-                        <span className="text-gray-400">Subtotal</span>
-                        <span>₹{selectedBill.subtotal.toLocaleString()}</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  {selectedBill.notes ? (
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Notes</h3>
+                      <p className="text-sm text-gray-900 dark:text-white">{selectedBill.notes}</p>
+                    </div>
+                  ) : (
+                    <div className="text-gray-500 dark:text-gray-400 text-sm italic">No notes available</div>
+                  )}
+                </div>
+                <div>
+                  <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                    <div className="flex justify-between py-2">
+                      <span className="text-gray-600 dark:text-gray-400">Subtotal:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">₹{selectedBill.subtotal.toLocaleString()}</span>
+                    </div>
+                    {selectedBill.discountPercent > 0 && (
+                      <div className="flex justify-between py-2">
+                        <span className="text-gray-600 dark:text-gray-400">Discount ({selectedBill.discountPercent}%):</span>
+                        <span className="font-medium text-gray-900 dark:text-white">₹{((selectedBill.subtotal * selectedBill.discountPercent) / 100).toLocaleString()}</span>
                       </div>
-
-                      {selectedBill.discountPercent > 0 && (
-                        <div className="flex justify-between text-sm font-medium text-amber-400">
-                          <span>Discount ({selectedBill.discountPercent}%)</span>
-                          <span>- ₹{((selectedBill.subtotal * selectedBill.discountPercent) / 100).toLocaleString()}</span>
-                        </div>
-                      )}
-
-                      {selectedBill.taxPercent > 0 && (
-                        <div className="flex justify-between text-sm font-medium text-gray-400">
-                          <span>GST ({selectedBill.taxPercent}%)</span>
-                          <span>₹{selectedBill.taxAmount.toLocaleString()}</span>
-                        </div>
-                      )}
-
-                      <div className="pt-4 border-t border-gray-800 flex justify-between items-end">
-                        <span className="text-sm font-bold text-gray-400">Grand Total</span>
-                        <span className="text-3xl font-black text-white leading-none tracking-tight">
-                          ₹{selectedBill.totalAmount.toLocaleString()}
-                        </span>
+                    )}
+                    {selectedBill.taxPercent > 0 && (
+                      <div className="flex justify-between py-2">
+                        <span className="text-gray-600 dark:text-gray-400">Tax ({selectedBill.taxPercent}%):</span>
+                        <span className="font-medium text-gray-900 dark:text-white">₹{selectedBill.taxAmount.toLocaleString()}</span>
                       </div>
-
-                      <div className="grid grid-cols-2 gap-3 mt-6">
-                        <div className="bg-gray-800 rounded-xl p-3">
-                          <span className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Received</span>
-                          <span className="text-sm font-bold text-emerald-400">₹{selectedBill.paidAmount.toLocaleString()}</span>
-                        </div>
-                        <div className="bg-gray-800 rounded-xl p-3">
-                          <span className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Balance Due</span>
-                          <span className="text-sm font-bold text-rose-400">₹{selectedBill.dueAmount.toLocaleString()}</span>
-                        </div>
-                      </div>
+                    )}
+                    <div className="flex justify-between py-2 border-t border-gray-200 dark:border-gray-600 mt-2">
+                      <span className="font-semibold text-gray-900 dark:text-white">Total:</span>
+                      <span className="font-bold text-gray-900 dark:text-white">₹{selectedBill.totalAmount.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between py-2">
+                      <span className="text-gray-600 dark:text-gray-400">Paid:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">₹{selectedBill.paidAmount.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between py-2">
+                      <span className="text-gray-600 dark:text-gray-400">Due:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">₹{selectedBill.dueAmount.toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
@@ -1881,8 +2002,6 @@ const ManageBills = () => {
           </div>
         </div>
       )}
-
-
     </div>
   );
 };
