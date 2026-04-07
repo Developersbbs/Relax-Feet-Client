@@ -333,7 +333,7 @@ const ManageSuppliers = () => {
           {/* Add Supplier Button */}
           <button
             onClick={openCreateModal}
-            className="bg-[#0099CC] hover:bg-[#007aa3] text-white px-4 py-2 rounded-lg flex items-center transition-colors"
+            className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors"
           >
             <Plus className="w-5 h-5 mr-2" />
             Add Supplier
@@ -631,7 +631,7 @@ const ManageSuppliers = () => {
                       type="text"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0099CC] focus:border-blue-500"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-blue-500"
                       required
                     />
                   </div>
@@ -765,7 +765,7 @@ const ManageSuppliers = () => {
                     <button
                       type="button"
                       onClick={addProduct}
-                      className="px-4 py-2 bg-[#0099CC] text-white rounded-md hover:bg-[#007aa3]"
+                      className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700"
                     >
                       Add
                     </button>
@@ -808,7 +808,7 @@ const ManageSuppliers = () => {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 text-sm font-medium text-white bg-[#0099CC] border border-transparent rounded-md hover:bg-[#007aa3] transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-white bg-orange-600 border border-transparent rounded-md hover:bg-orange-700 transition-colors"
                   >
                     {modalMode === 'create' ? 'Create Supplier' : 'Update Supplier'}
                   </button>

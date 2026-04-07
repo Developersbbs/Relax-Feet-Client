@@ -226,7 +226,7 @@ const Notifications = () => {
               onClick={() => setStatusFilter(tab.value)}
               className={`px-3 py-2.5 text-sm font-medium rounded-md transition-colors duration-150 min-w-[80px] touch-manipulation ${
                 statusFilter === tab.value
-                  ? 'bg-[#0099CC] text-white shadow'
+                  ? 'bg-[#720000] text-white shadow'
                   : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
@@ -256,7 +256,7 @@ const Notifications = () => {
                 max={365}
                 value={autoDeleteInput}
                 onChange={(event) => setAutoDeleteInput(event.target.value)}
-                className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm focus:border-[#0099CC] focus:ring focus:ring-[#e0f5fb] focus:ring-opacity-50 min-h-[44px] touch-manipulation"
+                className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm focus:border-[#720000] focus:ring focus:ring-[#f8e6e6] focus:ring-opacity-50 min-h-[44px] touch-manipulation"
                 placeholder="Enter number of days"
               />
               <span className="mt-1 text-xs text-slate-500">Set to 0 to disable automatic deletion.</span>
@@ -267,7 +267,7 @@ const Notifications = () => {
                 type="checkbox"
                 checked={allowManualDeleteInput}
                 onChange={(event) => setAllowManualDeleteInput(event.target.checked)}
-                className="h-4 w-4 rounded border-slate-300 text-[#0099CC] focus:ring-[#0099CC]"
+                className="h-4 w-4 rounded border-slate-300 text-[#720000] focus:ring-[#720000]"
               />
               <span className="text-sm font-medium text-slate-700">Allow manual deletion</span>
             </label>
@@ -276,8 +276,8 @@ const Notifications = () => {
               type="button"
               onClick={handleSaveSettings}
               disabled={isSavingSettings}
-              className={`inline-flex items-center justify-center rounded-lg bg-amber-700 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#007aa3] disabled:cursor-not-allowed disabled:opacity-70 min-h-[44px] touch-manipulation ${
-                isSavingSettings ? 'cursor-not-allowed opacity-70' : 'hover:bg-[#007aa3]'
+              className={`inline-flex items-center justify-center rounded-lg bg-amber-700 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#8a1a1a] disabled:cursor-not-allowed disabled:opacity-70 min-h-[44px] touch-manipulation ${
+                isSavingSettings ? 'cursor-not-allowed opacity-70' : 'hover:bg-[#8a1a1a]'
               }`}
             >
               {isSavingSettings ? (
@@ -365,7 +365,7 @@ const Notifications = () => {
                       type="button"
                       onClick={() => handleMarkAsRead(item._id)}
                       disabled={loadingActions.has(item._id)}
-                      className={`inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-[#e0f5fb] px-3 py-2 text-sm font-medium text-[#0099CC] transition hover:bg-amber-100 min-h-[44px] min-w-[100px] justify-center touch-manipulation ${
+                      className={`inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-[#f8e6e6] px-3 py-2 text-sm font-medium text-[#720000] transition hover:bg-amber-100 min-h-[44px] min-w-[100px] justify-center touch-manipulation ${
                         loadingActions.has(item._id)
                           ? 'opacity-70 cursor-not-allowed bg-gray-50'
                           : 'hover:bg-amber-100'
@@ -541,10 +541,10 @@ const Notifications = () => {
                         handleClosePopup();
                       }}
                       disabled={loadingActions.has(selectedNotification._id)}
-                      className={`flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-amber-700 px-4 py-2.5 sm:py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#007aa3] min-h-[44px] touch-manipulation ${
+                      className={`flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-amber-700 px-4 py-2.5 sm:py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#8a1a1a] min-h-[44px] touch-manipulation ${
                         loadingActions.has(selectedNotification._id)
                           ? 'opacity-70 cursor-not-allowed bg-gray-400'
-                          : 'hover:bg-[#007aa3]'
+                          : 'hover:bg-[#8a1a1a]'
                       }`}
                     >
                       {loadingActions.has(selectedNotification._id) ? (

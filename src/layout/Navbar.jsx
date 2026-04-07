@@ -23,7 +23,7 @@ const Navbar = () => {
     // const newDarkMode = !darkMode;
     // setDarkMode(newDarkMode);
     // localStorage.setItem('darkMode', newDarkMode.toString());
-
+    
     // if (newDarkMode) {
     //   document.documentElement.classList.add('dark');
     // } else {
@@ -32,18 +32,20 @@ const Navbar = () => {
   };
 
   const linkClass = ({ isActive }) =>
-    `px-4 py-2 rounded-lg font-medium transition-all duration-200 ${isActive
-      ? "bg-[#0099CC] text-white shadow-lg transform scale-105"
-      : darkMode
-        ? "text-gray-300 hover:text-white hover:bg-[#007aa3] hover:shadow-md"
-        : "text-[#0099CC] hover:text-white hover:bg-[#0099CC] hover:shadow-md"
+    `px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+      isActive 
+        ? "bg-amber-700 text-white shadow-lg transform scale-105" 
+        : darkMode 
+          ? "text-gray-300 hover:text-white hover:bg-gray-700 hover:shadow-md"
+          : "text-blue-700 hover:text-white hover:bg-blue-600 hover:shadow-md"
     }`
 
   return (
-    <nav className={`flex-1 flex items-center justify-between transition-colors duration-300 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'
-      }`}>
+    <nav className={`flex-1 flex items-center justify-between transition-colors duration-300 ${
+      darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'
+    }`}>
       <div className="flex items-center gap-2">
-
+       
       </div>
 
       <div className="flex items-center gap-2 sm:gap-4">
@@ -78,20 +80,23 @@ const Navbar = () => {
             <NotificationBell />
 
             {/* User Profile */}
-            <div className={`flex items-center gap-2 sm:gap-3 px-2 sm:px-4 py-2 rounded-lg border transition-colors duration-300 ${darkMode
+            <div className={`flex items-center gap-2 sm:gap-3 px-2 sm:px-4 py-2 rounded-lg border transition-colors duration-300 ${
+              darkMode
                 ? 'bg-gray-800 border-gray-600 text-white'
                 : 'bg-blue-50 border-blue-200 text-gray-900'
-              }`}>
-              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-[#0099CC] rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm">
+            }`}>
+              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-[#720000] rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm">
                 {user.username?.charAt(0).toUpperCase() || 'U'}
               </div>
               <div className="flex flex-col hidden sm:block">
-                <span className={`font-semibold text-xs sm:text-sm transition-colors duration-300 ${darkMode ? 'text-white' : 'text-blue-900'
-                  }`}>
+                <span className={`font-semibold text-xs sm:text-sm transition-colors duration-300 ${
+                  darkMode ? 'text-white' : 'text-blue-900'
+                }`}>
                   {user.username}
                 </span>
-                <span className={`text-xs transition-colors duration-300 ${darkMode ? 'text-gray-400' : 'text-blue-600'
-                  }`}>
+                <span className={`text-xs transition-colors duration-300 ${
+                  darkMode ? 'text-gray-400' : 'text-blue-600'
+                }`}>
 
                 </span>
               </div>

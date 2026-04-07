@@ -235,10 +235,10 @@ const ManageCustomers = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-slate-700 transition-colors duration-300">
           <div className="flex items-center">
-            <Users className="w-10 h-10 text-[#0099CC] mr-4" />
+            <Users className="w-10 h-10 text-[#720000] mr-4" />
             <div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Total Customers</h3>
-              <p className="text-3xl font-bold text-[#0099CC]">{stats.total}</p>
+              <p className="text-3xl font-bold text-[#720000]">{stats.total}</p>
             </div>
           </div>
         </div>
@@ -276,7 +276,7 @@ const ManageCustomers = () => {
                 placeholder="Search customers..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-transparent w-full"
+                className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#720000] focus:border-transparent w-full"
               />
             </div>
 
@@ -286,7 +286,7 @@ const ManageCustomers = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="pl-10 pr-8 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-transparent appearance-none bg-white dark:bg-slate-700 dark:text-slate-100 min-w-40"
+                className="pl-10 pr-8 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#720000] focus:border-transparent appearance-none bg-white dark:bg-slate-700 dark:text-slate-100 min-w-40"
               >
                 <option value="all">All Status</option>
                 <option value="active">Active</option>
@@ -298,7 +298,7 @@ const ManageCustomers = () => {
           {/* Add Customer Button */}
           <button
             onClick={openCreateModal}
-            className="bg-[#0099CC] hover:bg-[#007aa3] text-white px-4 py-2 rounded-lg flex items-center transition-colors"
+            className="bg-[#720000] hover:bg-[#8a1a1a] text-white px-4 py-2 rounded-lg flex items-center transition-colors"
           >
             <Plus className="w-5 h-5 mr-2" />
             Add Customer
@@ -374,7 +374,7 @@ const ManageCustomers = () => {
                       <div className="flex items-center justify-end space-x-2">
                         <button
                           onClick={() => openViewModal(customer)} // Use updated function
-                          className="text-[#0099CC] hover:text-blue-900 p-1 rounded transition-colors"
+                          className="text-[#720000] hover:text-blue-900 p-1 rounded transition-colors"
                           title="View"
                         >
                           <Eye className="w-4 h-4" />
@@ -488,7 +488,7 @@ const ManageCustomers = () => {
                           placeholder="Search bills..."
                           value={billSearchTerm}
                           onChange={(e) => setBillSearchTerm(e.target.value)}
-                          className="pl-9 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm w-full focus:ring-2 focus:ring-[#0099CC] focus:border-transparent"
+                          className="pl-9 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm w-full focus:ring-2 focus:ring-[#720000] focus:border-transparent"
                         />
                       </div>
                     )}
@@ -683,7 +683,7 @@ const ManageCustomers = () => {
                         value={formData.address.street}
                         onChange={handleAddressChange}
                         disabled={modalMode === 'view'}
-                          className="text-sm text-[#0099CC] dark:text-[#0099CC] focus:outline-none focus:ring-2 focus:ring-[#0099CC] focus:border-transparent disabled:bg-gray-100"
+                          className="text-sm text-[#720000] dark:text-[#720000] focus:outline-none focus:ring-2 focus:ring-[#720000] focus:border-transparent disabled:bg-gray-100"
                       />
                       <input
                         type="text"
@@ -692,7 +692,7 @@ const ManageCustomers = () => {
                         value={formData.address.city}
                         onChange={handleAddressChange}
                         disabled={modalMode === 'view'}
-                          className="text-sm text-[#0099CC] dark:text-[#0099CC] focus:outline-none focus:ring-2 focus:ring-[#0099CC] focus:border-transparent disabled:bg-gray-100"
+                          className="text-sm text-[#720000] dark:text-[#720000] focus:outline-none focus:ring-2 focus:ring-[#720000] focus:border-transparent disabled:bg-gray-100"
                       />
                       <input
                         type="text"
@@ -701,7 +701,7 @@ const ManageCustomers = () => {
                         value={formData.address.state}
                         onChange={handleAddressChange}
                         disabled={modalMode === 'view'}
-                          className="text-sm text-[#0099CC] dark:text-[#0099CC] focus:outline-none focus:ring-2 focus:ring-[#0099CC] focus:border-transparent disabled:bg-gray-100"
+                          className="text-sm text-[#720000] dark:text-[#720000] focus:outline-none focus:ring-2 focus:ring-[#720000] focus:border-transparent disabled:bg-gray-100"
                       />
                       <input
                         type="text"
@@ -710,7 +710,7 @@ const ManageCustomers = () => {
                         value={formData.address.zipCode}
                         onChange={handleAddressChange}
                         disabled={modalMode === 'view'}
-                          className="text-sm text-[#0099CC] dark:text-[#0099CC] focus:outline-none focus:ring-2 focus:ring-[#0099CC] focus:border-transparent disabled:bg-gray-100"
+                          className="text-sm text-[#720000] dark:text-[#720000] focus:outline-none focus:ring-2 focus:ring-[#720000] focus:border-transparent disabled:bg-gray-100"
                       />
                       <input
                         type="text"
@@ -719,12 +719,12 @@ const ManageCustomers = () => {
                         value={formData.address.country}
                         onChange={handleAddressChange}
                         disabled={modalMode === 'view'}
-                          className="text-sm text-[#0099CC] dark:text-[#0099CC] focus:outline-none focus:ring-2 focus:ring-[#0099CC] focus:border-transparent disabled:bg-gray-100"
+                          className="text-sm text-[#720000] dark:text-[#720000] focus:outline-none focus:ring-2 focus:ring-[#720000] focus:border-transparent disabled:bg-gray-100"
                       />
                     </div>
                   </div>
                   <div className="md:col-span-2">
-                    <label htmlFor="notes" className="block text-sm font-medium text-[#0099CC] dark:text-[#0099CC]">
+                    <label htmlFor="notes" className="block text-sm font-medium text-[#720000] dark:text-[#720000]">
                     </label>
                     <textarea
                       id="notes"
@@ -748,7 +748,7 @@ const ManageCustomers = () => {
                   {(modalMode === 'create' || modalMode === 'edit') && (
                     <button
                       type="submit"
-                      className="px-4 py-2 bg-[#0099CC] text-white rounded-md hover:bg-[#007aa3] focus:outline-none focus:ring-2 focus:ring-[#0099CC] focus:ring-offset-2"
+                      className="px-4 py-2 bg-[#720000] text-white rounded-md hover:bg-[#8a1a1a] focus:outline-none focus:ring-2 focus:ring-[#720000] focus:ring-offset-2"
                     >
                       {modalMode === 'create' ? 'Create Customer' : 'Update Customer'}
                     </button>

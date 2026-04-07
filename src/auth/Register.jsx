@@ -61,11 +61,11 @@ const Register = () => {
   }
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-[#005f7f] via-[#0099CC] to-[#00bcd4] flex items-center justify-center px-4 py-10">
+    <div className="min-h-screen w-full bg-gradient-to-br from-orange-950 via-orange-900 to-amber-800 flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-2xl">
         <div className="overflow-hidden rounded-3xl bg-white/90 backdrop-blur shadow-xl ring-1 ring-orange-100">
           <div className="grid gap-0 md:grid-cols-[14rem,1fr]">
-            <div className="hidden md:flex flex-col justify-between bg-gradient-to-b from-[#0099CC] via-[#007aa3] to-[#005f7f] p-8 text-white">
+            <div className="hidden md:flex flex-col justify-between bg-gradient-to-b from-orange-500 via-amber-500 to-yellow-400 p-8 text-white">
               <div className="space-y-4">
 
 
@@ -109,7 +109,7 @@ const Register = () => {
                       required
                       value={username}
                       onChange={(e) => dispatch(setUsername(e.target.value))}
-                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:border-[#0099CC] focus:outline-none focus:ring-2 focus:ring-orange-400/60 transition"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-400/60 transition"
                       placeholder="Enter your full name"
                     />
                   </div>
@@ -125,7 +125,7 @@ const Register = () => {
                       required
                       value={email}
                       onChange={(e) => dispatch(setEmail(e.target.value))}
-                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:border-[#0099CC] focus:outline-none focus:ring-2 focus:ring-orange-400/60 transition"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-400/60 transition"
                       placeholder="you@example.com"
                     />
                   </div>
@@ -142,7 +142,7 @@ const Register = () => {
                         required
                         value={password}
                         onChange={(e) => dispatch(setPassword(e.target.value))}
-                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 pr-12 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:border-[#0099CC] focus:outline-none focus:ring-2 focus:ring-orange-400/60 transition"
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 pr-12 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-400/60 transition"
                         placeholder="Create a secure password"
                       />
                       <button
@@ -162,7 +162,7 @@ const Register = () => {
                     id="terms"
                     name="terms"
                     type="checkbox"
-                    className="mt-1 h-4 w-4 rounded border-slate-300 text-orange-600 focus:ring-[#0099CC]"
+                    className="mt-1 h-4 w-4 rounded border-slate-300 text-orange-600 focus:ring-orange-500"
                     required
                   />
                   <label htmlFor="terms" className="text-sm text-slate-600">
@@ -177,9 +177,9 @@ const Register = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className={`w-full rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0099CC] ${isLoading
+                  className={`w-full rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 ${isLoading
                     ? 'bg-gray-400 cursor-not-allowed opacity-70'
-                    : 'bg-gradient-to-r from-[#0099CC] via-[#007aa3] to-[#005f7f] shadow-[#0099CC]/30 hover:shadow-xl hover:shadow-[#0099CC]/40 hover:scale-[1.02] active:scale-[0.98]'
+                    : 'bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-400 shadow-orange-500/30 hover:shadow-xl hover:shadow-amber-500/40 hover:scale-[1.02] active:scale-[0.98]'
                     }`}
                 >
                   <div className="flex items-center justify-center gap-2">

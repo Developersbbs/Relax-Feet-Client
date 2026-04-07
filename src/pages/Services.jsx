@@ -189,7 +189,7 @@ const Services = () => {
               setEditingService(null);
               resetForm();
             }}
-            className="mt-4 md:mt-0 bg-[#0099CC] hover:bg-[#007aa3] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors duration-200"
+            className="mt-4 md:mt-0 bg-[#720000] hover:bg-[#8a1a1a] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors duration-200"
           >
             <FiPlus className="w-5 h-5" />
             Add New Service
@@ -269,7 +269,7 @@ const Services = () => {
                   placeholder="Search services..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#720000] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
               <div className="flex items-center gap-2">
@@ -277,7 +277,7 @@ const Services = () => {
                 <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#720000] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 >
                   <option value="">All Categories</option>
                   {categories.map(category => (
@@ -295,7 +295,7 @@ const Services = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
             <div className="col-span-full flex justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0099CC]"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#720000]"></div>
             </div>
           ) : filteredServices.length === 0 ? (
             <div className="col-span-full text-center py-12 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8">
@@ -311,7 +311,7 @@ const Services = () => {
                     setEditingService(null);
                     resetForm();
                   }}
-                  className="inline-flex items-center px-4 py-2 bg-[#0099CC] hover:bg-[#007aa3] text-white rounded-lg transition-colors duration-200"
+                  className="inline-flex items-center px-4 py-2 bg-[#720000] hover:bg-[#8a1a1a] text-white rounded-lg transition-colors duration-200"
                 >
                   <FiPlus className="w-4 h-4 mr-2" />
                   Add Service
@@ -329,7 +329,7 @@ const Services = () => {
                       {service.name}
                     </h3>
                     {service.category && (
-                      <span className="inline-block bg-[#f5e6e6] dark:bg-[#003d55] text-[#0099CC] dark:text-[#b3e5fc] text-xs px-2 py-1 rounded-full mb-3">
+                      <span className="inline-block bg-[#f5e6e6] dark:bg-[#3d0000] text-[#720000] dark:text-[#ffb3b3] text-xs px-2 py-1 rounded-full mb-3">
                         {service.category}
                       </span>
                     )}
@@ -360,7 +360,7 @@ const Services = () => {
                   </button>
                   <button
                     onClick={() => handleDelete(service._id)}
-                    className="flex-1 bg-[#e0f5fb] dark:bg-[#003d55] hover:bg-[#f0d6d6] dark:hover:bg-[#4a0000] text-[#0099CC] dark:text-[#b3e5fc] px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
+                    className="flex-1 bg-[#f8e6e6] dark:bg-[#3d0000] hover:bg-[#f0d6d6] dark:hover:bg-[#4a0000] text-[#720000] dark:text-[#ffb3b3] px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
                   >
                     Delete
                   </button>
@@ -476,7 +476,7 @@ const Services = () => {
                 </button>
                 <button
                   type="submit"
-                  className="w-full bg-[#0099CC] hover:bg-[#007aa3] text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+                  className="w-full bg-[#720000] hover:bg-[#8a1a1a] text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
                 >
                   {editingService ? 'Update' : 'Create'}
                 </button>

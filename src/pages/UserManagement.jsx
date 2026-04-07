@@ -46,8 +46,8 @@ const UserManagement = () => {
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.role?.toLowerCase().includes(searchTerm.toLowerCase());
+                         user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         user.role?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesRole = roleFilter === 'all' || user.role === roleFilter;
 
@@ -58,10 +58,6 @@ const UserManagement = () => {
     switch (role) {
       case 'superadmin':
         return <Shield className="w-5 h-5 text-purple-600 dark:text-purple-400" />;
-      case 'branchadmin':
-        return <Shield className="w-5 h-5 text-red-600 dark:text-red-400" />;
-      case 'branchmanager':
-        return <Shield className="w-5 h-5 text-orange-600 dark:text-orange-400" />;
       case 'stockmanager':
         return <Package className="w-5 h-5 text-blue-600 dark:text-blue-400" />;
       case 'billcounter':
@@ -75,10 +71,6 @@ const UserManagement = () => {
     switch (role) {
       case 'superadmin':
         return 'bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-300';
-      case 'branchadmin':
-        return 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300';
-      case 'branchmanager':
-        return 'bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-300';
       case 'stockmanager':
         return 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-300';
       case 'billcounter':
@@ -137,7 +129,7 @@ const UserManagement = () => {
       return;
     }
 
-    if (['branchadmin', 'branchmanager', 'stockmanager', 'billcounter'].includes(formData.role) && !formData.branchId) {
+    if (['stockmanager', 'billcounter'].includes(formData.role) && !formData.branchId) {
       setErrorMessage("Branch selection is required for this role");
       return;
     }
@@ -260,7 +252,7 @@ const UserManagement = () => {
               placeholder="Search users..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 sm:py-3 border border-gray-300 dark:border-slate-600 rounded-lg text-sm w-full focus:ring-2 focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-slate-700 dark:text-slate-100 transition-colors"
+              className="pl-10 pr-4 py-2 sm:py-3 border border-gray-300 dark:border-slate-600 rounded-lg text-sm w-full focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white dark:bg-slate-700 dark:text-slate-100 transition-colors"
             />
           </div>
 
@@ -270,7 +262,7 @@ const UserManagement = () => {
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="px-3 py-2 sm:py-3 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0099CC] focus:border-[#0099CC] bg-white dark:bg-slate-700 dark:text-slate-100 transition-colors min-w-0"
+              className="px-3 py-2 sm:py-3 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white dark:bg-slate-700 dark:text-slate-100 transition-colors min-w-0"
             >
               <option value="all">All Roles</option>
               <option value="superadmin">Super Admin</option>
@@ -280,9 +272,9 @@ const UserManagement = () => {
           </div>
 
           {/* Add User Button */}
-          <button
+          <button 
             onClick={handleOpenAddModal}
-            className="flex items-center justify-center gap-2 px-4 py-2 sm:px-6 sm:py-3 bg-[#0099CC] text-white rounded-lg hover:bg-[#007aa3] transition-colors text-sm sm:text-base font-medium min-w-0"
+            className="flex items-center justify-center gap-2 px-4 py-2 sm:px-6 sm:py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm sm:text-base font-medium min-w-0"
           >
             <UserPlus className="w-4 h-4" />
             <span className="hidden sm:inline">Add User</span>
@@ -312,7 +304,7 @@ const UserManagement = () => {
                       Role
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
-                      Branch
+                       Branch
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Status
@@ -365,16 +357,17 @@ const UserManagement = () => {
                             </span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="text-sm text-gray-900 dark:text-slate-100">
                             {user.branchId ? (user.branchId.name || user.branchId) : 'N/A'}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.isActive !== false
-                            ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300'
-                            : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300'
-                            }`}>
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                            user.isActive !== false
+                              ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300'
+                              : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300'
+                          }`}>
                             {user.isActive !== false ? 'Active' : 'Inactive'}
                           </span>
                         </td>
@@ -383,13 +376,13 @@ const UserManagement = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <div className="flex justify-end gap-2">
-                            <button
+                            <button 
                               onClick={() => handleOpenEditModal(user)}
-                              className="text-[#0099CC] hover:text-[#007aa3] dark:text-[#00bcd4] dark:hover:text-[#0099CC] transition-colors p-1"
+                              className="text-orange-600 hover:text-orange-900 dark:text-orange-400 dark:hover:text-orange-300 transition-colors p-1"
                             >
                               <Edit className="w-4 h-4" />
                             </button>
-                            <button
+                            <button 
                               onClick={() => handleDeleteUser(user._id)}
                               className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors p-1"
                             >
@@ -440,10 +433,11 @@ const UserManagement = () => {
                             </div>
                           </div>
                         </div>
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.isActive !== false
-                          ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300'
-                          : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300'
-                          }`}>
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          user.isActive !== false
+                            ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300'
+                            : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300'
+                        }`}>
                           {user.isActive !== false ? 'Active' : 'Inactive'}
                         </span>
                       </div>
@@ -461,14 +455,14 @@ const UserManagement = () => {
                       </div>
 
                       <div className="flex justify-end gap-2 mt-4 pt-3 border-t border-gray-200 dark:border-slate-700">
-                        <button
+                        <button 
                           onClick={() => handleOpenEditModal(user)}
-                          className="flex items-center gap-1 px-3 py-1.5 text-[#0099CC] hover:text-[#007aa3] dark:text-[#00bcd4] dark:hover:text-[#0099CC] transition-colors text-sm"
+                          className="flex items-center gap-1 px-3 py-1.5 text-orange-600 hover:text-orange-900 dark:text-orange-400 dark:hover:text-orange-300 transition-colors text-sm"
                         >
                           <Edit className="w-4 h-4" />
                           <span className="hidden sm:inline">Edit</span>
                         </button>
-                        <button
+                        <button 
                           onClick={() => handleDeleteUser(user._id)}
                           className="flex items-center gap-1 px-3 py-1.5 text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors text-sm"
                         >
@@ -485,15 +479,15 @@ const UserManagement = () => {
         )}
       </div>
 
-      {/* Add/Edit Modal */}
-      {showModal && (
+       {/* Add/Edit Modal */}
+       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 overflow-y-auto">
           <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl w-full max-w-md my-8">
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-slate-700">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                 {modalMode === 'add' ? 'Add New User' : 'Edit User'}
               </h2>
-              <button
+              <button 
                 onClick={() => setShowModal(false)}
                 className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
               >
@@ -509,8 +503,8 @@ const UserManagement = () => {
                   type="text"
                   required
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-orange-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
                 />
               </div>
               <div>
@@ -521,8 +515,8 @@ const UserManagement = () => {
                   type="text"
                   required
                   value={formData.username}
-                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                  onChange={(e) => setFormData({...formData, username: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-orange-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
                 />
               </div>
               <div>
@@ -533,8 +527,8 @@ const UserManagement = () => {
                   type="email"
                   required
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-orange-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
                 />
               </div>
               <div>
@@ -545,8 +539,8 @@ const UserManagement = () => {
                   type="password"
                   required={modalMode === 'add'}
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                  onChange={(e) => setFormData({...formData, password: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-orange-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
                 />
               </div>
               <div>
@@ -555,26 +549,25 @@ const UserManagement = () => {
                 </label>
                 <select
                   value={formData.role}
-                  onChange={(e) => setFormData({ ...formData, role: e.target.value, branchId: '' })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                  onChange={(e) => setFormData({...formData, role: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-orange-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
                 >
-                  <option value="branchadmin">🏢 Branch Admin</option>
-                  <option value="branchmanager">📋 Branch Manager</option>
-                  <option value="stockmanager">📦 Stock Manager</option>
-                  <option value="billcounter">🧾 Bill Counter</option>
+                  <option value="superadmin">Super Admin</option>
+                  <option value="stockmanager">Stock Manager</option>
+                  <option value="billcounter">Bill Counter</option>
                 </select>
               </div>
-
-              {['branchadmin', 'branchmanager', 'stockmanager', 'billcounter'].includes(formData.role) && (
+              
+              {['stockmanager', 'billcounter'].includes(formData.role) && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Branch
                   </label>
                   <select
                     value={formData.branchId}
-                    onChange={(e) => setFormData({ ...formData, branchId: e.target.value })}
+                    onChange={(e) => setFormData({...formData, branchId: e.target.value})}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-[#0099CC] bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-orange-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
                   >
                     <option value="">Select a Branch</option>
                     {branches.map(branch => (
@@ -591,14 +584,14 @@ const UserManagement = () => {
                   type="checkbox"
                   id="isActive"
                   checked={formData.isActive}
-                  onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                  className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-[#0099CC]"
+                  onChange={(e) => setFormData({...formData, isActive: e.target.checked})}
+                  className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
                 />
                 <label htmlFor="isActive" className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                   User Account Active
                 </label>
               </div>
-
+              
               <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-slate-700">
                 <button
                   type="button"
@@ -610,7 +603,7 @@ const UserManagement = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-4 py-2 bg-[#0099CC] text-white hover:bg-[#007aa3] rounded-lg transition-colors disabled:opacity-50"
+                  className="px-4 py-2 bg-orange-600 text-white hover:bg-orange-700 rounded-lg transition-colors disabled:opacity-50"
                 >
                   {modalMode === 'add' ? 'Create User' : 'Save Changes'}
                 </button>
