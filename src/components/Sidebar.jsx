@@ -107,31 +107,11 @@ const Sidebar = ({ onNavigate }) => {
                 {/* Logo Glow Effect */}
                 <div className="absolute inset-0 "></div>
 
-                {/* Fallback for logo */}
-                <div className="relative flex items-center justify-center">
-                  <img
-                    src="/RelaxFeet.png"
-                    alt="RelaxFeet Logo"
-                    className="h-16 md:h-24 lg:h-32 w-[150px] max-w-full transform group-hover:scale-105 transition-all duration-300 drop-shadow-xl"
-                    style={{
-                      filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.15)) brightness(1.1) contrast(1.05)',
-                      maxWidth: '100%'
-                    }}
-                    onError={(e) => {
-                      console.warn('Frame 3.svg failed to load, trying alternative logo');
-                      e.target.src = '/shree-sai-enginerrring-logo.svg';
-                    }}
-                    onLoad={(e) => {
-                      console.log('Frame 3.svg logo loaded successfully');
-                    }}
-                  />
-
-                  {/* Backup: Show text if image fails */}
-                  <div className="logo-fallback absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 pointer-events-none">
-                    <span className="text-amber-100 text-xs md:text-sm font-bold tracking-wider drop-shadow-lg">
-                      RELAXFEET
-                    </span>
-                  </div>
+                {/* Text Logo */}
+                <div className="relative flex items-center justify-center h-16 md:h-24 lg:h-32">
+                  <span className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-300 to-yellow-500 drop-shadow-lg tracking-widest flex items-center justify-center transform group-hover:scale-105 transition-all duration-300" style={{ filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.3))' }}>
+                    SBBS
+                  </span>
                 </div>
 
                 {/* Subtle border effect */}

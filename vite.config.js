@@ -15,7 +15,7 @@ export default defineConfig({
     proxy: {
       // Forward any request starting with /api to your backend
       '/api': {
-        target: 'http://localhost:5000', // Your backend server address
+        target: 'http://localhost:5001', // Your backend server address
         changeOrigin: true,
       },
     },
